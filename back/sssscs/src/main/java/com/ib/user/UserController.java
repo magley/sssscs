@@ -21,10 +21,29 @@ import jakarta.annotation.security.PermitAll;
 public class UserController {
 	@Autowired
 	private UserService userService;
-
+	@Autowired
+	private AuthenticationManager authManager;
+	
 	@PostMapping("/api/user")
 	public ResponseEntity<?> register(@RequestBody UserCreateDto dto) {
 		User user = userService.register(dto);
 		return new ResponseEntity<>(user, HttpStatus.OK);
+	}
+	
+	@PutMapping("/api/user/login")
+	public ResponseEntity<?> login(@RequestBody UserLoginDto dto) {
+		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
+	
+		Authentication auth = null;
+		try {
+			auth = authManager.authenticate(authToken);
+		} catch (BadCredentialsException ex) {
+			return new ResponseEntity<>("Wrong email or password!", HttpStatus.BAD_REQUEST);
+		};
+		
+		// TODO: Set authentication in SecurityContext.
+		// TODO: Generate token/cookie.
+		
+		return new ResponseEntity<>(new User(), HttpStatus.OK);
 	}
 }
