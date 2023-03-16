@@ -43,7 +43,11 @@ public class UserController {
 		
 		// TODO: Set authentication in SecurityContext.
 		// TODO: Generate token/cookie.
+		// TODO: Return token instead of User.
 		
-		return new ResponseEntity<>(new User(), HttpStatus.OK);
+		User user = new User();
+		user.setEmail(dto.getEmail());
+		
+		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 }
