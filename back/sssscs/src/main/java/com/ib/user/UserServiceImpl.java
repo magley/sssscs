@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ib.user.dto.UserCreateDto;
+import com.ib.user.exception.EmailTakenException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -16,9 +17,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User register(UserCreateDto dto) {
-		if (userRepo.findByEmail(dto.getEmail()).isPresent()) {
-			return null;
-			// TODO: Throw an exception?
+		if (isEmailTaken(dto.getEmail())) {
+			throw new EmailTakenException();
 		}
 		
 		User user = new User();
@@ -28,6 +28,10 @@ public class UserServiceImpl implements UserService {
 		user.setSurname(dto.getSurname());
 		
 		return userRepo.save(user);
+	}
+	
+	private boolean isEmailTaken(String email) {
+		return userRepo.findByEmail(email).isPresent();
 	}
 	
 }
