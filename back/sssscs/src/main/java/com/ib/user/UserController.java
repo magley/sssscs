@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ib.user.dto.UserCreateDto;
 import com.ib.user.dto.UserLoginDto;
@@ -27,29 +28,28 @@ public class UserController {
 	private AuthenticationManager authManager;
 	
 	@PostMapping
-	public ResponseEntity<?> register(@RequestBody UserCreateDto dto) {
+	public ResponseEntity<User> register(@RequestBody UserCreateDto dto) {
 		User user = userService.register(dto);
-		return new ResponseEntity<>(user, HttpStatus.OK);
+		return ResponseEntity.ok(user);
 	}
 	
 	@PutMapping("/login")
-	public ResponseEntity<?> login(@RequestBody UserLoginDto dto) {
+	public ResponseEntity<User> login(@RequestBody UserLoginDto dto) {
 		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
 	
 		Authentication auth = null;
 		try {
 			auth = authManager.authenticate(authToken);
 		} catch (BadCredentialsException ex) {
-			return new ResponseEntity<>("Wrong email or password!", HttpStatus.BAD_REQUEST);
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email or password!");
 		};
 		
-		// TODO: Set authentication in SecurityContext.
 		// TODO: Generate token/cookie.
 		// TODO: Return token instead of User.
 		
 		User user = new User();
 		user.setEmail(dto.getEmail());
 		
-		return new ResponseEntity<>(user, HttpStatus.OK);
+		return ResponseEntity.ok(user);
 	}
 }

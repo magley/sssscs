@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { Env } from "../common/Environment";
 
 export interface UserLoginDto {
     email: string,
@@ -11,7 +12,6 @@ export interface UserLoginResultDto {
 
 export class LoginService {
     static async login(dto: UserLoginDto): Promise<AxiosResponse<UserLoginResultDto>> {
-        const env_url = "http://127.0.0.1:8080";
-        return await axios.put(`${env_url}/api/user/login`, dto);
+        return await axios.put(`${Env.url}/api/user/login`, dto);
     }
 };
