@@ -20,7 +20,7 @@ import jakarta.annotation.security.PermitAll;
 @RestController
 public class UserController {
 	@Autowired
-	private UserService userService;
+	private IUserService userService;
 	@Autowired
 	private AuthenticationManager authManager;
 	
