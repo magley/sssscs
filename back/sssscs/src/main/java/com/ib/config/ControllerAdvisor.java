@@ -12,7 +12,6 @@ import com.ib.user.exception.EmailTakenException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
-@EnableWebMvc
 public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 	@ExceptionHandler({EmailTakenException.class})
 	public ResponseEntity<?> handleEmailTaken(final Exception e, final HttpServletRequest request) {

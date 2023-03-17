@@ -49,10 +49,6 @@ public class UserService implements IUserService, UserDetailsService {
 					.roles("ADMIN") // TODO: Add actual roles.
 					.build();
 		} else {
-			// TODO: Does this ever get thrown? It seems that by default, Spring prefers throwing
-			// the more generic BadCredentialsException, which we have to catch when invoking
-			// AuthenticationManager.authenticate(), which makes sense because it's safer not to
-			// know which credential (email/password) is incorrect.
 			throw new UsernameNotFoundException("User not found with this username: " + email);
 		}
 	}
