@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ib.user.dto.UserCreateDto;
@@ -18,19 +19,20 @@ import com.ib.user.dto.UserLoginDto;
 import jakarta.annotation.security.PermitAll;
 
 @RestController
+@RequestMapping("/api/user")
 public class UserController {
 	@Autowired
 	private IUserService userService;
 	@Autowired
 	private AuthenticationManager authManager;
 	
-	@PostMapping("/api/user")
+	@PostMapping
 	public ResponseEntity<?> register(@RequestBody UserCreateDto dto) {
 		User user = userService.register(dto);
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 	
-	@PutMapping("/api/user/login")
+	@PutMapping("/login")
 	public ResponseEntity<?> login(@RequestBody UserLoginDto dto) {
 		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
 	
