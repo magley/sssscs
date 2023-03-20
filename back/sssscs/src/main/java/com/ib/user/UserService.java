@@ -1,7 +1,5 @@
 package com.ib.user;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,7 +7,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ib.user.dto.UserCreateDto;
 import com.ib.user.exception.EmailTakenException;
 
 @Service
@@ -35,15 +32,7 @@ public class UserService implements IUserService, UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		Optional<User> user = userRepo.findByEmail(email);
-		if (user.isPresent()) {
-			return org.springframework.security.core.userdetails.User
-					.withUsername(email)
-					.password(user.get().getPassword())
-					.roles("ADMIN") // TODO: Add actual roles.
-					.build();
-		} else {
-			throw new UsernameNotFoundException("User not found with this username: " + email);
-		}
+		return userRepo.findByEmail(email).orElseThrow(
+				() -> new UsernameNotFoundException("User not found with this username: " + email));
 	}
 }
