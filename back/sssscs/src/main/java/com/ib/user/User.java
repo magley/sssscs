@@ -31,7 +31,7 @@ public class User implements UserDetails {
 		FOO,
 	}
 
-	@Id 
+	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String email;
