@@ -1,6 +1,7 @@
 package com.ib.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ib.common.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -51,8 +52,11 @@ public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
         if (id == null) {
             return modelMapper.map(dto, parameter.getParameterType());
         } else {
-            Object persistedObject = entityManager.find(parameter.getParameterType(), id);
-            // TODO: Throw if persistedObject is null
+            Class entityType = parameter.getParameterType();
+            Object persistedObject = entityManager.find(entityType, id);
+            if (persistedObject == null) {
+                throw new EntityNotFoundException(entityType, (Long) id);
+            }
             modelMapper.map(dto, persistedObject);
             return persistedObject;
         }
