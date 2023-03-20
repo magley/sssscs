@@ -38,7 +38,7 @@ public class User implements UserDetails {
 	private String password;
 	private String name;
 	private String surname;
-	private Role role;
+	private Role role = Role.FOO;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
