@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @ControllerAdvice
-public class ControllerAdvisor extends ResponseEntityExceptionHandler {
+public class ControllerAdvisor {
 	@ExceptionHandler({EntityException.class})
 	public ResponseEntity<?> handleEntityException(final Exception e, final HttpServletRequest request) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -31,7 +31,7 @@ public class ControllerAdvisor extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
-	protected ResponseEntity<BadValidation> handleConstraintViolationException(MethodArgumentNotValidException e,
+	public ResponseEntity<BadValidation> handleConstraintViolationException(MethodArgumentNotValidException e,
 																			   HttpServletRequest req) {
 		List<FieldError> errors = e.getFieldErrors();
 		StringBuilder sb = new StringBuilder("Request finished with validation errors:\n");
