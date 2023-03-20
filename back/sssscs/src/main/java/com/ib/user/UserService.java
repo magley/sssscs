@@ -21,17 +21,11 @@ public class UserService implements IUserService, UserDetailsService {
 	private IUserRepo userRepo;
 
 	@Override
-	public User register(UserCreateDto dto) {
-		if (isEmailTaken(dto.getEmail())) {
+	public User register(User user) {
+		if (isEmailTaken(user.getEmail())) {
 			throw new EmailTakenException();
 		}
-		
-		User user = new User();
-		user.setEmail(dto.getEmail());
-		user.setPassword(passwordEncoder.encode(dto.getPassword()));
-		user.setName(dto.getName());
-		user.setSurname(dto.getSurname());
-		
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepo.save(user);
 	}
 	

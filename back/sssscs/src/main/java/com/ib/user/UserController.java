@@ -1,5 +1,6 @@
 package com.ib.user;
 
+import com.ib.util.DTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +29,8 @@ public class UserController {
 	private AuthenticationManager authManager;
 	
 	@PostMapping
-	public ResponseEntity<User> register(@RequestBody UserCreateDto dto) {
-		User user = userService.register(dto);
-		return ResponseEntity.ok(user);
+	public ResponseEntity<User> register(@DTO(UserCreateDto.class) User user) {
+		return ResponseEntity.ok(userService.register(user));
 	}
 	
 	@PutMapping("/login")
