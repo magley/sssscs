@@ -1,9 +1,15 @@
-import { Box, TextField, Button } from "@mui/material";
+import { Box, TextField, Button, Typography } from "@mui/material";
 import { AxiosResponse, AxiosError } from "axios";
-import { FormEvent, useState } from "react";
 import { RegisterService, User, UserCreateDto } from "./RegisterService";
+import { FieldValues, useForm } from "react-hook-form";
 
-const TryRegister = async (dto: UserCreateDto) => {
+const TryRegister = async (data: FieldValues) => {
+    const dto: UserCreateDto = {
+        'email': data['email'],
+        'name': data['name'],
+        'surname': data['surname'],
+        'password': data['password']
+    }
     RegisterService.register(dto)
         .then((res: AxiosResponse<User>) => {
             console.log(res.data);
@@ -15,37 +21,69 @@ const TryRegister = async (dto: UserCreateDto) => {
         });
 }
 
-let Register = () => {
-    const [email, setEmail] = useState("");
-    const [name, setName] = useState("");
-    const [surname, setSurname] = useState("")
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        TryRegister({email, password, name, surname})
-    }
+const Register = () => {
+    const { register, handleSubmit, formState: { errors } } = useForm({mode: 'onChange'});
 
     return (
-        <div className="Register">
-            <h2>Register</h2>
-            <form onSubmit={handleSubmit}>
-                <Box>
-                    <TextField variant="outlined" type="text" name="cert-email" label="Email" required onChange={e => setEmail(e.target.value)} />
-                    <br/>
-                    <TextField variant="outlined" type="password" name="cert-pass" label="Password" required onChange={e => setPassword(e.target.value)} />
-                    <br/>
-                    <TextField variant="outlined" type="password" name="cert-confirm-pass" label="Confirm password" required onChange={e => setConfirmPassword(e.target.value)} />
-                    <br/>
-                    <TextField variant="outlined" type="text" name="cert-name" label="Name" required onChange={e => setName(e.target.value)} />
-                    <br/>
-                    <TextField variant="outlined" type="text" name="cert-surname" label="Surname" required onChange={e => setSurname(e.target.value)} />
-                    <br/>
-                    <Button color="primary" variant="contained" type="submit">Register</Button>
-                </Box>
-            </form>
-        </div>
+        <Box component='form' onSubmit={handleSubmit(TryRegister)} sx={{maxWidth: '30rem'}}>
+            <Typography variant='h4' sx={{mb: 2}}>
+                Register
+            </Typography>
+            <TextField
+                sx={{mb: 2}}
+                label="Email"
+                fullWidth
+                {...register('email', {
+                    required: 'Email is required',
+                    pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                        message: 'Not a valid email'
+                    }
+                })}
+                error={!!errors['email']}
+                helperText={errors['email']?.message?.toString()}
+            />
+            <TextField
+                sx={{mb: 2}}
+                label="Password"
+                type="password"
+                fullWidth
+                {...register('password', {
+                    required: 'Password is required'
+                })}
+                error={!!errors['password']}
+                helperText={errors['password']?.message?.toString()}
+            />
+            <TextField
+                sx={{mb: 2}}
+                label="Confirm password"
+                type="password"
+                fullWidth
+                // FIXME: Update when password is updated as well
+                {...register('confirmPassword', {
+                    validate: (value, formValues) => {
+                        return value === formValues['password'] || 'Password not matching'
+                    }
+                })}
+                error={!!errors['confirmPassword']}
+                helperText={errors['confirmPassword']?.message?.toString()}
+            />
+            <TextField
+                sx={{mb: 2}}
+                label="Name"
+                fullWidth
+                {...register('name')}
+            />
+            <TextField
+                sx={{mb: 2}}
+                label="Surname"
+                fullWidth
+                {...register('surname')}
+            />
+            <Button variant="contained" type="submit">
+                Register
+            </Button>
+        </Box>
     );
 }
 
