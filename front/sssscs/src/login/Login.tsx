@@ -1,15 +1,19 @@
-import React, { FormEvent, useState } from "react";
 import Button from '@mui/material/Button';
-import { TextField, Box } from '@mui/material';
+import { TextField, Box, Typography } from '@mui/material';
 import { LoginService, UserLoginDto, UserLoginResultDto } from "./LoginService";
 import { AxiosError, AxiosResponse } from "axios";
+import { FieldValues, useForm } from "react-hook-form";
 
 /**
  * Send a login request to the server.
  * @param data Login credentials.
  */
-const TryLogin = async (data: UserLoginDto) => {
-    LoginService.login(data)
+const TryLogin = async (data: FieldValues) => {
+    const dto: UserLoginDto = {
+        email: data['email'],
+        password: data['password']
+    }
+    LoginService.login(dto)
         .then((res: AxiosResponse<UserLoginResultDto>) => {
             console.log(res.data);
             console.log(res.status);
@@ -21,31 +25,33 @@ const TryLogin = async (data: UserLoginDto) => {
 }
 
 export const Login : React.FC<{}> = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
-    /**
-     * Callback for when the user clicks on the 'Sign In' button.
-     */
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        TryLogin({
-            email, password
-        });
-    };
+    const { register, handleSubmit, formState: { errors } } = useForm({mode: 'onChange'});
 
     return (
-        <div className="Login">
-            <h2>Login</h2>
-            <form onSubmit={handleSubmit}>
-                <Box>
-                    <TextField variant="outlined" type="text" name="cert-email" label="Email" required onChange={e => setEmail(e.target.value)} />
-                    <br/>
-                    <TextField variant="outlined" type="password" name="cert-pass" label="Password" required onChange={e => setPassword(e.target.value)} />
-                    <br/>
-                    <Button color="primary" variant="contained" type="submit">Sign In</Button>
-                </Box>
-            </form>
-        </div>
+        <Box component='form' onSubmit={handleSubmit(TryLogin)} sx={{maxWidth: '30rem'}}>
+            <Typography variant='h4' sx={{mb: 2}}>
+                Login
+            </Typography>
+            <TextField
+                sx={{mb: 2}}
+                label="Email"
+                fullWidth
+                {...register('email', { required: 'Email is required' })}
+                error={!!errors['email']}
+                helperText={errors['email']?.message?.toString()}
+            />
+            <TextField
+                sx={{mb: 2}}
+                type="password"
+                label="Password"
+                fullWidth
+                {...register('password', { required: 'Password is required' })}
+                error={!!errors['password']}
+                helperText={errors['password']?.message?.toString()}
+            />
+            <Button variant="contained" type="submit">
+                Sign In
+            </Button>
+        </Box>
     );
 }
