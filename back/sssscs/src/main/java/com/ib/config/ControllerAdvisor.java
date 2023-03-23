@@ -3,30 +3,25 @@ package com.ib.config;
 import com.ib.common.EntityException;
 import com.ib.common.EntityNotFoundException;
 import com.ib.util.BadValidation;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import com.ib.user.exception.EmailTakenException;
-
-import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
 
 @ControllerAdvice
 public class ControllerAdvisor {
 	@ExceptionHandler({EntityException.class})
-	public ResponseEntity<?> handleEntityException(final Exception e, final HttpServletRequest request) {
+	public ResponseEntity<?> handleEntityException(final EntityException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler({EntityNotFoundException.class})
-	public ResponseEntity<?> handleEntityNotFoundException(final Exception e, final HttpServletRequest request) {
+	public ResponseEntity<?> handleEntityNotFoundException(final EntityNotFoundException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 	}
 

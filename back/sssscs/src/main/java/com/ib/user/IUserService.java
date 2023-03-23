@@ -1,7 +1,5 @@
 package com.ib.user;
 
-import com.ib.user.dto.UserCreateDto;
-
 public interface IUserService {
-	public User register(User user);
+	User register(User user);
 }

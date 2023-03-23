@@ -28,7 +28,7 @@ import java.util.Collections;
 public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
     private static final ModelMapper modelMapper = new ModelMapper();
 
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     public DTOModelMapper(ObjectMapper objectMapper, EntityManager entityManager) {
         super(Collections.singletonList(new MappingJackson2HttpMessageConverter(objectMapper)));
@@ -48,11 +48,12 @@ public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         Object dto = super.resolveArgument(parameter, mavContainer, webRequest, binderFactory);
+        assert dto != null;
         Object id = getEntityId(dto);
         if (id == null) {
             return modelMapper.map(dto, parameter.getParameterType());
         } else {
-            Class entityType = parameter.getParameterType();
+            Class<?> entityType = parameter.getParameterType();
             Object persistedObject = entityManager.find(entityType, id);
             if (persistedObject == null) {
                 throw new EntityNotFoundException(entityType, (Long) id);
