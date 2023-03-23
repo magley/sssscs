@@ -1,5 +1,6 @@
 package com.ib.user.dto;
 
+import com.ib.util.validation.Password;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -16,7 +17,7 @@ public class UserCreateDto {
 	@Size(max = 100)
 	private String email;
 	@NotNull
-	@Size(max = 18)
+	@Password
 	private String password;
 	@NotNull
 	@Size(max = 100)

@@ -28,9 +28,9 @@ const Register = () => {
     // TODO: Find a cleaner way to do this
     const { onChange, onBlur, name, ref } = register('password', {
         required: 'Password is required',
-        maxLength: {
-            value: 18,
-            message: 'Password must be less than 19 characters long'
+        pattern: {
+            value: /^(?=.*\d)(?=.*[A-Z])(?!.*[^a-zA-Z0-9@#$^+=])(.{8,15})$/,
+            message: 'Password must contain only characters a-z, A-Z, 0-9, @, #, $, ^, +, = and must be between 8 and 15 characters and contain at least one digit and capital letter!'
         }
     });
 

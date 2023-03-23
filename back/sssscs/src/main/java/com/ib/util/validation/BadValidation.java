@@ -1,4 +1,4 @@
-package com.ib.util;
+package com.ib.util.validation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
