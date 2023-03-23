@@ -1,7 +1,7 @@
 package com.ib.config;
 
-import com.ib.common.EntityException;
-import com.ib.common.EntityNotFoundException;
+import com.ib.util.exception.EntityException;
+import com.ib.util.exception.EntityNotFoundException;
 import com.ib.util.BadValidation;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,6 @@
 package com.ib.user.exception;
 
-import com.ib.common.EntityException;
+import com.ib.util.exception.EntityException;
 
 import java.io.Serial;
 

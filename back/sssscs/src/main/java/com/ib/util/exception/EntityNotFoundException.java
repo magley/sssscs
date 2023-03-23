@@ -1,4 +1,4 @@
-package com.ib.common;
+package com.ib.util.exception;
 
 public class EntityNotFoundException extends EntityException {
 

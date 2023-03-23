@@ -1,7 +1,7 @@
 package com.ib.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ib.common.EntityNotFoundException;
+import com.ib.util.exception.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
