@@ -25,10 +25,10 @@ const TryLogin = async (data: FieldValues) => {
 }
 
 export const Login = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm({mode: 'onChange'});
+    const { register, handleSubmit, formState: { errors } } = useForm({mode: 'all'});
 
     return (
-        <Box component='form' onSubmit={handleSubmit(TryLogin)} sx={{maxWidth: '30rem'}}>
+        <Box component='form' noValidate onSubmit={handleSubmit(TryLogin)} sx={{maxWidth: '30rem'}}>
             <Typography variant='h4' sx={{mb: 2}}>
                 Login
             </Typography>
@@ -36,6 +36,7 @@ export const Login = () => {
                 sx={{mb: 2}}
                 label="Email"
                 fullWidth
+                required
                 {...register('email', { required: 'Email is required' })}
                 error={!!errors['email']}
                 helperText={errors['email']?.message?.toString()}
@@ -45,6 +46,7 @@ export const Login = () => {
                 type="password"
                 label="Password"
                 fullWidth
+                required
                 {...register('password', { required: 'Password is required' })}
                 error={!!errors['password']}
                 helperText={errors['password']?.message?.toString()}

@@ -2,6 +2,7 @@ import { Box, TextField, Button, Typography } from "@mui/material";
 import { AxiosResponse, AxiosError } from "axios";
 import { RegisterService, User, UserCreateDto } from "./RegisterService";
 import { FieldValues, useForm } from "react-hook-form";
+import { useState } from "react";
 
 const TryRegister = async (data: FieldValues) => {
     const dto: UserCreateDto = {
@@ -23,10 +24,19 @@ const TryRegister = async (data: FieldValues) => {
 }
 
 const Register = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm({mode: 'onChange'});
+    const { register, trigger, handleSubmit, formState: { errors } } = useForm({mode: 'all'});
+
+    // TODO: Find a cleaner way to do this
+    const { onChange, onBlur, name, ref } = register('password', {
+        required: 'Password is required',
+        maxLength: {
+            value: 18,
+            message: 'Password must be less than 19 characters long'
+        }
+    });
 
     return (
-        <Box component='form' onSubmit={handleSubmit(TryRegister)} sx={{maxWidth: '30rem'}}>
+        <Box component='form' noValidate onSubmit={handleSubmit(TryRegister)} sx={{maxWidth: '30rem'}}>
             <Typography variant='h4' sx={{mb: 2}}>
                 Register
             </Typography>
@@ -34,6 +44,7 @@ const Register = () => {
                 sx={{mb: 2}}
                 label="Email"
                 fullWidth
+                required
                 {...register('email', {
                     required: 'Email is required',
                     pattern: {
@@ -53,13 +64,15 @@ const Register = () => {
                 label="Password"
                 type="password"
                 fullWidth
-                {...register('password', {
-                    required: 'Password is required',
-                    maxLength: {
-                        value: 18,
-                        message: 'Password must be less than 19 characters long'
-                    }
-                })}
+                required
+                // TODO: Find a cleaner way to do this
+                onChange={(e) => {
+                    onChange(e);
+                    trigger('confirmPassword');
+                }}
+                onBlur={onBlur}
+                name={name}
+                ref={ref}
                 error={!!errors['password']}
                 helperText={errors['password']?.message?.toString()}
             />
@@ -68,7 +81,6 @@ const Register = () => {
                 label="Confirm password"
                 type="password"
                 fullWidth
-                // FIXME: Update when password is updated as well
                 {...register('confirmPassword', {
                     validate: (value, formValues) => {
                         return value === formValues['password'] || 'Password not matching'
@@ -81,6 +93,7 @@ const Register = () => {
                 sx={{mb: 2}}
                 label="Name"
                 fullWidth
+                required
                 {...register('name', {
                     required: 'Name is required',
                     maxLength: {
@@ -95,6 +108,7 @@ const Register = () => {
                 sx={{mb: 2}}
                 label="Surname"
                 fullWidth
+                required
                 {...register('surname', {
                     required: 'Surname is required',
                     maxLength: {
@@ -109,6 +123,7 @@ const Register = () => {
                 sx={{mb: 2}}
                 label="Phone number"
                 fullWidth
+                required
                 {...register('phoneNumber', {
                     required: 'Phone number is required',
                     maxLength: {
