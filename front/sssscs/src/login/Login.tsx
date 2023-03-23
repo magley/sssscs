@@ -8,7 +8,7 @@ import { FieldValues, useForm } from "react-hook-form";
  * Send a login request to the server.
  * @param data Login credentials.
  */
-const TryLogin = async (data: FieldValues) => {
+const tryLogin = async (data: FieldValues) => {
     const dto: UserLoginDto = {
         email: data['email'],
         password: data['password']
@@ -28,7 +28,7 @@ export const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm({mode: 'all'});
 
     return (
-        <Box component='form' noValidate onSubmit={handleSubmit(TryLogin)} sx={{maxWidth: '30rem'}}>
+        <Box component='form' noValidate onSubmit={handleSubmit(tryLogin)} sx={{maxWidth: '30rem'}}>
             <Typography variant='h4' sx={{mb: 2}}>
                 Login
             </Typography>

@@ -26,8 +26,7 @@ public class ControllerAdvisor {
 	}
 
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
-	public ResponseEntity<BadValidation> handleConstraintViolationException(MethodArgumentNotValidException e,
-																			   HttpServletRequest req) {
+	public ResponseEntity<BadValidation> handleConstraintViolationException(MethodArgumentNotValidException e, HttpServletRequest req) {
 		List<FieldError> errors = e.getFieldErrors();
 		StringBuilder sb = new StringBuilder("Request finished with validation errors:\n");
 		for (FieldError fe : errors) {

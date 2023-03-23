@@ -23,8 +23,6 @@ public class UserController {
 	
 	@PostMapping
 	public ResponseEntity<User> register(@DTO(UserCreateDto.class) User user) {
-		// FIXME: Return something other than user. Also, why do we return 500 with
-		//        "Failed to write request" now that User implements UserDetails?
 		return ResponseEntity.ok(userService.register(user));
 	}
 	

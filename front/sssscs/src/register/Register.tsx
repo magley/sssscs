@@ -2,9 +2,8 @@ import { Box, TextField, Button, Typography } from "@mui/material";
 import { AxiosResponse, AxiosError } from "axios";
 import { RegisterService, User, UserCreateDto } from "./RegisterService";
 import { FieldValues, useForm } from "react-hook-form";
-import { useState } from "react";
 
-const TryRegister = async (data: FieldValues) => {
+const tryRegister = async (data: FieldValues) => {
     const dto: UserCreateDto = {
         email: data['email'],
         name: data['name'],
@@ -36,7 +35,7 @@ const Register = () => {
     });
 
     return (
-        <Box component='form' noValidate onSubmit={handleSubmit(TryRegister)} sx={{maxWidth: '30rem'}}>
+        <Box component='form' noValidate onSubmit={handleSubmit(tryRegister)} sx={{maxWidth: '30rem'}}>
             <Typography variant='h4' sx={{mb: 2}}>
                 Register
             </Typography>
