@@ -5,10 +5,10 @@ import { FieldValues, useForm } from "react-hook-form";
 
 const TryRegister = async (data: FieldValues) => {
     const dto: UserCreateDto = {
-        'email': data['email'],
-        'name': data['name'],
-        'surname': data['surname'],
-        'password': data['password']
+        email: data['email'],
+        name: data['name'],
+        surname: data['surname'],
+        password: data['password']
     }
     RegisterService.register(dto)
         .then((res: AxiosResponse<User>) => {

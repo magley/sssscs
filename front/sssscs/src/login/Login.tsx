@@ -24,7 +24,7 @@ const TryLogin = async (data: FieldValues) => {
         });
 }
 
-export const Login : React.FC<{}> = () => {
+export const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm({mode: 'onChange'});
 
     return (
