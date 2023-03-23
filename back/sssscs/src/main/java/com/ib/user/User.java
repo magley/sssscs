@@ -19,7 +19,8 @@ import java.util.List;
 public class User implements UserDetails {
 
 	public enum Role {
-		FOO,
+		REGULAR,
+		ADMIN
 	}
 
 	@Id
@@ -29,7 +30,7 @@ public class User implements UserDetails {
 	private String password;
 	private String name;
 	private String surname;
-	private Role role = Role.FOO;
+	private Role role = Role.REGULAR;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
