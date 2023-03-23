@@ -39,6 +39,10 @@ const Register = () => {
                     pattern: {
                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
                         message: 'Not a valid email'
+                    },
+                    maxLength: {
+                        value: 100,
+                        message: 'Email must be less than 101 characters long'
                     }
                 })}
                 error={!!errors['email']}
@@ -50,7 +54,11 @@ const Register = () => {
                 type="password"
                 fullWidth
                 {...register('password', {
-                    required: 'Password is required'
+                    required: 'Password is required',
+                    maxLength: {
+                        value: 18,
+                        message: 'Password must be less than 19 characters long'
+                    }
                 })}
                 error={!!errors['password']}
                 helperText={errors['password']?.message?.toString()}
@@ -73,19 +81,36 @@ const Register = () => {
                 sx={{mb: 2}}
                 label="Name"
                 fullWidth
-                {...register('name')}
+                {...register('name', {
+                    required: 'Name is required',
+                    maxLength: {
+                        value: 100,
+                        message: 'Name must be less than 101 characters long'
+                    }
+                })}
+                error={!!errors['name']}
+                helperText={errors['name']?.message?.toString()}
             />
             <TextField
                 sx={{mb: 2}}
                 label="Surname"
                 fullWidth
-                {...register('surname')}
+                {...register('surname', {
+                    required: 'Surname is required',
+                    maxLength: {
+                        value: 100,
+                        message: 'Surname must be less than 101 characters long'
+                    }
+                })}
+                error={!!errors['surname']}
+                helperText={errors['surname']?.message?.toString()}
             />
             <TextField
                 sx={{mb: 2}}
                 label="Phone number"
                 fullWidth
                 {...register('phoneNumber', {
+                    required: 'Phone number is required',
                     maxLength: {
                         value: 18,
                         message: 'Phone number must be less than 19 characters long'
