@@ -6,6 +6,7 @@ export interface UserCreateDto {
     password: string,
     name: string,
     surname: string,
+    phoneNumber: string
 };
 
 // TODO: Remove, temporary
@@ -15,6 +16,7 @@ export interface User {
     password: string,
     name: string,
     surname: string,
+    phoneNumber: string
 }
 
 export class RegisterService {

@@ -8,7 +8,8 @@ const TryRegister = async (data: FieldValues) => {
         email: data['email'],
         name: data['name'],
         surname: data['surname'],
-        password: data['password']
+        password: data['password'],
+        phoneNumber: data['phoneNumber']
     }
     RegisterService.register(dto)
         .then((res: AxiosResponse<User>) => {
@@ -79,6 +80,19 @@ const Register = () => {
                 label="Surname"
                 fullWidth
                 {...register('surname')}
+            />
+            <TextField
+                sx={{mb: 2}}
+                label="Phone number"
+                fullWidth
+                {...register('phoneNumber', {
+                    maxLength: {
+                        value: 18,
+                        message: 'Phone number must be less than 19 characters long'
+                    }
+                })}
+                error={!!errors['phoneNumber']}
+                helperText={errors['phoneNumber']?.message?.toString()}
             />
             <Button variant="contained" type="submit">
                 Register
