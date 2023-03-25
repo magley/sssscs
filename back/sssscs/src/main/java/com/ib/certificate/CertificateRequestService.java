@@ -1,5 +1,7 @@
 package com.ib.certificate;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +10,7 @@ import com.ib.certificate.CertificateRequest.Status;
 import com.ib.certificate.exception.BadExpirationDateException;
 import com.ib.certificate.exception.InvalidCertificateTypeException;
 import com.ib.certificate.exception.IssuerUnauthorizedException;
+import com.ib.user.User;
 import com.ib.user.User.Role;
 
 @Service
@@ -56,5 +59,10 @@ public class CertificateRequestService implements ICertificateRequestService {
 		}
 		
 		return false;
+	}
+
+	@Override
+	public List<CertificateRequest> findByIssuer(User issuer) {
+		return certificateRequestRepo.findByIssuer(issuer);
 	}
 }

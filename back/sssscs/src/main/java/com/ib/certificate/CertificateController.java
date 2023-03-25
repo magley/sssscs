@@ -1,8 +1,11 @@
 package com.ib.certificate;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -12,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ib.certificate.CertificateRequest.Status;
 import com.ib.certificate.dto.CertificateRequestCreateDto;
+import com.ib.certificate.dto.CertificateRequestDto;
 import com.ib.user.IUserService;
+import com.ib.user.User;
 
 @RestController
 @RequestMapping("/api/cert")
@@ -61,5 +66,26 @@ public class CertificateController {
 		
 		Certificate cert = certificateService.accept(req);
 		return ResponseEntity.ok(cert.toString());
+	}
+	
+	@GetMapping("/request/{id}")
+	public ResponseEntity<List<CertificateRequestDto>> getMyRequests(@PathVariable Long id) {
+		User issuer = userService.findById(id);
+		if (issuer == null) {
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		
+		List<CertificateRequest> requests = certificateRequestService.findByIssuer(issuer);
+		List<CertificateRequestDto> result = requests.stream()
+				.map(r -> new CertificateRequestDto(
+						r.getId(), 
+						r.getIssuer().getId(), 
+						r.getValidTo(), 
+						r.getParent() != null ? r.getParent().getId() : 0, 
+						r.getType(), 
+						r.getStatus())
+		).toList();
+		
+		return ResponseEntity.ok(result);
 	}
 }
