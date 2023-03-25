@@ -1,9 +1,7 @@
 package com.ib.config;
 
-import com.ib.util.exception.EntityException;
-import com.ib.util.exception.EntityNotFoundException;
-import com.ib.util.validation.BadValidation;
-import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -11,7 +9,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.List;
+import com.ib.util.exception.EntityException;
+import com.ib.util.exception.EntityNotFoundException;
+import com.ib.util.validation.BadValidation;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class ControllerAdvisor {

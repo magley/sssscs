@@ -2,9 +2,7 @@ package com.ib.certificate;
 
 import java.time.LocalDateTime;
 
-
 import com.ib.user.User;
-import com.ib.user.User.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,8 +1,7 @@
 package com.ib.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ib.util.DTOModelMapper;
-import jakarta.persistence.EntityManager;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +13,10 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ib.util.DTOModelMapper;
+
+import jakarta.persistence.EntityManager;
 
 @Configuration
 public class ServerConfig implements WebMvcConfigurer {

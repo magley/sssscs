@@ -1,7 +1,5 @@
 package com.ib.certificate;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ib.certificate.CertificateRequest.Status;
 import com.ib.certificate.dto.CertificateRequestCreateDto;
 import com.ib.user.IUserService;
-import com.ib.util.DTO;
-
-import jakarta.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/api/cert")
@@ -55,8 +50,6 @@ public class CertificateController {
 		if (req == null) {
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		}
-		
-		
 		
 		Certificate cert = certificateService.accept(req);
 		return ResponseEntity.ok(cert.toString());
