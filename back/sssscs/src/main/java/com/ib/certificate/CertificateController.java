@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ib.certificate.CertificateRequest.Status;
 import com.ib.certificate.dto.CertificateRequestCreateDto;
 import com.ib.user.IUserService;
 import com.ib.util.DTO;
@@ -28,13 +29,14 @@ public class CertificateController {
 	private IUserService userService;
 	
 	@PostMapping("/request")
-	public ResponseEntity<String> makeRequest(/*@DTO(CertificateRequestCreateDto.class)*/ @RequestBody CertificateRequestCreateDto certificate) {
+	public ResponseEntity<CertificateRequest> makeRequest(/*@DTO(CertificateRequestCreateDto.class)*/ @RequestBody CertificateRequestCreateDto certificate) {
 		// TODO: Automatic mapping.
 		
 		CertificateRequest req = new CertificateRequest();
 		req.setIssuer(userService.findById(certificate.getIssuerId()));
 		req.setType(certificate.getType());
 		req.setValidTo(certificate.getValidTo());
+		req.setStatus(Status.PENDING);
 		if (certificate.getParentId() != 0) {
 			Certificate parent = certificateService.findById(certificate.getParentId());
 			
@@ -44,17 +46,19 @@ public class CertificateController {
 		}
 		
 		req = certificateService.makeRequest(req);
-		return ResponseEntity.ok(req.toString());
+		return ResponseEntity.ok(req);
 	}
 	
 	@PutMapping("/request/accept/{id}")
 	public ResponseEntity<String> acceptRequest(@PathVariable Long id) {
-		CertificateRequest req = certificateService.findReqById(id);
+		CertificateRequest req = certificateService.findReqByIdAndStatusEquals(id, Status.PENDING);
 		if (req == null) {
-			return new ResponseEntity<String>("", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		}
 		
-		Certificate cert = certificateService.save(req);
+		
+		
+		Certificate cert = certificateService.accept(req);
 		return ResponseEntity.ok(cert.toString());
 	}
 }

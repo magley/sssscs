@@ -30,6 +30,10 @@ import lombok.ToString;
 @Entity
 @Table(name = "certificate_requests")
 public class CertificateRequest {
+	public enum Status {
+		PENDING, ACCEPTED, REJECTED;
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -48,6 +52,10 @@ public class CertificateRequest {
 	@Column(nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	private Type type;
+	
+	@Column(nullable = false)
+	@Enumerated(value = EnumType.STRING)
+	private Status status;
 	
 	/**
 	 * @return Whether validTo is expired. Should never happen, 

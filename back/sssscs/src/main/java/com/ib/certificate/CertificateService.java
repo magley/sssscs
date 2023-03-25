@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ib.certificate.Certificate.Type;
+import com.ib.certificate.CertificateRequest.Status;
 import com.ib.certificate.exception.BadExpirationDateException;
 import com.ib.certificate.exception.InvalidCertificateTypeException;
 import com.ib.certificate.exception.IssuerUnauthorizedException;
@@ -61,12 +62,15 @@ public class CertificateService implements ICertificateService {
 	}
 
 	@Override
-	public CertificateRequest findReqById(Long id) {
-		return certificateRequestRepo.findById(id).orElse(null);
+	public CertificateRequest findReqByIdAndStatusEquals(Long id, Status status) {
+		return certificateRequestRepo.findByIdAndStatusEquals(id, status).orElse(null);
 	}
 
 	@Override
-	public Certificate save(CertificateRequest req) {
+	public Certificate accept(CertificateRequest req) {
+		req.setStatus(Status.ACCEPTED);
+		req = certificateRequestRepo.save(req);
+		
 		Certificate c = new Certificate();
 		c.setIssuer(req.getIssuer());
 		c.setParent(req.getParent());
