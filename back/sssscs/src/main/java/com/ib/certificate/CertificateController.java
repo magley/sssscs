@@ -21,10 +21,13 @@ public class CertificateController {
 	private ICertificateService certificateService;
 	
 	@Autowired
+	private ICertificateRequestService certificateRequestService;
+	
+	@Autowired
 	private IUserService userService;
 	
 	@PostMapping("/request")
-	public ResponseEntity<CertificateRequest> makeRequest(/*@DTO(CertificateRequestCreateDto.class)*/ @RequestBody CertificateRequestCreateDto certificate) {
+	public ResponseEntity<String> makeRequest(/*@DTO(CertificateRequestCreateDto.class)*/ @RequestBody CertificateRequestCreateDto certificate) {
 		// TODO: Automatic mapping.
 		
 		CertificateRequest req = new CertificateRequest();
@@ -40,13 +43,18 @@ public class CertificateController {
 			req.setParent(parent);
 		}
 		
-		req = certificateService.makeRequest(req);
-		return ResponseEntity.ok(req);
+		req = certificateRequestService.makeRequest(req);
+		
+		if (certificateRequestService.canAutoAccept(req)) {
+			certificateService.accept(req);
+		}
+		
+		return ResponseEntity.ok(req.toString());
 	}
 	
 	@PutMapping("/request/accept/{id}")
 	public ResponseEntity<String> acceptRequest(@PathVariable Long id) {
-		CertificateRequest req = certificateService.findReqByIdAndStatusEquals(id, Status.PENDING);
+		CertificateRequest req = certificateRequestService.findByIdAndStatusEquals(id, Status.PENDING);
 		if (req == null) {
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 		}
