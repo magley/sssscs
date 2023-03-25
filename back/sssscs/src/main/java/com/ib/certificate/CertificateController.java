@@ -88,4 +88,27 @@ public class CertificateController {
 		
 		return ResponseEntity.ok(result);
 	}
+	
+	@GetMapping("/request/incoming/{id}")
+	public ResponseEntity<List<CertificateRequestDto>> getPendingRequestsIssuedTo(@PathVariable Long id) {
+		User issuee = userService.findById(id);
+		if (issuee == null) {
+			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+		}
+		
+		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuee);
+		List<CertificateRequestDto> result = requests.stream()
+				.map(r -> new CertificateRequestDto(
+						r.getId(), 
+						r.getIssuer().getId(), 
+						r.getValidTo(), 
+						r.getParent() != null ? r.getParent().getId() : 0, 
+						r.getType(), 
+						r.getStatus())
+		).toList();
+		
+		return ResponseEntity.ok(result);
+	}
+	
+	
 }
