@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ib.certificate.CertificateRequest.Status;
 import com.ib.certificate.dto.CertificateRequestCreateDto;
 import com.ib.certificate.dto.CertificateRequestDto;
+import com.ib.certificate.dto.CertificateSummaryItemDto;
 import com.ib.user.IUserService;
 import com.ib.user.User;
 
@@ -110,5 +111,18 @@ public class CertificateController {
 		return ResponseEntity.ok(result);
 	}
 	
+	@GetMapping
+	public ResponseEntity<List<CertificateSummaryItemDto>> getAllCertificates() {
+		List<Certificate> certs = certificateService.getAll();
+		List<CertificateSummaryItemDto> result = certs.stream()
+				.map(r -> new CertificateSummaryItemDto(
+						r.getId(), 
+						r.getValidFrom(),
+						"TODO",
+						r.getType()
+		)).toList();
+		
+		return ResponseEntity.ok(result);
+	}
 	
 }

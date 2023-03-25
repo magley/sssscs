@@ -1,6 +1,7 @@
 package com.ib.certificate;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,5 +36,10 @@ public class CertificateService implements ICertificateService {
 		c.setValidFrom(LocalDateTime.now());
 		c.setValidTo(req.getValidTo());
 		return certificateRepo.save(c);
+	}
+	
+	@Override
+	public List<Certificate> getAll() {
+		return certificateRepo.findAll();
 	}
 }
