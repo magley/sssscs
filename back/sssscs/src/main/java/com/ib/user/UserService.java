@@ -35,4 +35,9 @@ public class UserService implements IUserService, UserDetailsService {
 		return userRepo.findByEmail(email).orElseThrow(
 				() -> new UsernameNotFoundException("User not found with this username: " + email));
 	}
+
+	@Override
+	public User findById(Long issuer) {
+		return userRepo.findById(issuer).orElse(null);
+	}
 }
