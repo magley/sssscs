@@ -55,6 +55,7 @@ public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
         } else {
             Class<?> entityType = parameter.getParameterType();
             Object persistedObject = entityManager.find(entityType, id);
+            // TODO: Test
             if (persistedObject == null) {
                 throw new EntityNotFoundException(entityType, (Long) id);
             }

@@ -29,6 +29,7 @@ public class ServerConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+		// TODO: Try autowired object mapper
 		ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().applicationContext(this.applicationContext).build();
 		argumentResolvers.add(new DTOModelMapper(objectMapper, entityManager));
 	}
