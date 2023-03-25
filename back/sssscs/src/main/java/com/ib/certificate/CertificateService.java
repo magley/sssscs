@@ -1,9 +1,14 @@
 package com.ib.certificate;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ib.certificate.Certificate.Type;
+import com.ib.certificate.exception.BadExpirationDateException;
+import com.ib.certificate.exception.InvalidCertificateTypeException;
+import com.ib.certificate.exception.IssuerUnauthorizedException;
 import com.ib.user.User.Role;
 
 @Service
@@ -14,21 +19,19 @@ public class CertificateService implements ICertificateService {
 	private ICertificateRequestRepo certificateRequestRepo;
 	
 	// TODO: Split CertificateService into CertificateRequestService.
-
+	
 	@Override
 	public CertificateRequest makeRequest(CertificateRequest request) {
-		// TODO: Create custom exceptions.
-		
 		if (!request.isTypeValid()) {
-			throw new RuntimeException("Invalid certifice type.");
+			throw new InvalidCertificateTypeException();
 		}
 		
 		if (request.isExpired()) {
-			throw new RuntimeException("Bad expiration date");
+			throw new BadExpirationDateException();
 		}
 		
 		if (!request.isIssuerAuthorized()) {
-			throw new RuntimeException("Regular user cannot create root certificate");
+			throw new IssuerUnauthorizedException();
 		}
 		
 		if (canAutoAccept(request)) {
@@ -50,5 +53,26 @@ public class CertificateService implements ICertificateService {
 		}
 		
 		return false;
+	}
+	
+	@Override
+	public Certificate findById(Long id) {
+		return certificateRepo.findById(id).orElse(null);
+	}
+
+	@Override
+	public CertificateRequest findReqById(Long id) {
+		return certificateRequestRepo.findById(id).orElse(null);
+	}
+
+	@Override
+	public Certificate save(CertificateRequest req) {
+		Certificate c = new Certificate();
+		c.setIssuer(req.getIssuer());
+		c.setParent(req.getParent());
+		c.setType(req.getType());
+		c.setValidFrom(LocalDateTime.now());
+		c.setValidTo(req.getValidTo());
+		return certificateRepo.save(c);
 	}
 }
