@@ -23,14 +23,8 @@ public class CertificateService implements ICertificateService {
 
 	@Override
 	public Certificate accept(CertificateRequest req) {
-		certificateRequestService.setStatus(req, Status.ACCEPTED);
-		
-		Certificate c = new Certificate();
-		c.setIssuer(req.getIssuer());
-		c.setParent(req.getParent());
-		c.setType(req.getType());
-		c.setValidFrom(LocalDateTime.now());
-		c.setValidTo(req.getValidTo());
+		certificateRequestService.setStatus(req, Status.ACCEPTED);	
+		Certificate c = new Certificate(req);
 		return certificateRepo.save(c);
 	}
 	

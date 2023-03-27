@@ -54,4 +54,12 @@ public class Certificate {
 	@Column(nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	private Type type;
+	
+	public Certificate(CertificateRequest req) {
+		setIssuer(req.getIssuer());
+		setParent(req.getParent());
+		setType(req.getType());
+		setValidFrom(LocalDateTime.now());
+		setValidTo(req.getValidTo());
+	}
 }
