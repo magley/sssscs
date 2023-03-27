@@ -26,7 +26,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "certs")
 public class Certificate {
 	public enum Type {
 		ROOT,
