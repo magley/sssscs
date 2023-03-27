@@ -37,8 +37,8 @@ public class CertificateRequestService implements ICertificateRequestService {
 	}
 	
 	@Override
-	public CertificateRequest findByIdAndStatusEquals(Long id, Status status) {
-		return certificateRequestRepo.findByIdAndStatusEquals(id, status).orElseThrow(() -> new EntityNotFoundException(CertificateRequest.class, id));
+	public CertificateRequest findByIdAndStatus(Long id, Status status) {
+		return certificateRequestRepo.findByIdAndStatus(id, status).orElseThrow(() -> new EntityNotFoundException(CertificateRequest.class, id));
 	}
 
 	@Override

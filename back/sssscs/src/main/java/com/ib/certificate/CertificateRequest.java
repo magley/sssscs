@@ -71,10 +71,7 @@ public class CertificateRequest {
 	 * @return True if the issuer can issue a certificate of this type. 
 	 */
 	public boolean isIssuerAuthorized() {
-		if (getIssuer().getRole() == Role.REGULAR && (getParent() == null || getType() == Type.ROOT)) {
-			return false;
-		}
-		return true;
+		return !(getIssuer().getRole() == Role.REGULAR && (getParent() == null || getType() == Type.ROOT));
 	}
 	
 	/**

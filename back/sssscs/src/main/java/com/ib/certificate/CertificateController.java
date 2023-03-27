@@ -57,7 +57,7 @@ public class CertificateController {
 	
 	@PutMapping("/request/accept/{id}")
 	public ResponseEntity<String> acceptRequest(@PathVariable Long id) {
-		CertificateRequest req = certificateRequestService.findByIdAndStatusEquals(id, Status.PENDING);
+		CertificateRequest req = certificateRequestService.findByIdAndStatus(id, Status.PENDING);
 		
 		User issuee = userService.findById(1L); // TODO: Fetch user ID from token.
 		if (issuee == null) {
@@ -78,7 +78,7 @@ public class CertificateController {
 	
 	@PutMapping("/request/reject/{id}")
 	public ResponseEntity<?> rejectRequest(@PathVariable Long id, @RequestBody String reason) {
-		CertificateRequest req = certificateRequestService.findByIdAndStatusEquals(id, Status.PENDING);
+		CertificateRequest req = certificateRequestService.findByIdAndStatus(id, Status.PENDING);
 		
 		User issuee = userService.findById(1L); // TODO: Fetch user ID from token.
 		if (issuee == null) {
