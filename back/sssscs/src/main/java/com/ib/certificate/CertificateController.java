@@ -75,8 +75,32 @@ public class CertificateController {
 			// return new ResponseEntity<>("Request not found", HttpStatus.NOT_FOUND);
 		}
 		
+		// TODO: It's ugly how accept is in CertificateService 
+		// and reject is in CertificateRequestService, but there's 
+		// no way to decouple them. Accepting *must* call both.
 		Certificate cert = certificateService.accept(req);
 		return ResponseEntity.ok(cert.toString());
+	}
+	
+	@PutMapping("/request/reject/{id}")
+	public ResponseEntity<?> rejectRequest(@PathVariable Long id, @RequestBody String reason) {
+		CertificateRequest req = certificateRequestService.findByIdAndStatusEquals(id, Status.PENDING);
+		if (req == null) {
+			return new ResponseEntity<>("Request not found", HttpStatus.NOT_FOUND);
+		}
+		
+		User issuee = userService.findById(1L); // TODO: Fetch user ID from token.
+		if (issuee == null) {
+			return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
+		}
+		
+		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuee);
+		if (!requests.contains(req)) {
+			// return new ResponseEntity<>("Request not found", HttpStatus.NOT_FOUND);
+		}
+		
+		certificateRequestService.reject(req, reason);
+		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
 	}
 	
 	@GetMapping("/request/{id}")
@@ -94,7 +118,8 @@ public class CertificateController {
 						r.getValidTo(), 
 						r.getParent() != null ? r.getParent().getId() : 0, 
 						r.getType(), 
-						r.getStatus())
+						r.getStatus(),
+						r.getRejectionReason())
 		).toList();
 		
 		return ResponseEntity.ok(result);
@@ -115,7 +140,8 @@ public class CertificateController {
 						r.getValidTo(), 
 						r.getParent() != null ? r.getParent().getId() : 0, 
 						r.getType(), 
-						r.getStatus())
+						r.getStatus(),
+						r.getRejectionReason())
 		).toList();
 		
 		return ResponseEntity.ok(result);

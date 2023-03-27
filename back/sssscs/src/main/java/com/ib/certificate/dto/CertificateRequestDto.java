@@ -19,4 +19,5 @@ public class CertificateRequestDto {
 	private Long parentId;
 	private Type type;
 	private Status status;
+	private String rejectionReason;
 }

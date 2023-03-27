@@ -12,4 +12,5 @@ public interface ICertificateRequestService {
 	public boolean canAutoAccept(CertificateRequest request);
 	public List<CertificateRequest> findByIssuer(User issuer);
 	public List<CertificateRequest> findByIssuee(User issuee);
+	public void reject(CertificateRequest req, String reason);
 }

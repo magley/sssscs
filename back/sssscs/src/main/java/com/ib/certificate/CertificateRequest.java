@@ -57,6 +57,9 @@ public class CertificateRequest {
 	@Enumerated(value = EnumType.STRING)
 	private Status status;
 	
+	@Column(nullable = true)
+	private String rejectionReason;
+	
 	/**
 	 * @return Whether validTo is expired. Should never happen, 
 	 * otherwise the request is invalid.
