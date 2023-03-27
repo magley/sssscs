@@ -2,7 +2,10 @@ package com.ib.certificate;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.convert.TypeMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +35,9 @@ public class CertificateController {
 	@Autowired
 	private IUserService userService;
 	
+	@Autowired
+	private ModelMapper modelMapper;
+	
 	@PostMapping("/request")
 	public ResponseEntity<String> makeRequest(/*@DTO(CertificateRequestCreateDto.class)*/ @RequestBody CertificateRequestCreateDto certificate) {
 		// TODO: Automatic mapping.
@@ -41,7 +47,7 @@ public class CertificateController {
 		req.setType(certificate.getType());
 		req.setValidTo(certificate.getValidTo());
 		req.setStatus(Status.PENDING);
-		if (certificate.getParentId() != 0) {
+		if (certificate.getParentId() != null) {
 			Certificate parent = certificateService.findById(certificate.getParentId());
 			req.setParent(parent);
 		}
@@ -98,17 +104,8 @@ public class CertificateController {
 	public ResponseEntity<List<CertificateRequestDto>> getMyRequests(@PathVariable Long id) {
 		User issuer = userService.findById(id);
 		
-		List<CertificateRequest> requests = certificateRequestService.findByIssuer(issuer);
-		List<CertificateRequestDto> result = requests.stream()
-				.map(r -> new CertificateRequestDto(
-						r.getId(), 
-						r.getIssuer().getId(), 
-						r.getValidTo(), 
-						r.getParent() != null ? r.getParent().getId() : 0, 
-						r.getType(), 
-						r.getStatus(),
-						r.getRejectionReason())
-		).toList();
+		List<CertificateRequest> requests = certificateRequestService.findByIssuer(issuer);	
+		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
 		
 		return ResponseEntity.ok(result);
 	}
@@ -118,16 +115,7 @@ public class CertificateController {
 		User issuee = userService.findById(id);
 		
 		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuee);
-		List<CertificateRequestDto> result = requests.stream()
-				.map(r -> new CertificateRequestDto(
-						r.getId(), 
-						r.getIssuer().getId(), 
-						r.getValidTo(), 
-						r.getParent() != null ? r.getParent().getId() : 0, 
-						r.getType(), 
-						r.getStatus(),
-						r.getRejectionReason())
-		).toList();
+		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
 		
 		return ResponseEntity.ok(result);
 	}
@@ -135,13 +123,9 @@ public class CertificateController {
 	@GetMapping
 	public ResponseEntity<List<CertificateSummaryItemDto>> getAllCertificates() {
 		List<Certificate> certs = certificateService.getAll();
-		List<CertificateSummaryItemDto> result = certs.stream()
-				.map(r -> new CertificateSummaryItemDto(
-						r.getId(), 
-						r.getValidFrom(),
-						"TODO",
-						r.getType()
-		)).toList();
+		
+		// TODO: Add Subject in Certificate class to show in this list.
+		List<CertificateSummaryItemDto> result = certs.stream().map(r -> modelMapper.map(r, CertificateSummaryItemDto.class)).toList();
 		
 		return ResponseEntity.ok(result);
 	}

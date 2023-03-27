@@ -1,5 +1,6 @@
 package com.ib.config;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,5 +18,10 @@ public class StandardConfig {
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
 		return authConfig.getAuthenticationManager();
+	}
+	
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
 	}
 }
