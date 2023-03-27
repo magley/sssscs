@@ -62,7 +62,17 @@ public class CertificateController {
 	public ResponseEntity<String> acceptRequest(@PathVariable Long id) {
 		CertificateRequest req = certificateRequestService.findByIdAndStatusEquals(id, Status.PENDING);
 		if (req == null) {
-			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>("Request not found", HttpStatus.NOT_FOUND);
+		}
+		
+		User issuee = userService.findById(1L); // TODO: Fetch user ID from token.
+		if (issuee == null) {
+			return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
+		}
+		
+		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuee);
+		if (!requests.contains(req)) {
+			// return new ResponseEntity<>("Request not found", HttpStatus.NOT_FOUND);
 		}
 		
 		Certificate cert = certificateService.accept(req);
@@ -91,7 +101,7 @@ public class CertificateController {
 	}
 	
 	@GetMapping("/request/incoming/{id}")
-	public ResponseEntity<List<CertificateRequestDto>> getPendingRequestsIssuedTo(@PathVariable Long id) {
+	public ResponseEntity<List<CertificateRequestDto>> getRequestsIssuedTo(@PathVariable Long id) {
 		User issuee = userService.findById(id);
 		if (issuee == null) {
 			return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
