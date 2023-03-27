@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ib.certificate.CertificateRequest.Status;
+import com.ib.util.exception.EntityNotFoundException;
 
 @Service
 public class CertificateService implements ICertificateService {
@@ -17,7 +18,7 @@ public class CertificateService implements ICertificateService {
 	
 	@Override
 	public Certificate findById(Long id) {
-		return certificateRepo.findById(id).orElse(null);
+		return certificateRepo.findById(id).orElseThrow(() -> new EntityNotFoundException(Certificate.class, id));
 	}
 
 	@Override

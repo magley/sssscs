@@ -12,6 +12,7 @@ import com.ib.certificate.exception.InvalidCertificateTypeException;
 import com.ib.certificate.exception.IssuerUnauthorizedException;
 import com.ib.user.User;
 import com.ib.user.User.Role;
+import com.ib.util.exception.EntityNotFoundException;
 
 @Service
 public class CertificateRequestService implements ICertificateRequestService {
@@ -37,7 +38,7 @@ public class CertificateRequestService implements ICertificateRequestService {
 	
 	@Override
 	public CertificateRequest findByIdAndStatusEquals(Long id, Status status) {
-		return certificateRequestRepo.findByIdAndStatusEquals(id, status).orElse(null);
+		return certificateRequestRepo.findByIdAndStatusEquals(id, status).orElseThrow(() -> new EntityNotFoundException(CertificateRequest.class, id));
 	}
 
 	@Override

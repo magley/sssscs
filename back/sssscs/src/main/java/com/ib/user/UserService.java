@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ib.user.exception.EmailTakenException;
+import com.ib.util.exception.EntityNotFoundException;
 
 @Service
 public class UserService implements IUserService, UserDetailsService {
@@ -38,6 +39,6 @@ public class UserService implements IUserService, UserDetailsService {
 
 	@Override
 	public User findById(Long issuer) {
-		return userRepo.findById(issuer).orElse(null);
+		return userRepo.findById(issuer).orElseThrow(() -> new EntityNotFoundException(User.class, issuer));
 	}
 }
