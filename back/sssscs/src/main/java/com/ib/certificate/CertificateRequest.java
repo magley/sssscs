@@ -28,7 +28,6 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "certificate_requests")
 public class CertificateRequest {
 	public enum Status {
 		PENDING, ACCEPTED, REJECTED;
