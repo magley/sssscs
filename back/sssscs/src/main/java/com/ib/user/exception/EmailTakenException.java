@@ -1,8 +1,8 @@
 package com.ib.user.exception;
 
-import com.ib.util.exception.EntityException;
-
 import java.io.Serial;
+
+import com.ib.util.exception.EntityException;
 
 public class EmailTakenException extends EntityException {
 	@Serial

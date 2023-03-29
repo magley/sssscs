@@ -1,7 +1,11 @@
 package com.ib.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ib.util.exception.EntityNotFoundException;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Type;
+import java.util.Collections;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -15,14 +19,12 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ib.util.exception.EntityNotFoundException;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.util.Collections;
 
 // Copied from https://auth0.com/blog/automatically-mapping-dto-to-entity-on-spring-boot-apis/
 public class DTOModelMapper extends RequestResponseBodyMethodProcessor {
