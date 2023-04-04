@@ -11,7 +11,7 @@ import com.ib.user.exception.EmailTakenException;
 import com.ib.util.exception.EntityNotFoundException;
 
 @Service
-public class UserService implements IUserService, UserDetailsService {
+public class UserService implements IUserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
