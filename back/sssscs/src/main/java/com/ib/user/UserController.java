@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.ib.user.dto.UserCreateDto;
 import com.ib.user.dto.UserLoginDto;
 import com.ib.util.DTO;
+import com.ib.util.security.JwtTokenUtil;
 
 @RestController
 @RequestMapping("/api/user")
@@ -26,28 +27,26 @@ public class UserController {
 	@Autowired
 	private AuthenticationManager authManager;
 	
+	@Autowired
+	private JwtTokenUtil jwtTokenUtil;
+
 	@PostMapping
 	public ResponseEntity<User> register(@DTO(UserCreateDto.class) User user) {
 		return ResponseEntity.ok(userService.register(user));
 	}
 	
 	@PutMapping("/login")
-	public ResponseEntity<User> login(@RequestBody UserLoginDto dto) {
+	public ResponseEntity<String> login(@RequestBody UserLoginDto dto) {
 		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
-	
 		Authentication auth = null;
 		try {
 			auth = authManager.authenticate(authToken);
 		} catch (BadCredentialsException ex) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email or password!");
 		}
-		
-		// TODO: Generate token/cookie.
-		// TODO: Return token instead of User.
-		
-		User user = new User();
-		user.setEmail(dto.getEmail());
-		
-		return ResponseEntity.ok(user);
+		User user = (User) auth.getPrincipal();
+		// TODO: json mb
+		String token = jwtTokenUtil.generateToken(user.getEmail(), user.getId(), user.getRole().toString());
+		return ResponseEntity.ok(token);
 	}
 }

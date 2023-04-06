@@ -8,13 +8,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ib.util.DTOModelMapper;
+import com.ib.util.security.JwtRequestFilter;
 
 import jakarta.persistence.EntityManager;
 
@@ -22,6 +25,9 @@ import jakarta.persistence.EntityManager;
 public class ServerConfig implements WebMvcConfigurer {
 	private final ApplicationContext applicationContext;
 	private final EntityManager entityManager;
+	
+	@Autowired
+	private JwtRequestFilter jwtRequestFilter;
 
 	@Autowired
 	public ServerConfig(ApplicationContext applicationContext, EntityManager entityManager) {
@@ -45,6 +51,10 @@ public class ServerConfig implements WebMvcConfigurer {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable();
 		http.headers().frameOptions().disable();
+		var matcherRegistry = http.authorizeHttpRequests();
+		matcherRegistry.anyRequest().permitAll();
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 }
