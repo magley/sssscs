@@ -39,7 +39,7 @@ public class CertificateController {
 	private ModelMapper modelMapper;
 	
 	@PostMapping("/request")
-	public ResponseEntity<String> makeRequest(/*@DTO(CertificateRequestCreateDto.class)*/ @RequestBody CertificateRequestCreateDto certificate) {
+	public ResponseEntity<String> makeRequest(@RequestBody CertificateRequestCreateDto certificate) {
 		// TODO: Automatic mapping.
 		
 		CertificateRequest req = new CertificateRequest();

@@ -1,5 +1,10 @@
 package com.ib.config;
 
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.Security;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,5 +28,11 @@ public class StandardConfig {
 	@Bean
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
+	}
+	
+	@Bean
+	public KeyStore keyStore() throws KeyStoreException {
+		Security.addProvider(new BouncyCastleProvider());
+		return KeyStore.getInstance("JKS");
 	}
 }

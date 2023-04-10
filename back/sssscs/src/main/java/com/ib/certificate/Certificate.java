@@ -1,5 +1,6 @@
 package com.ib.certificate;
 
+import java.security.PublicKey;
 import java.time.LocalDateTime;
 
 import com.ib.user.User;
@@ -12,6 +13,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -54,6 +56,9 @@ public class Certificate {
 	@Column(nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	private Type type;
+	
+	@Lob
+	private PublicKey publicKey; // Public key of the issuer of this certificate.
 	
 	public Certificate(CertificateRequest req) {
 		setIssuer(req.getIssuer());
