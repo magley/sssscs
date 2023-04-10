@@ -47,27 +47,38 @@ public class CertificateService implements ICertificateService {
 
 	@Override
 	public boolean validate(Certificate cert) {
-		if (cert.getType() == Type.ROOT) {
-			return true;
-		}
+		if (isExpired(cert)) return false;
+		if (isInvalidSignature(cert)) return false;
 		
-		// Verify date-time
-		if (LocalDateTime.now().isBefore(cert.getValidFrom()) || LocalDateTime.now().isAfter(cert.getValidTo())) {
+		if (isTrusted(cert)) {
+			return true;
+		} else {			
+			return validate(cert.getParent());
+		}
+	}
+
+	private boolean isTrusted(Certificate cert) {
+		return  (cert.getType() == Type.ROOT);
+	}
+	
+	private boolean isExpired(Certificate cert) {
+		return (LocalDateTime.now().isBefore(cert.getValidFrom()) || LocalDateTime.now().isAfter(cert.getValidTo()));
+	}
+	
+	private boolean isInvalidSignature(Certificate cert) {
+		if (isTrusted(cert)) {
 			return false;
 		}
-		
-		// Verify signature.
 		try {
-			PublicKey issuerPublicKey = cert.getPublicKey();
+			PublicKey issuerPublicKey = cert.getIssuer().getPublicKey();
 			X509Certificate x509cert = (X509Certificate)ks.getCertificate(cert.getId().toString());
 			x509cert.verify(issuerPublicKey);
 		} catch (SignatureException | InvalidKeyException exceptionsForWhenCertificateIsInvalid) {
-			return false;
+			return true;
 		} catch (CertificateException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException e) {
 			e.printStackTrace();
+			return true;
 		}
-		
-		// We don't trust this certificate, so check parent, too.
-		return validate(cert.getParent());
+		return false;
 	}
 }

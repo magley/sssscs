@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.ib.pki.KeyPairUtil;
+
 @Configuration
 public class StandardConfig {
 	@Bean
@@ -34,5 +36,10 @@ public class StandardConfig {
 	public KeyStore keyStore() throws KeyStoreException {
 		Security.addProvider(new BouncyCastleProvider());
 		return KeyStore.getInstance("JKS");
+	}
+	
+	@Bean
+	public KeyPairUtil keyPairUtil() {
+		return new KeyPairUtil();
 	}
 }

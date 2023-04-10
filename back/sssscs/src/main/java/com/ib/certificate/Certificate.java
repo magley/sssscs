@@ -57,9 +57,6 @@ public class Certificate {
 	@Enumerated(value = EnumType.STRING)
 	private Type type;
 	
-	@Lob
-	private PublicKey publicKey; // Public key of the issuer of this certificate.
-	
 	public Certificate(CertificateRequest req) {
 		setIssuer(req.getIssuer());
 		setParent(req.getParent());

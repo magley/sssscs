@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ib.pki.KeyPairUtil;
 import com.ib.user.exception.EmailTakenException;
 import com.ib.util.exception.EntityNotFoundException;
 
@@ -14,9 +15,10 @@ import com.ib.util.exception.EntityNotFoundException;
 public class UserService implements IUserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
 	@Autowired
 	private IUserRepo userRepo;
+	@Autowired
+	private KeyPairUtil keyPairUtil;
 
 	@Override
 	public User register(User user) {
@@ -24,6 +26,8 @@ public class UserService implements IUserService {
 			throw new EmailTakenException();
 		}
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		keyPairUtil.getOrCreate(user);
+		
 		return userRepo.save(user);
 	}
 	

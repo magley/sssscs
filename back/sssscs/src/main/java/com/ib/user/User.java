@@ -1,5 +1,6 @@
 package com.ib.user;
 
+import java.security.PublicKey;
 import java.util.Collection;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -51,6 +53,8 @@ public class User implements UserDetails {
 	@Column(nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	private Role role = Role.REGULAR;
+	@Lob
+	private PublicKey publicKey;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
