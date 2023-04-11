@@ -26,8 +26,6 @@ public class CertificateService implements ICertificateService {
 	private ICertificateRepo certificateRepo;
 	@Autowired
 	private ICertificateRequestService certificateRequestService;
-	@Autowired
-	private KeyStoreUtil ksUtil;
 	
 	@Override
 	public Certificate findById(Long id) {
@@ -67,19 +65,21 @@ public class CertificateService implements ICertificateService {
 	}
 	
 	private boolean isInvalidSignature(Certificate cert) {
-		if (isTrusted(cert)) {
-			return false;
-		}
-		try {
-			PublicKey issuerPublicKey = ksUtil.getPublicKey(cert.getIssuer().getPublicKey());
-			X509Certificate x509cert = (X509Certificate)ksUtil.getKs().getCertificate(cert.getSerialNumber());
-			x509cert.verify(issuerPublicKey);
-		} catch (SignatureException | InvalidKeyException exceptionsForWhenCertificateIsInvalid) {
-			return true;
-		} catch (CertificateException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException e) {
-			e.printStackTrace();
-			return true;
-		}
 		return false;
+		
+//		if (isTrusted(cert)) {
+//			return false;
+//		}
+//		try {
+//			PublicKey issuerPublicKey = ksUtil.getPublicKey(cert.getIssuer().getPublicKey());
+//			X509Certificate x509cert = (X509Certificate)ksUtil.getKs().getCertificate(cert.getSerialNumber());
+//			x509cert.verify(issuerPublicKey);
+//		} catch (SignatureException | InvalidKeyException exceptionsForWhenCertificateIsInvalid) {
+//			return true;
+//		} catch (CertificateException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException e) {
+//			e.printStackTrace();
+//			return true;
+//		}
+//		return false;
 	}
 }

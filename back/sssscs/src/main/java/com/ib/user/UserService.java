@@ -1,16 +1,15 @@
 package com.ib.user;
 
 import java.security.KeyPair;
+import java.util.Base64;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ib.pki.KeyPairUtil;
-import com.ib.pki.KeyStoreUtil;
+import com.ib.pki.manual.KeyUtil;
 import com.ib.user.exception.EmailTakenException;
 import com.ib.util.exception.EntityNotFoundException;
 
@@ -21,10 +20,7 @@ public class UserService implements IUserService {
 	@Autowired
 	private IUserRepo userRepo;
 	@Autowired
-	private KeyPairUtil keyPairUtil;
-	
-	@Autowired
-	private KeyStoreUtil ksUtil;
+	private KeyUtil keyUtil;
 	
 	@Override
 	public User register(User user) {
@@ -32,12 +28,16 @@ public class UserService implements IUserService {
 			throw new EmailTakenException();
 		}
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		KeyPair kp = keyPairUtil.getOrCreateNewFor(user);
-		user.setPublicKey(kp.getPublic().toString());
+		KeyPair kp = keyUtil.getOrCreateNewFor(user); // Will always create new keys since the user is new.
 		
-		System.err.println(user.getPublicKey().toString());
-		System.err.println(ksUtil.getPrivateKeyOrNull(user.getEmail()));
+		user.setPublicKey(keyUtil.writePublicKeyToStr(kp.getPublic()));
+		keyUtil.writePrivateKey(kp.getPrivate(), user);
 		
+		// For testing.
+		System.err.println("UserService::register()");
+		System.err.println(kp.getPrivate());
+		System.err.println(kp.getPublic());
+
 		return userRepo.save(user);
 	}
 	

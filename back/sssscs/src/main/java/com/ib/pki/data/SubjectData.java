@@ -1,6 +1,7 @@
-package com.ib.pki;
+package com.ib.pki.data;
 
-import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Date;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
@@ -13,9 +14,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class IssuerData {
-	private PrivateKey privateKey;
+public class SubjectData {
+	private PublicKey publicKey;
 	private X500Name x500name;
-	
-	
+	private String certSerialNumber;
+	private Date startDate;
+	private Date endDate;
 }

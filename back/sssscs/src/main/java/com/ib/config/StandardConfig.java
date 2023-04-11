@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.ib.pki.KeyPairUtil;
 import com.ib.pki.KeyStoreUtil;
+import com.ib.pki.manual.KeyUtil;
 
 @Configuration
 public class StandardConfig {
@@ -33,15 +34,20 @@ public class StandardConfig {
 		return new ModelMapper();
 	}
 
-	@Bean
-	public KeyPairUtil keyPairUtil() {
-		return new KeyPairUtil();
-	}
+//	@Bean
+//	public KeyPairUtil keyPairUtil() {
+//		return new KeyPairUtil();
+//	}
+//	
+//	@Bean
+//	public KeyStoreUtil keyStoreUtil() {
+//		KeyStoreUtil ksUtil = new KeyStoreUtil();
+//		ksUtil.loadKeyStore();
+//		return ksUtil;
+//	}
 	
 	@Bean
-	public KeyStoreUtil keyStoreUtil() {
-		KeyStoreUtil ksUtil = new KeyStoreUtil();
-		ksUtil.loadKeyStore();
-		return ksUtil;
+	public KeyUtil keyUtil() {
+		return new KeyUtil();
 	}
 }

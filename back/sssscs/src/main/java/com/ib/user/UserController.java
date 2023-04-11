@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.ib.pki.manual.KeyUtil;
 import com.ib.user.dto.UserCreateDto;
 import com.ib.user.dto.UserLoginDto;
 import com.ib.util.DTO;
@@ -26,9 +27,10 @@ public class UserController {
 	private IUserService userService;
 	@Autowired
 	private AuthenticationManager authManager;
-	
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
+	@Autowired
+	private KeyUtil keyUtil;
 
 	@PostMapping
 	public ResponseEntity<User> register(@DTO(UserCreateDto.class) User user) {
@@ -45,6 +47,13 @@ public class UserController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email or password!");
 		}
 		User user = (User) auth.getPrincipal();
+		
+		
+		// For testing.
+		System.err.println("UserController::login()");
+		System.err.println(keyUtil.readPrivateKey(user));
+		System.err.println(keyUtil.readPublicKeyFromStr(user.getPublicKey()));
+		
 		// TODO: json mb
 		String token = jwtTokenUtil.generateToken(user.getEmail(), user.getId(), user.getRole().toString());
 		return ResponseEntity.ok(token);

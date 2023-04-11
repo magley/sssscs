@@ -39,7 +39,7 @@ public class CertificateController {
 	public ResponseEntity<String> createRootCertificate() {
 		// X509Certificate x509cert = generate();
 		// certs.add(new Cert("ROOT-XYZ"));
-		return "";
+		return null;
 	}
 	
 	@PostMapping("/request")
