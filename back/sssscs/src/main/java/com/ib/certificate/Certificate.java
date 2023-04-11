@@ -57,6 +57,10 @@ public class Certificate {
 	@Enumerated(value = EnumType.STRING)
 	private Type type;
 	
+	public String getSerialNumber() {
+		return id.toString();
+	}
+	
 	public Certificate(CertificateRequest req) {
 		setIssuer(req.getIssuer());
 		setParent(req.getParent());

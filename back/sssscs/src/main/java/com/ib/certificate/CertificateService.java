@@ -71,7 +71,7 @@ public class CertificateService implements ICertificateService {
 		}
 		try {
 			PublicKey issuerPublicKey = cert.getIssuer().getPublicKey();
-			X509Certificate x509cert = (X509Certificate)ks.getCertificate(cert.getId().toString());
+			X509Certificate x509cert = (X509Certificate)ks.getCertificate(cert.getSerialNumber());
 			x509cert.verify(issuerPublicKey);
 		} catch (SignatureException | InvalidKeyException exceptionsForWhenCertificateIsInvalid) {
 			return true;

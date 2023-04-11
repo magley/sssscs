@@ -26,7 +26,7 @@ public class UserService implements IUserService {
 			throw new EmailTakenException();
 		}
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		keyPairUtil.getOrCreate(user);
+		keyPairUtil.getOrCreateNewFor(user);
 		
 		return userRepo.save(user);
 	}
