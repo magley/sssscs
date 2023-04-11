@@ -4,29 +4,74 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.security.spec.X509EncodedKeySpec;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Base64;
+import java.util.Date;
 
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+
+import com.ib.user.User;
 
 public class KeyStoreUtil {
 	private String secret = "MySecret47389473289";
 	private String filename = "./pki/keystore.jks";
-	
-	@Autowired
 	private KeyStore ks;
+	
+	public KeyStoreUtil() {
+		Security.addProvider(new BouncyCastleProvider());
+		try {
+			ks = KeyStore.getInstance("JKS");
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public KeyStore getKs() {
+		return ks;
+	}
+	
+	public PublicKey getPublicKey(String key) {
+		try{
+	        byte[] byteKey = Base64.getDecoder().decode(key);
+	        X509EncodedKeySpec X509publicKey = new X509EncodedKeySpec(byteKey);
+	        KeyFactory kf = KeyFactory.getInstance("RSA");
+	        return kf.generatePublic(X509publicKey);
+	    }
+	    catch(Exception e){
+	        e.printStackTrace();
+	    }
+
+	    return null;
+	}
 	
 	public void setPrivateKey(String alias, PrivateKey privateKey) {
 		try {
 			Certificate rootCertificate = ks.getCertificate("1"); // TODO: Hardcoded alias for root certificate is BAD.
+			// TODO: We need to create a (self-signed?) certificate of this private key that stores the public key.
 			ks.setKeyEntry(alias, privateKey, secret.toCharArray(), new Certificate[] {rootCertificate});
+			
+			saveKeyStore();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -70,5 +115,9 @@ public class KeyStoreUtil {
         } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    public X509Certificate generateRootInMemory() {
+		return null;
     }
 }

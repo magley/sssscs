@@ -32,13 +32,7 @@ public class StandardConfig {
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
-	
-	@Bean
-	public KeyStore keyStore() throws KeyStoreException {
-		Security.addProvider(new BouncyCastleProvider());
-		return KeyStore.getInstance("JKS");
-	}
-	
+
 	@Bean
 	public KeyPairUtil keyPairUtil() {
 		return new KeyPairUtil();
@@ -46,6 +40,8 @@ public class StandardConfig {
 	
 	@Bean
 	public KeyStoreUtil keyStoreUtil() {
-		return new KeyStoreUtil();
+		KeyStoreUtil ksUtil = new KeyStoreUtil();
+		ksUtil.loadKeyStore();
+		return ksUtil;
 	}
 }

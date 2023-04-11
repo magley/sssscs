@@ -8,6 +8,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ext.SqlBlobSerializer;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -54,8 +57,8 @@ public class User implements UserDetails {
 	@Column(nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	private Role role = Role.REGULAR;
-	@Lob
-	private PublicKey publicKey;
+	@Column(length = 1024)
+	private String publicKey; // Saved as string. Use KeyStoreUtil.getPublicKey() to get the actual PublicKey object.
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

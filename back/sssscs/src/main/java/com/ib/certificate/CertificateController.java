@@ -28,15 +28,19 @@ import com.ib.user.User;
 public class CertificateController {
 	@Autowired
 	private ICertificateService certificateService;
-	
 	@Autowired
 	private ICertificateRequestService certificateRequestService;
-	
 	@Autowired
 	private IUserService userService;
-	
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@PostMapping("/root")
+	public ResponseEntity<String> createRootCertificate() {
+		// X509Certificate x509cert = generate();
+		// certs.add(new Cert("ROOT-XYZ"));
+		return "";
+	}
 	
 	@PostMapping("/request")
 	public ResponseEntity<String> makeRequest(@RequestBody CertificateRequestCreateDto certificate) {

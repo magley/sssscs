@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.CertificateRequest.Status;
+import com.ib.pki.KeyStoreUtil;
 import com.ib.util.exception.EntityNotFoundException;
 
 @Service
@@ -26,7 +27,7 @@ public class CertificateService implements ICertificateService {
 	@Autowired
 	private ICertificateRequestService certificateRequestService;
 	@Autowired
-	private KeyStore ks;
+	private KeyStoreUtil ksUtil;
 	
 	@Override
 	public Certificate findById(Long id) {
@@ -70,8 +71,8 @@ public class CertificateService implements ICertificateService {
 			return false;
 		}
 		try {
-			PublicKey issuerPublicKey = cert.getIssuer().getPublicKey();
-			X509Certificate x509cert = (X509Certificate)ks.getCertificate(cert.getSerialNumber());
+			PublicKey issuerPublicKey = ksUtil.getPublicKey(cert.getIssuer().getPublicKey());
+			X509Certificate x509cert = (X509Certificate)ksUtil.getKs().getCertificate(cert.getSerialNumber());
 			x509cert.verify(issuerPublicKey);
 		} catch (SignatureException | InvalidKeyException exceptionsForWhenCertificateIsInvalid) {
 			return true;

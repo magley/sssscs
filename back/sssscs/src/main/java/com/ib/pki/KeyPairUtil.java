@@ -14,9 +14,6 @@ public class KeyPairUtil {
 	@Autowired
 	private KeyStoreUtil ksUtil;
 	
-	@Autowired
-	private KeyStore ks;
-	
 	public KeyPair getOrCreateNewFor(User user) {
 		PrivateKey privateKeyFromKeyStore = getPrivateKeyOrNull(user);
 		
@@ -25,7 +22,7 @@ public class KeyPairUtil {
 			savePrivateKeyToKeyStore(user, kp.getPrivate());
 			return kp;
 		} else {
-			return new KeyPair(user.getPublicKey(), privateKeyFromKeyStore);
+			return new KeyPair(ksUtil.getPublicKey(user.getPublicKey()), privateKeyFromKeyStore);
 		}
 	}
 	
