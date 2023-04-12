@@ -3,10 +3,6 @@ package com.ib.certificate;
 import java.time.LocalDateTime;
 
 import com.ib.certificate.Certificate.Type;
-import com.ib.certificate.CertificateRequest.Status;
-import com.ib.certificate.dto.CertificateRequestCreateDto;
-import com.ib.certificate.dto.CertificateRequestDto;
-import com.ib.user.User;
 import com.ib.user.User.Role;
 
 import jakarta.persistence.Column;
@@ -18,7 +14,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,8 +36,10 @@ public class CertificateRequest {
 	private Long id;
 	
 	//@Column(nullable = false)
-	@ManyToOne(fetch = FetchType.LAZY)
-	private User issuer;
+	//@ManyToOne(fetch = FetchType.LAZY)
+	//private User issuer;
+	
+	private String subjectName;
 
 	@Column(nullable = false)
 	private LocalDateTime validTo;
@@ -74,7 +71,7 @@ public class CertificateRequest {
 	 * @return True if the issuer can issue a certificate of this type. 
 	 */
 	public boolean isIssuerAuthorized() {
-		return !(getIssuer().getRole() == Role.REGULAR && (getParent() == null || getType() == Type.ROOT));
+		return !(getParent().getIssuer().getRole() == Role.REGULAR && (getParent() == null || getType() == Type.ROOT));
 	}
 	
 	/**

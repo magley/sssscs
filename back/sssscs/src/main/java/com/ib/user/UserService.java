@@ -1,8 +1,5 @@
 package com.ib.user;
 
-import java.security.KeyPair;
-import java.util.Base64;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,16 +25,6 @@ public class UserService implements IUserService {
 			throw new EmailTakenException();
 		}
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		KeyPair kp = keyUtil.getOrCreateNewFor(user); // Will always create new keys since the user is new.
-		
-		user.setPublicKey(keyUtil.writePublicKeyToStr(kp.getPublic()));
-		keyUtil.writePrivateKey(kp.getPrivate(), user);
-		
-		// For testing.
-		System.err.println("UserService::register()");
-		System.err.println(kp.getPrivate());
-		System.err.println(kp.getPublic());
-
 		return userRepo.save(user);
 	}
 	

@@ -47,13 +47,6 @@ public class UserController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email or password!");
 		}
 		User user = (User) auth.getPrincipal();
-		
-		
-		// For testing.
-		System.err.println("UserController::login()");
-		System.err.println(keyUtil.readPrivateKey(user));
-		System.err.println(keyUtil.readPublicKeyFromStr(user.getPublicKey()));
-		
 		// TODO: json mb
 		String token = jwtTokenUtil.generateToken(user.getEmail(), user.getId(), user.getRole().toString());
 		return ResponseEntity.ok(token);

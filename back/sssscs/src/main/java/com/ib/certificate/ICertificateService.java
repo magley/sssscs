@@ -1,6 +1,5 @@
 package com.ib.certificate;
 
-import java.security.KeyStoreException;
 import java.util.List;
 
 public interface ICertificateService {

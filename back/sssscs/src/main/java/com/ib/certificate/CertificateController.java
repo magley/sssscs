@@ -3,9 +3,7 @@ package com.ib.certificate;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.convert.TypeMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +35,7 @@ public class CertificateController {
 	
 	@PostMapping("/root")
 	public ResponseEntity<String> createRootCertificate() {
+		
 		// X509Certificate x509cert = generate();
 		// certs.add(new Cert("ROOT-XYZ"));
 		return null;
@@ -44,10 +43,8 @@ public class CertificateController {
 	
 	@PostMapping("/request")
 	public ResponseEntity<String> makeRequest(@RequestBody CertificateRequestCreateDto certificate) {
-		// TODO: Automatic mapping.
-		
 		CertificateRequest req = new CertificateRequest();
-		req.setIssuer(userService.findById(certificate.getIssuerId()));
+		req.setSubjectName(certificate.getSubjectName());
 		req.setType(certificate.getType());
 		req.setValidTo(certificate.getValidTo());
 		req.setStatus(Status.PENDING);
@@ -104,15 +101,15 @@ public class CertificateController {
 		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
 	}
 	
-	@GetMapping("/request/{id}")
-	public ResponseEntity<List<CertificateRequestDto>> getMyRequests(@PathVariable Long id) {
-		User issuer = userService.findById(id);
-		
-		List<CertificateRequest> requests = certificateRequestService.findByIssuer(issuer);	
-		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
-		
-		return ResponseEntity.ok(result);
-	}
+//	@GetMapping("/request/{id}")
+//	public ResponseEntity<List<CertificateRequestDto>> getMyRequests(@PathVariable Long id) {
+//		User issuer = userService.findById(id);
+//		
+//		List<CertificateRequest> requests = certificateRequestService.findByIssuer(issuer);	
+//		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
+//		
+//		return ResponseEntity.ok(result);
+//	}
 	
 	@GetMapping("/request/incoming/{id}")
 	public ResponseEntity<List<CertificateRequestDto>> getRequestsIssuedTo(@PathVariable Long id) {

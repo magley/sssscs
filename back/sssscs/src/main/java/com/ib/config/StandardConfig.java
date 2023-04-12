@@ -1,7 +1,5 @@
 package com.ib.config;
 
-import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.Security;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -13,8 +11,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.ib.pki.KeyPairUtil;
-import com.ib.pki.KeyStoreUtil;
 import com.ib.pki.manual.KeyUtil;
 
 @Configuration
@@ -48,6 +44,7 @@ public class StandardConfig {
 	
 	@Bean
 	public KeyUtil keyUtil() {
+		Security.addProvider(new BouncyCastleProvider());
 		return new KeyUtil();
 	}
 }

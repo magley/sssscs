@@ -1,6 +1,5 @@
 package com.ib.certificate;
 
-import java.security.PublicKey;
 import java.time.LocalDateTime;
 
 import com.ib.user.User;
@@ -13,9 +12,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -62,8 +59,12 @@ public class Certificate {
 	}
 	
 	public Certificate(CertificateRequest req) {
-		setIssuer(req.getIssuer());
 		setParent(req.getParent());
+		if (getParent() != null) {
+			setIssuer(req.getParent().getIssuer());
+		} else {
+			setIssuer(null);
+		}
 		setType(req.getType());
 		setValidFrom(LocalDateTime.now());
 		setValidTo(req.getValidTo());
