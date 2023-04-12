@@ -67,7 +67,7 @@ public class CertificateService implements ICertificateService {
 	
 	private X509Certificate createX509Certificate(Certificate c, CertificateRequest req) {
 		Certificate parent = c.getParent();
-		if (parent == null ) {
+		if (parent == null) {
 			return createSelfSignedX509(c, req);
 		} else {
 			return createX509(c, req);
@@ -98,12 +98,16 @@ public class CertificateService implements ICertificateService {
 	}
 	
 	private X509Certificate generate(Certificate c, CertificateRequest req, PublicKey subjectKey, PrivateKey issuerKey, LocalDateTime validFrom, LocalDateTime validTo) {
+		Certificate parent = c.getParent();
+		X509Certificate parent509 = keyUtil.getX509Certificate(parent.getSerialNumber());
+		String issuerName = parent509.getSubjectX500Principal().getName(); // TODO: Formatting. Or some other way? Same for endpoint where we're getting certificates' summaries.
+		
 		try {	
 			JcaContentSignerBuilder csbuilder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
 			csbuilder = csbuilder.setProvider("BC");
 			ContentSigner signer = csbuilder.build(issuerKey);
 			X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(
-				keyUtil.getX500Name("AA"),
+				keyUtil.getX500Name(issuerName),
 				BigInteger.valueOf(c.getId()),
 				keyUtil.dateFrom(validFrom),
 				keyUtil.dateFrom(validTo),

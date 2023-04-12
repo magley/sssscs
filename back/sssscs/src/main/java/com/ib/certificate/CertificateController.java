@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,12 +61,12 @@ public class CertificateController {
 	public ResponseEntity<String> acceptRequest(@PathVariable Long id) {
 		CertificateRequest req = certificateRequestService.findByIdAndStatus(id, Status.PENDING);
 		
-		User issuee = userService.findById(1L); // TODO: Fetch user ID from token.
-		if (issuee == null) {
+		User issuer = userService.findById(1L); // TODO: Fetch user ID from token.
+		if (issuer == null) {
 			return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
 		}
 		
-		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuee);
+		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuer);
 		if (!requests.contains(req)) {
 			// return new ResponseEntity<>("Request not found", HttpStatus.NOT_FOUND);
 		}
@@ -81,12 +82,17 @@ public class CertificateController {
 	public ResponseEntity<?> rejectRequest(@PathVariable Long id, @RequestBody String reason) {
 		CertificateRequest req = certificateRequestService.findByIdAndStatus(id, Status.PENDING);
 		
-		User issuee = userService.findById(1L); // TODO: Fetch user ID from token.
-		if (issuee == null) {
+//		System.err.println(SecurityContextHolder.getContext());
+//		System.err.println(SecurityContextHolder.getContext().getAuthentication());
+//		final User issuer = (User)(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+//		System.err.println(issuer);
+		
+		User issuer = userService.findById(1L); // TODO: Fetch user ID from token.
+		if (issuer == null) {
 			return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
 		}
 		
-		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuee);
+		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuer);
 		if (!requests.contains(req)) {
 			// return new ResponseEntity<>("Request not found", HttpStatus.NOT_FOUND);
 		}
