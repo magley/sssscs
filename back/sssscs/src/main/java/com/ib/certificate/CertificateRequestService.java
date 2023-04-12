@@ -66,6 +66,11 @@ public class CertificateRequestService implements ICertificateRequestService {
 	public List<CertificateRequest> findByIssuee(User issuee) {
 		return certificateRequestRepo.findByIssuee(issuee.getId(), issuee.getRole() == Role.ADMIN);
 	}
+	
+	@Override
+	public List<CertificateRequest> findByCreator(User creator) {
+		return certificateRequestRepo.findByCreator(creator);
+	}
 
 	@Override
 	public void reject(CertificateRequest req, String reason) {

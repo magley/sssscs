@@ -95,6 +95,16 @@ public class CertificateController {
 		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
 	}
 	
+	@GetMapping("/request/created/{id}")
+	public ResponseEntity<List<CertificateRequestDto>> getRequestsCreatedBy(@PathVariable Long id) {
+		User creator = userService.findById(id);
+		
+		List<CertificateRequest> requests = certificateRequestService.findByCreator(creator);
+		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
+		
+		return ResponseEntity.ok(result);
+	}
+	
 	@GetMapping("/request/incoming/{id}")
 	public ResponseEntity<List<CertificateRequestDto>> getRequestsIssuedTo(@PathVariable Long id) {
 		User issuee = userService.findById(id);
