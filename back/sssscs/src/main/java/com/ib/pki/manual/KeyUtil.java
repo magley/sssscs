@@ -32,9 +32,12 @@ import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.cert.X509ExtensionUtils;
+import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.bouncycastle.operator.DigestCalculator;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
+import org.bouncycastle.util.io.pem.PemObjectGenerator;
 
 public class KeyUtil {
 	private static String DIR_KEYS = "./keys";
@@ -114,10 +117,12 @@ public class KeyUtil {
 		
 		try {
 			PrintWriter out = new PrintWriter(fnameCert);
-			out.write(certificate.toString());
-			out.flush();
-			out.close();
-		} catch (FileNotFoundException e) {
+			JcaPEMWriter pemWriter = new JcaPEMWriter(out);
+			PemObjectGenerator objGen = new JcaMiscPEMGenerator(certificate);
+			pemWriter.writeObject(objGen);
+			pemWriter.flush();
+			pemWriter.close();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
