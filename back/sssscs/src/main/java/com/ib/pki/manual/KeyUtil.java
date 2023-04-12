@@ -23,20 +23,11 @@ import java.time.ZoneId;
 import java.util.Base64;
 import java.util.Date;
 
-import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
-import org.bouncycastle.asn1.x509.AuthorityKeyIdentifier;
-import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
-import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.cert.X509ExtensionUtils;
 import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
-import org.bouncycastle.operator.DigestCalculator;
-import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.util.io.pem.PemObjectGenerator;
 
 public class KeyUtil {
@@ -156,37 +147,6 @@ public class KeyUtil {
 		//builder.addRDN(BCStyle.UID, user.getId().toString());
 		return builder.build();
 	}
-	
-	/**
-	   * Creates the hash value of the public key.
-	   *
-	   * @param publicKey of the certificate
-	   *
-	   * @return SubjectKeyIdentifier hash
-	   *
-	   * @throws OperatorCreationException
-	   */
-	  public static SubjectKeyIdentifier createSubjectKeyId(final PublicKey publicKey) throws OperatorCreationException {
-		  final SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
-		  final DigestCalculator digCalc = new BcDigestCalculatorProvider().get(new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1));
-		  return new X509ExtensionUtils(digCalc).createSubjectKeyIdentifier(publicKeyInfo);
-	  }
-
-	  /**
-	   * Creates the hash value of the authority public key.
-	   *
-	   * @param publicKey of the authority certificate
-	   *
-	   * @return AuthorityKeyIdentifier hash
-	   *
-	   * @throws OperatorCreationException
-	   */
-	  public static AuthorityKeyIdentifier createAuthorityKeyId(final PublicKey publicKey) throws OperatorCreationException {
-		  final SubjectPublicKeyInfo publicKeyInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
-		  final DigestCalculator digCalc =
-	      new BcDigestCalculatorProvider().get(new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1));
-		  return new X509ExtensionUtils(digCalc).createAuthorityKeyIdentifier(publicKeyInfo);
-	  }
 	
 	
 	

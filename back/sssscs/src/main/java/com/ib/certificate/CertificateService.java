@@ -68,14 +68,7 @@ public class CertificateService implements ICertificateService {
 	private X509Certificate createSelfSignedX509(Certificate c, CertificateRequest req) {
 		KeyPair keyPair = keyUtil.generateKeyPair();
 		
-		//X509Certificate x509 = generateSelfSigned(keyPair, c.getValidFrom(), c.getValidTo());
-		X509Certificate x509 = null;
-		try {
-			x509 = generateSelfSigned(keyPair, "SHA256WithRSAEncryption", "god", 365);
-		} catch (OperatorCreationException | CertificateException | CertIOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		X509Certificate x509 = generateSelfSigned(keyPair, c.getValidFrom(), c.getValidTo());
 		keyUtil.saveX509Certificate(c.getSerialNumber(), x509);
 		keyUtil.savePrivateKey(c.getSerialNumber(), keyPair.getPrivate());
 		
@@ -120,61 +113,32 @@ public class CertificateService implements ICertificateService {
 			return null;
 		}
 	}
-	
-	public X509Certificate generateSelfSigned(KeyPair keyPair,
-            String hashAlgorithm,
-            String cn,
-            int days)
-		throws OperatorCreationException, CertificateException, CertIOException
-	{
-		final Instant now = Instant.now();
-		final Date notBefore = Date.from(now);
-		final Date notAfter = Date.from(now.plus(Duration.ofDays(days)));
-		
-		final ContentSigner contentSigner = new JcaContentSignerBuilder(hashAlgorithm).build(keyPair.getPrivate());
-		final X500Name x500Name = new X500Name("CN=" + cn);
-		final X509v3CertificateBuilder certificateBuilder =
-		new JcaX509v3CertificateBuilder(x500Name,
-		BigInteger.valueOf(now.toEpochMilli()),
-		notBefore,
-		notAfter,
-		x500Name,
-		keyPair.getPublic())
-		.addExtension(Extension.subjectKeyIdentifier, false, KeyUtil.createSubjectKeyId(keyPair.getPublic()))
-		.addExtension(Extension.authorityKeyIdentifier, false, KeyUtil.createAuthorityKeyId(keyPair.getPublic()))
-		.addExtension(Extension.basicConstraints, true, new BasicConstraints(true));
-		
-		return new JcaX509CertificateConverter()
-		.setProvider("BC").getCertificate(certificateBuilder.build(contentSigner));
+
+	private X509Certificate generateSelfSigned(KeyPair kp, LocalDateTime validFrom, LocalDateTime validTo) {
+		try {	
+			
+			X500Name x500Name = new X500Name("CN=localhost");
+			JcaContentSignerBuilder csbuilder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
+			csbuilder = csbuilder.setProvider("BC");
+			ContentSigner signer = csbuilder.build(kp.getPrivate());
+			X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(
+				x500Name,
+				BigInteger.valueOf(Instant.now().getEpochSecond()),
+				keyUtil.dateFrom(validFrom),
+				keyUtil.dateFrom(validTo),
+				x500Name,
+				kp.getPublic()
+			);
+			
+			X509CertificateHolder holder = builder.build(signer);
+			JcaX509CertificateConverter conv = new JcaX509CertificateConverter();
+			conv = conv.setProvider("BC");
+			return conv.getCertificate(holder);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
-	
-//	private X509Certificate generateSelfSigned(KeyPair kp, LocalDateTime validFrom, LocalDateTime validTo) {
-//		try {	
-//			
-//			X500Name x500Name = new X500Name("CN=god");
-//			JcaContentSignerBuilder csbuilder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
-//			csbuilder = csbuilder.setProvider("BC");
-//			ContentSigner signer = csbuilder.build(kp.getPrivate());
-//			X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(
-//				x500Name,
-//				BigInteger.valueOf(Instant.now().getEpochSecond()),
-//				keyUtil.dateFrom(validFrom),
-//				keyUtil.dateFrom(validTo),
-//				x500Name,
-//				kp.getPublic()
-//			).addExtension(Extension.subjectKeyIdentifier, false, KeyUtil.createSubjectKeyId(kp.getPublic()))       
-//			 .addExtension(Extension.authorityKeyIdentifier, false, KeyUtil.createAuthorityKeyId(kp.getPublic()))
-//			 .addExtension(Extension.basicConstraints, true, new BasicConstraints(true));
-//			
-//			X509CertificateHolder holder = builder.build(signer);
-//			JcaX509CertificateConverter conv = new JcaX509CertificateConverter();
-//			conv = conv.setProvider("BC");
-//			return conv.getCertificate(holder);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			return null;
-//		}
-//	}
 		
 	@Override
 	public List<Certificate> getAll() {
