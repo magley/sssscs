@@ -1,9 +1,13 @@
 package com.ib.certificate;
 
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
@@ -52,6 +56,9 @@ public class CertificateService implements ICertificateService {
 		Certificate c = new Certificate(req);
 		c = certificateRepo.save(c);
 		createX509Certificate(c, req);
+		
+		System.err.println("Checking validity...");
+		System.err.println(validate(c));
 		return c;
 	}
 	
@@ -62,7 +69,6 @@ public class CertificateService implements ICertificateService {
 		} else {
 			return createX509(c, req);
 		}
-
 	}
 	
 	private X509Certificate createSelfSignedX509(Certificate c, CertificateRequest req) {
@@ -71,9 +77,7 @@ public class CertificateService implements ICertificateService {
 		X509Certificate x509 = generateSelfSigned(keyPair, c.getValidFrom(), c.getValidTo());
 		keyUtil.saveX509Certificate(c.getSerialNumber(), x509);
 		keyUtil.savePrivateKey(c.getSerialNumber(), keyPair.getPrivate());
-		
-		System.err.println(x509.toString());
-		
+
 		return x509;
 	}
 	
@@ -158,7 +162,7 @@ public class CertificateService implements ICertificateService {
 	}
 
 	private boolean isTrusted(Certificate cert) {
-		return  (cert.getType() == Type.ROOT);
+		return (cert.getType() == Type.ROOT);
 	}
 	
 	private boolean isExpired(Certificate cert) {
@@ -166,21 +170,24 @@ public class CertificateService implements ICertificateService {
 	}
 	
 	private boolean isInvalidSignature(Certificate cert) {
-		return false;
+		if (isTrusted(cert)) {
+			return false;
+		}
 		
-//		if (isTrusted(cert)) {
-//			return false;
-//		}
-//		try {
-//			PublicKey issuerPublicKey = ksUtil.getPublicKey(cert.getIssuer().getPublicKey());
-//			X509Certificate x509cert = (X509Certificate)ksUtil.getKs().getCertificate(cert.getSerialNumber());
-//			x509cert.verify(issuerPublicKey);
-//		} catch (SignatureException | InvalidKeyException exceptionsForWhenCertificateIsInvalid) {
-//			return true;
-//		} catch (CertificateException | NoSuchAlgorithmException | NoSuchProviderException | KeyStoreException e) {
-//			e.printStackTrace();
-//			return true;
-//		}
-//		return false;
+		X509Certificate self509 = keyUtil.getX509Certificate(cert.getSerialNumber());
+		X509Certificate parent509 = keyUtil.getX509Certificate(cert.getParent().getSerialNumber());
+		if (parent509 == null) {
+			throw new RuntimeException("This should not happen.");
+		}
+		
+		try {
+			self509.verify(parent509.getPublicKey());
+		} catch (SignatureException | InvalidKeyException e) {
+			return true;
+		} catch (CertificateException | NoSuchAlgorithmException | NoSuchProviderException e) {
+			e.printStackTrace();
+			return true;
+		}
+		return false;
 	}
 }
