@@ -74,7 +74,7 @@ public class CertificateRequestService implements ICertificateRequestService {
 
 	@Override
 	public void reject(CertificateRequest req, String reason) {
-		setStatus(req, Status.ACCEPTED);
+		setStatus(req, Status.REJECTED);
 		req.setRejectionReason(reason);
 		certificateRequestRepo.save(req);
 	}
