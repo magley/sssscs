@@ -144,6 +144,7 @@ public class KeyUtil {
 	
 	public X500Name getX500Name(String name) {
 		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
+		builder.addRDN(BCStyle.CN, name);
 		builder.addRDN(BCStyle.NAME, name);
 		//builder.addRDN(BCStyle.SURNAME, user.getSurname());
 		//builder.addRDN(BCStyle.E, user.getEmail());

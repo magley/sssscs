@@ -1,5 +1,6 @@
 package com.ib.certificate;
 
+import java.security.cert.X509Certificate;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -101,16 +102,6 @@ public class CertificateController {
 		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
 	}
 	
-//	@GetMapping("/request/{id}")
-//	public ResponseEntity<List<CertificateRequestDto>> getMyRequests(@PathVariable Long id) {
-//		User issuer = userService.findById(id);
-//		
-//		List<CertificateRequest> requests = certificateRequestService.findByIssuer(issuer);	
-//		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
-//		
-//		return ResponseEntity.ok(result);
-//	}
-	
 	@GetMapping("/request/incoming/{id}")
 	public ResponseEntity<List<CertificateRequestDto>> getRequestsIssuedTo(@PathVariable Long id) {
 		User issuee = userService.findById(id);
@@ -123,12 +114,7 @@ public class CertificateController {
 	
 	@GetMapping
 	public ResponseEntity<List<CertificateSummaryItemDto>> getAllCertificates() {
-		List<Certificate> certs = certificateService.getAll();
-		
-		// TODO: Add Subject in Certificate class to show in this list.
-		List<CertificateSummaryItemDto> result = certs.stream().map(r -> modelMapper.map(r, CertificateSummaryItemDto.class)).toList();
-		
-		return ResponseEntity.ok(result);
+		return ResponseEntity.ok(certificateService.getAllSummary());
 	}
 	
 }

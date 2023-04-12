@@ -14,6 +14,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAmount;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,10 +30,12 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.CertificateRequest.Status;
+import com.ib.certificate.dto.CertificateSummaryItemDto;
 import com.ib.pki.manual.KeyUtil;
 import com.ib.util.exception.EntityNotFoundException;
 
@@ -189,5 +192,23 @@ public class CertificateService implements ICertificateService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public List<CertificateSummaryItemDto> getAllSummary() {
+		List<Certificate> certs = getAll();
+		List<CertificateSummaryItemDto> result = new ArrayList<>();
+		for (Certificate cert : certs) {
+			CertificateSummaryItemDto item = new CertificateSummaryItemDto();
+			X509Certificate cert509 = keyUtil.getX509Certificate(cert.getSerialNumber());
+			
+			item.setId(cert.getId());
+			item.setType(cert.getType());
+			item.setValidFrom(cert.getValidFrom());
+			item.setSubjectName(cert509.getSubjectX500Principal().getName()); // TODO: Extract CN=something -> something.
+			result.add(item);
+		}
+		
+		return result;
 	}
 }
