@@ -126,4 +126,12 @@ public class CertificateController {
 		return ResponseEntity.ok(certificateService.getAllSummary());
 	}
 	
+	
+	@GetMapping("/valid/{serialNum}")
+	public ResponseEntity<?> isValid(@PathVariable String serialNum) {
+		Certificate cert = certificateService.findBySerialNumber(serialNum);
+		boolean isValid = certificateService.isValid(cert);
+		return new ResponseEntity<>(isValid, HttpStatus.OK);
+	}
+	
 }
