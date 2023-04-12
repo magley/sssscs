@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.CertificateRequest.Status;
 import com.ib.certificate.exception.BadExpirationDateException;
 import com.ib.certificate.exception.InvalidCertificateTypeException;
@@ -28,9 +29,9 @@ public class CertificateRequestService implements ICertificateRequestService {
 			throw new BadExpirationDateException();
 		}
 		
-//		if (!request.isIssuerAuthorized()) {
-//			throw new IssuerUnauthorizedException();
-//		}
+		if (!request.isCreatorAuthorized()) {
+			throw new IssuerUnauthorizedException();
+		}
 		
 		return certificateRequestRepo.save(request);
 	}
@@ -48,25 +49,18 @@ public class CertificateRequestService implements ICertificateRequestService {
 	
 	@Override
 	public boolean canAutoAccept(CertificateRequest request) {
-		// TODO.
+		if (request.getType() != Type.ROOT) {
+			if (request.getCreator().equals(request.getParent().getIssuer())) {
+				return true;
+			}
+		}
 		
-//		if (request.getType() != Type.ROOT) {
-//			if (request.getIssuer().equals(request.getParent().getIssuer())) {
-//				return true;
-//			}
-//		}
-//		
-//		if (request.getParent().getIssuer().getRole() == Role.ADMIN) {
-//			return true;
-//		}
-//		
+		if (request.getCreator().getRole() == Role.ADMIN) {
+			return true;
+		}
+	
 		return false;
 	}
-
-//	@Override
-//	public List<CertificateRequest> findByIssuer(User issuer) {
-//		return certificateRequestRepo.findByIssuer(issuer);
-//	}
 
 	@Override
 	public List<CertificateRequest> findByIssuee(User issuee) {

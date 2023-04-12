@@ -34,14 +34,6 @@ public class CertificateController {
 	@Autowired
 	private ModelMapper modelMapper;
 	
-	@PostMapping("/root")
-	public ResponseEntity<String> createRootCertificate() {
-		
-		// X509Certificate x509cert = generate();
-		// certs.add(new Cert("ROOT-XYZ"));
-		return null;
-	}
-	
 	@PostMapping("/request")
 	public ResponseEntity<String> makeRequest(@RequestBody CertificateRequestCreateDto certificate) {
 		CertificateRequest req = new CertificateRequest();
@@ -49,6 +41,7 @@ public class CertificateController {
 		req.setType(certificate.getType());
 		req.setValidTo(certificate.getValidTo());
 		req.setStatus(Status.PENDING);
+		req.setCreator(userService.findById(certificate.getCreatorId()));
 		if (certificate.getParentId() != null) {
 			Certificate parent = certificateService.findById(certificate.getParentId());
 			req.setParent(parent);

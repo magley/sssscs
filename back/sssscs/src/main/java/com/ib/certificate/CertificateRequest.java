@@ -3,6 +3,7 @@ package com.ib.certificate;
 import java.time.LocalDateTime;
 
 import com.ib.certificate.Certificate.Type;
+import com.ib.user.User;
 import com.ib.user.User.Role;
 
 import jakarta.persistence.Column;
@@ -35,16 +36,15 @@ public class CertificateRequest {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	//@Column(nullable = false)
-	//@ManyToOne(fetch = FetchType.LAZY)
-	//private User issuer;
+	@ManyToOne(fetch = FetchType.LAZY)
+	private User creator;
 	
+	@Column(nullable = false)
 	private String subjectName;
 
 	@Column(nullable = false)
 	private LocalDateTime validTo;
 	
-	//@Column(nullable = true)
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Certificate parent;
 	
@@ -68,10 +68,11 @@ public class CertificateRequest {
 	}
 	
 	/**
-	 * @return True if the issuer can issue a certificate of this type. 
+	 * @return True if the creator can create this type certificate. 
 	 */
-	public boolean isIssuerAuthorized() {
-		return !(getParent().getIssuer().getRole() == Role.REGULAR && (getParent() == null || getType() == Type.ROOT));
+	public boolean isCreatorAuthorized() {
+		// Regular cannot create root.
+		return !(getCreator().getRole() == Role.REGULAR && (getParent() == null || getType() == Type.ROOT));
 	}
 	
 	/**

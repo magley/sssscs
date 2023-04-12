@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 public class CertificateRequestDto {
 	private Long id;
 	private Long issuerId;
+	private String subjectName;
 	private LocalDateTime validTo;
 	private Long parentId;
 	private Type type;
