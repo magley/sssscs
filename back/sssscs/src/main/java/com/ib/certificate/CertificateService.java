@@ -58,9 +58,7 @@ public class CertificateService implements ICertificateService {
 		certificateRequestService.setStatus(req, Status.ACCEPTED);	
 		Certificate c = new Certificate(req);
 		c = certificateRepo.save(c);
-		c.setSerialNumber(c.getId().toString()); // TODO: This is ugly.
-		c = certificateRepo.save(c);
-		
+
 		createX509Certificate(c, req);
 		
 		System.err.println("Checking validity...");
@@ -224,11 +222,6 @@ public class CertificateService implements ICertificateService {
 		}
 		
 		return result;
-	}
-
-	@Override
-	public Certificate findBySerialNumber(String serialNum) {
-		return certificateRepo.findBySerialNumber(serialNum).orElseThrow(() -> new EntityNotFoundException(Certificate.class, serialNum));
 	}
 
 	@Override

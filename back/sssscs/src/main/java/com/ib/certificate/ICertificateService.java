@@ -11,6 +11,5 @@ public interface ICertificateService {
 	
 	public boolean validate(Certificate cert);
 	public List<CertificateSummaryItemDto> getAllSummary();
-	public Certificate findBySerialNumber(String serialNum);
 	public boolean isValid(Certificate cert);
 }

@@ -122,9 +122,9 @@ public class CertificateController {
 	}
 	
 	
-	@GetMapping("/valid/{serialNum}")
-	public ResponseEntity<?> isValid(@PathVariable String serialNum) {
-		Certificate cert = certificateService.findBySerialNumber(serialNum);
+	@GetMapping("/valid/{id}")
+	public ResponseEntity<?> isValid(@PathVariable Long id) {
+		Certificate cert = certificateService.findById(id);
 		boolean isValid = certificateService.isValid(cert);
 		return new ResponseEntity<>(isValid, HttpStatus.OK);
 	}

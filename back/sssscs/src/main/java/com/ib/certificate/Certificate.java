@@ -54,14 +54,15 @@ public class Certificate {
 	@Enumerated(value = EnumType.STRING)
 	private Type type;
 	
-	//@Column(nullable = false)
-	private String serialNumber;
-	
 	public Certificate(CertificateRequest req) {
 		setParent(req.getParent());
 		setOwner(req.getCreator());
 		setType(req.getType());
 		setValidFrom(LocalDateTime.now());
 		setValidTo(req.getValidTo());
+	}
+	
+	public String getSerialNumber() {
+		return id.toString();
 	}
 }

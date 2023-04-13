@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ICertificateRepo extends JpaRepository<Certificate, Long> {
-	Optional<Certificate> findBySerialNumber(String serialNum);
 }
