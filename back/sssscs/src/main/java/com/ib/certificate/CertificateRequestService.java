@@ -50,7 +50,7 @@ public class CertificateRequestService implements ICertificateRequestService {
 	@Override
 	public boolean canAutoAccept(CertificateRequest request) {
 		if (request.getType() != Type.ROOT) {
-			if (request.getCreator().equals(request.getParent().getIssuer())) {
+			if (request.getCreator().equals(request.getParent().getOwner())) {
 				return true;
 			}
 		}
@@ -60,11 +60,6 @@ public class CertificateRequestService implements ICertificateRequestService {
 		}
 	
 		return false;
-	}
-
-	@Override
-	public List<CertificateRequest> findByIssuee(User issuee) {
-		return certificateRequestRepo.findByIssuee(issuee.getId(), issuee.getRole() == Role.ADMIN);
 	}
 	
 	@Override
@@ -77,5 +72,10 @@ public class CertificateRequestService implements ICertificateRequestService {
 		setStatus(req, Status.REJECTED);
 		req.setRejectionReason(reason);
 		certificateRequestRepo.save(req);
+	}
+
+	@Override
+	public List<CertificateRequest> findByIssuee(User issuee) {
+		return certificateRequestRepo.findByIssuee(issuee.getId(), issuee.getRole() == Role.ADMIN);
 	}
 }

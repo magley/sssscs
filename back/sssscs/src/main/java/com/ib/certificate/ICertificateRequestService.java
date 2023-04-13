@@ -10,7 +10,7 @@ public interface ICertificateRequestService {
 	public CertificateRequest findByIdAndStatus(Long id, Status status);
 	public CertificateRequest setStatus(CertificateRequest reqeust, Status status);
 	public boolean canAutoAccept(CertificateRequest request);
-	public List<CertificateRequest> findByCreator(User issuer);
+	public List<CertificateRequest> findByCreator(User creator);
 	public List<CertificateRequest> findByIssuee(User issuee);
 	public void reject(CertificateRequest req, String reason);
 }

@@ -22,6 +22,7 @@ import com.ib.certificate.dto.CertificateRequestDto;
 import com.ib.certificate.dto.CertificateSummaryItemDto;
 import com.ib.user.IUserService;
 import com.ib.user.User;
+import com.ib.util.exception.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/cert")
@@ -61,19 +62,17 @@ public class CertificateController {
 	public ResponseEntity<String> acceptRequest(@PathVariable Long id) {
 		CertificateRequest req = certificateRequestService.findByIdAndStatus(id, Status.PENDING);
 		
-		User issuer = userService.findById(1L); // TODO: Fetch user ID from token.
-		if (issuer == null) {
-			return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
+		if (req.getParent() != null) {
+			// TODO: Get user from JWT.
+			User user = req.getParent().getOwner();
+			
+			List<CertificateRequest> requestsUserCanSign = certificateRequestService.findByIssuee(user);
+			if (!requestsUserCanSign.contains(req)) {
+				// TODO: Uncomment once we retrieve real user from JWT.
+				// throw new EntityNotFoundException(CertificateRequest.class, req.getId());
+			}
 		}
-		
-		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuer);
-		if (!requests.contains(req)) {
-			// return new ResponseEntity<>("Request not found", HttpStatus.NOT_FOUND);
-		}
-		
-		// TODO: It's ugly how accept is in CertificateService 
-		// and reject is in CertificateRequestService, but there's 
-		// no way to decouple them. Accepting *must* call both.
+	
 		Certificate cert = certificateService.accept(req);
 		return ResponseEntity.ok(cert.toString());
 	}
@@ -82,19 +81,15 @@ public class CertificateController {
 	public ResponseEntity<?> rejectRequest(@PathVariable Long id, @RequestBody String reason) {
 		CertificateRequest req = certificateRequestService.findByIdAndStatus(id, Status.PENDING);
 		
-//		System.err.println(SecurityContextHolder.getContext());
-//		System.err.println(SecurityContextHolder.getContext().getAuthentication());
-//		final User issuer = (User)(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-//		System.err.println(issuer);
-		
-		User issuer = userService.findById(1L); // TODO: Fetch user ID from token.
-		if (issuer == null) {
-			return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
-		}
-		
-		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuer);
-		if (!requests.contains(req)) {
-			// return new ResponseEntity<>("Request not found", HttpStatus.NOT_FOUND);
+		if (req.getParent() != null) {
+			// TODO: Get user from JWT.
+			User user = req.getParent().getOwner();
+			
+			List<CertificateRequest> requestsUserCanSign = certificateRequestService.findByIssuee(user);
+			if (!requestsUserCanSign.contains(req)) {
+				// TODO: Uncomment once we retrieve real user from JWT.
+				// throw new EntityNotFoundException(CertificateRequest.class, req.getId());
+			}
 		}
 		
 		certificateRequestService.reject(req, reason);
@@ -113,8 +108,8 @@ public class CertificateController {
 	
 	@GetMapping("/request/incoming/{id}")
 	public ResponseEntity<List<CertificateRequestDto>> getRequestsIssuedTo(@PathVariable Long id) {
-		User issuee = userService.findById(id);
-		
+		// TODO: Get user from JWT instead of using @PathVariable.
+		User issuee  = userService.findById(id);	
 		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuee);
 		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
 		

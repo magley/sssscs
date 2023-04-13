@@ -13,12 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CertificateRequestCreateDto {
-	@NotNull
 	private Certificate.Type type;
 	private Long creatorId;
-	@NotNull
 	private String subjectName;
-	@NotNull
 	private LocalDateTime validTo;
 	private Long parentId;
 }

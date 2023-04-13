@@ -38,7 +38,7 @@ public class Certificate {
 	
 	//@Column(nullable = false)
 	@ManyToOne(fetch = FetchType.LAZY)
-	private User issuer;
+	private User owner;
 	
 	//@Column(nullable = true)
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -59,11 +59,7 @@ public class Certificate {
 	
 	public Certificate(CertificateRequest req) {
 		setParent(req.getParent());
-		if (getParent() != null) {
-			setIssuer(req.getParent().getIssuer());
-		} else {
-			setIssuer(null);
-		}
+		setOwner(req.getCreator());
 		setType(req.getType());
 		setValidFrom(LocalDateTime.now());
 		setValidTo(req.getValidTo());
