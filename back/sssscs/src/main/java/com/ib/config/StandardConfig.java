@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.ib.pki.manual.KeyUtil;
+import com.ib.pki.KeyUtil;
 
 @Configuration
 public class StandardConfig {

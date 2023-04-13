@@ -1,7 +1,8 @@
-package com.ib.certificate;
+package com.ib.certificate.request;
 
 import java.time.LocalDateTime;
 
+import com.ib.certificate.Certificate;
 import com.ib.certificate.Certificate.Type;
 import com.ib.user.User;
 import com.ib.user.User.Role;

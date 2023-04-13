@@ -1,4 +1,4 @@
-package com.ib.certificate;
+package com.ib.certificate.request;
 
 import java.util.List;
 
@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ib.certificate.Certificate.Type;
-import com.ib.certificate.CertificateRequest.Status;
 import com.ib.certificate.exception.BadExpirationDateException;
 import com.ib.certificate.exception.InvalidCertificateTypeException;
 import com.ib.certificate.exception.IssuerUnauthorizedException;
+import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.user.User;
 import com.ib.user.User.Role;
 import com.ib.util.exception.EntityNotFoundException;

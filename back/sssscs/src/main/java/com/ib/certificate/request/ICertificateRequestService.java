@@ -1,8 +1,8 @@
-package com.ib.certificate;
+package com.ib.certificate.request;
 
 import java.util.List;
 
-import com.ib.certificate.CertificateRequest.Status;
+import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.user.User;
 
 public interface ICertificateRequestService {

@@ -3,6 +3,7 @@ package com.ib.certificate;
 import java.util.List;
 
 import com.ib.certificate.dto.CertificateSummaryItemDto;
+import com.ib.certificate.request.CertificateRequest;
 
 public interface ICertificateService {
 	public Certificate findById(Long id);

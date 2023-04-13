@@ -3,7 +3,7 @@ package com.ib.certificate.dto;
 import java.time.LocalDateTime;
 
 import com.ib.certificate.Certificate.Type;
-import com.ib.certificate.CertificateRequest.Status;
+import com.ib.certificate.request.CertificateRequest.Status;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

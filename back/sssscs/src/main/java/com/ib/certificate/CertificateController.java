@@ -1,13 +1,11 @@
 package com.ib.certificate;
 
-import java.security.cert.X509Certificate;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,13 +14,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ib.certificate.CertificateRequest.Status;
 import com.ib.certificate.dto.CertificateRequestCreateDto;
 import com.ib.certificate.dto.CertificateRequestDto;
 import com.ib.certificate.dto.CertificateSummaryItemDto;
+import com.ib.certificate.request.CertificateRequest;
+import com.ib.certificate.request.ICertificateRequestService;
+import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.user.IUserService;
 import com.ib.user.User;
-import com.ib.util.exception.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/cert")

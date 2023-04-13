@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.ib.pki.manual.KeyUtil;
 import com.ib.user.dto.UserCreateDto;
 import com.ib.user.dto.UserLoginDto;
 import com.ib.util.DTO;
@@ -29,8 +28,6 @@ public class UserController {
 	private AuthenticationManager authManager;
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
-	@Autowired
-	private KeyUtil keyUtil;
 
 	@PostMapping
 	public ResponseEntity<User> register(@DTO(UserCreateDto.class) User user) {
