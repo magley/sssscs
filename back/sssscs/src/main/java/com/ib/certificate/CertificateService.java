@@ -178,13 +178,16 @@ public class CertificateService implements ICertificateService {
 		//return (LocalDateTime.now().isBefore(cert.getValidFrom()) || LocalDateTime.now().isAfter(cert.getValidTo()));
 	}
 	
-	private boolean isInvalidSignature(Certificate cert) {
+	private boolean isInvalidSignature(Certificate cert) {	
+		X509Certificate self509 = keyUtil.getX509Certificate(cert.getSerialNumber());
+		X509Certificate parent509 = null;
+		
 		if (isTrusted(cert)) {
-			return false;
+			parent509 = self509;
+		} else {
+			parent509 = keyUtil.getX509Certificate(cert.getParent().getSerialNumber());
 		}
 		
-		X509Certificate self509 = keyUtil.getX509Certificate(cert.getSerialNumber());
-		X509Certificate parent509 = keyUtil.getX509Certificate(cert.getParent().getSerialNumber());
 		if (parent509 == null) {
 			throw new RuntimeException("This should not happen.");
 		}
