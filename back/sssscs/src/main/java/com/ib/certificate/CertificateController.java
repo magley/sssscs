@@ -23,6 +23,8 @@ import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.user.IUserService;
 import com.ib.user.User;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/cert")
 public class CertificateController {
@@ -36,7 +38,7 @@ public class CertificateController {
 	private ModelMapper modelMapper;
 	
 	@PostMapping("/request")
-	public ResponseEntity<String> makeRequest(@RequestBody CertificateRequestCreateDto certificate) {
+	public ResponseEntity<String> makeRequest(@Valid @RequestBody CertificateRequestCreateDto certificate) {
 		CertificateRequest req = new CertificateRequest();
 		req.setSubjectName(certificate.getSubjectName());
 		req.setType(certificate.getType());

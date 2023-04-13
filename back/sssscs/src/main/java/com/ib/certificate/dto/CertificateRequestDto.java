@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.request.CertificateRequest.Status;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,11 +14,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CertificateRequestDto {
+	@NotNull
 	private Long id;
+	@NotNull
 	private String subjectName;
+	@NotNull
 	private LocalDateTime validTo;
 	private Long parentId;
+	@NotNull
 	private Type type;
+	@NotNull
 	private Status status;
 	private String rejectionReason;
 }

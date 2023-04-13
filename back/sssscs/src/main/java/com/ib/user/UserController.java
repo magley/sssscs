@@ -19,6 +19,8 @@ import com.ib.user.dto.UserLoginDto;
 import com.ib.util.DTO;
 import com.ib.util.security.JwtTokenUtil;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
@@ -35,7 +37,7 @@ public class UserController {
 	}
 	
 	@PutMapping("/login")
-	public ResponseEntity<String> login(@RequestBody UserLoginDto dto) {
+	public ResponseEntity<String> login(@Valid @RequestBody UserLoginDto dto) {
 		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
 		Authentication auth = null;
 		try {

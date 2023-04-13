@@ -33,8 +33,7 @@ import org.bouncycastle.util.io.pem.PemObjectGenerator;
 public class KeyUtil {
     private static String DIR_KEYS = "./keys";
     private static String DIR_CERTS = "./certs";
-    private static String SECRET = "HFJKEHF2-r-2dhUOI#_R0238r0-fwk3w=e2u8v f3h";
-    
+ 
     ////////////////////////////////////////////////////////////
     // Filename generators
     ////////////////////////////////////////////////////////////
