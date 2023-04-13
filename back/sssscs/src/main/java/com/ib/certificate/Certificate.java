@@ -3,8 +3,11 @@ package com.ib.certificate;
 import java.time.LocalDateTime;
 
 import com.ib.certificate.request.CertificateRequest;
+import com.ib.pki.SubjectData;
 import com.ib.user.User;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -55,12 +58,23 @@ public class Certificate {
 	@Enumerated(value = EnumType.STRING)
 	private Type type;
 	
+	@Column(nullable = false)
+	@AttributeOverrides({
+		@AttributeOverride( name = "name", column = @Column(name = "subject_data_name")),
+		@AttributeOverride( name = "surname", column = @Column(name = "subject_data_surname")),
+		@AttributeOverride( name = "email", column = @Column(name = "subject_data_email")),
+		@AttributeOverride( name = "organization", column = @Column(name = "subject_data_organization")),
+		@AttributeOverride( name = "commonName", column = @Column(name = "subject_data_common_name"))
+	})
+	private SubjectData subjectData;
+	
 	public Certificate(CertificateRequest req) {
 		setParent(req.getParent());
 		setOwner(req.getCreator());
 		setType(req.getType());
 		setValidFrom(LocalDateTime.now());
 		setValidTo(req.getValidTo());
+		setSubjectData(req.getSubjectData());
 	}
 	
 	public String getSerialNumber() {

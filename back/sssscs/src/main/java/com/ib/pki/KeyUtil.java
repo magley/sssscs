@@ -30,6 +30,8 @@ import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.bouncycastle.util.io.pem.PemObjectGenerator;
 
+import com.ib.user.User;
+
 public class KeyUtil {
     private static String DIR_KEYS = "./keys";
     private static String DIR_CERTS = "./certs";
@@ -140,14 +142,21 @@ public class KeyUtil {
     // User data gen
     ////////////////////////////////////////////////////////////
     
-    public X500Name getX500Name(String name) {
+//    public X500Name getX500Name(String name) {
+//        X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
+//        builder.addRDN(BCStyle.CN, name);
+//        builder.addRDN(BCStyle.NAME, name);
+//        return builder.build();
+//    }
+    
+    public X500Name getX500Name(User user) {
         X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
-        builder.addRDN(BCStyle.CN, name);
-        builder.addRDN(BCStyle.NAME, name);
-        //builder.addRDN(BCStyle.SURNAME, user.getSurname());
-        //builder.addRDN(BCStyle.E, user.getEmail());
-        //builder.addRDN(BCStyle.TELEPHONE_NUMBER, user.getPhoneNumber());
-        //builder.addRDN(BCStyle.UID, user.getId().toString());
+        builder.addRDN(BCStyle.CN, user.getUsername());
+        builder.addRDN(BCStyle.NAME, user.getName());
+        builder.addRDN(BCStyle.SURNAME, user.getSurname());
+        builder.addRDN(BCStyle.E, user.getEmail());
+        builder.addRDN(BCStyle.TELEPHONE_NUMBER, user.getPhoneNumber());
+        builder.addRDN(BCStyle.UID, user.getId().toString());
         return builder.build();
     }
 }

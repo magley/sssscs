@@ -3,6 +3,7 @@ package com.ib.certificate.dto;
 import java.time.LocalDateTime;
 
 import com.ib.certificate.Certificate.Type;
+import com.ib.pki.SubjectData;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class CertificateSummaryItemDto {
 	@NotNull
 	private LocalDateTime validFrom;
 	@NotNull
-	private String subjectName;
+	private SubjectData subjectData;
 	@NotNull
 	private Type type;
 }

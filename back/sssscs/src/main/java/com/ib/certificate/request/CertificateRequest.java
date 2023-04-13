@@ -4,10 +4,14 @@ import java.time.LocalDateTime;
 
 import com.ib.certificate.Certificate;
 import com.ib.certificate.Certificate.Type;
+import com.ib.pki.SubjectData;
 import com.ib.user.User;
 import com.ib.user.User.Role;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -41,7 +45,15 @@ public class CertificateRequest {
 	private User creator;
 	
 	@Column(nullable = false)
-	private String subjectName;
+	@Embedded
+	@AttributeOverrides({
+		@AttributeOverride( name = "name", column = @Column(name = "subject_data_name")),
+		@AttributeOverride( name = "surname", column = @Column(name = "subject_data_surname")),
+		@AttributeOverride( name = "email", column = @Column(name = "subject_data_email")),
+		@AttributeOverride( name = "organization", column = @Column(name = "subject_data_organization")),
+		@AttributeOverride( name = "commonName", column = @Column(name = "subject_data_common_name"))
+	})
+	private SubjectData subjectData;
 
 	@Column(nullable = false)
 	private LocalDateTime validTo;

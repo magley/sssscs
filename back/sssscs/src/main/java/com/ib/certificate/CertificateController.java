@@ -18,8 +18,8 @@ import com.ib.certificate.dto.CertificateRequestCreateDto;
 import com.ib.certificate.dto.CertificateRequestDto;
 import com.ib.certificate.dto.CertificateSummaryItemDto;
 import com.ib.certificate.request.CertificateRequest;
-import com.ib.certificate.request.ICertificateRequestService;
 import com.ib.certificate.request.CertificateRequest.Status;
+import com.ib.certificate.request.ICertificateRequestService;
 import com.ib.user.IUserService;
 import com.ib.user.User;
 
@@ -40,7 +40,7 @@ public class CertificateController {
 	@PostMapping("/request")
 	public ResponseEntity<String> makeRequest(@Valid @RequestBody CertificateRequestCreateDto certificate) {
 		CertificateRequest req = new CertificateRequest();
-		req.setSubjectName(certificate.getSubjectName());
+		req.setSubjectData(certificate.getSubjectData());
 		req.setType(certificate.getType());
 		req.setValidTo(certificate.getValidTo());
 		req.setStatus(Status.PENDING);

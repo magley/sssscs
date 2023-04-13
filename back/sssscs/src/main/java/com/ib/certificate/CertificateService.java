@@ -28,8 +28,8 @@ import org.springframework.stereotype.Service;
 import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.dto.CertificateSummaryItemDto;
 import com.ib.certificate.request.CertificateRequest;
-import com.ib.certificate.request.ICertificateRequestService;
 import com.ib.certificate.request.CertificateRequest.Status;
+import com.ib.certificate.request.ICertificateRequestService;
 import com.ib.pki.KeyUtil;
 import com.ib.util.exception.EntityNotFoundException;
 
@@ -93,20 +93,20 @@ public class CertificateService implements ICertificateService {
 	}
 	
 	private X509Certificate generate(Certificate c, CertificateRequest req, PublicKey subjectKey, PrivateKey issuerKey, LocalDateTime validFrom, LocalDateTime validTo) {
-		Certificate parent = c.getParent();
-		X509Certificate parent509 = keyUtil.getX509Certificate(parent.getSerialNumber());
-		String issuerName = parent509.getSubjectX500Principal().getName(); // TODO: Formatting. Or some other way? Same for endpoint where we're getting certificates' summaries.
+		if (c.getParent() == null) {
+			throw new RuntimeException("When generating root certificate, use generateSelfSigned(), not generate()");
+		}
 		
 		try {	
 			JcaContentSignerBuilder csbuilder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
 			csbuilder = csbuilder.setProvider("BC");
 			ContentSigner signer = csbuilder.build(issuerKey);
 			X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(
-				keyUtil.getX500Name(issuerName),
+				keyUtil.getX500Name(c.getParent().getOwner()),
 				BigInteger.valueOf(c.getId()),
 				keyUtil.dateFrom(validFrom),
 				keyUtil.dateFrom(validTo),
-				keyUtil.getX500Name(req.getSubjectName()),
+				c.getSubjectData().getX500Name(),
 				subjectKey
 			);
 			
@@ -121,8 +121,7 @@ public class CertificateService implements ICertificateService {
 	}
 
 	private X509Certificate generateSelfSigned(KeyPair kp, LocalDateTime validFrom, LocalDateTime validTo) {
-		try {	
-			
+		try {
 			X500Name x500Name = new X500Name("CN=localhost");
 			JcaContentSignerBuilder csbuilder = new JcaContentSignerBuilder("SHA256WithRSAEncryption");
 			csbuilder = csbuilder.setProvider("BC");
@@ -214,7 +213,8 @@ public class CertificateService implements ICertificateService {
 			item.setId(cert.getId());
 			item.setType(cert.getType());
 			item.setValidFrom(cert.getValidFrom());
-			item.setSubjectName(cert509.getSubjectX500Principal().getName()); // TODO: Extract CN=something -> something.
+			item.setSubjectData(cert.getSubjectData());
+			//item.setSubjectName(cert509.getSubjectX500Principal().getName()); // TODO: Extract CN=something -> something.
 			result.add(item);
 		}
 		
