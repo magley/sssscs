@@ -54,17 +54,16 @@ public class KeyUtil {
     
     public PrivateKey getPrivateKey(String alias) {
         String fnamePriv = getFnamePrivKey(alias);
-        try {
-            if (!new File(fnamePriv).isFile()) {
-                return null;
-            }
-            FileInputStream is = new FileInputStream(fnamePriv);
+        if (!new File(fnamePriv).isFile()) {
+            return null;
+        }
+        
+        try (FileInputStream is = new FileInputStream(fnamePriv)) {
             byte[] key = Base64.getDecoder().decode(is.readAllBytes());
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(key);
             PrivateKey finalKey = keyFactory.generatePrivate(keySpec);
-            is.close();
-            
+
             return finalKey;
         } 
         catch (IOException | NoSuchAlgorithmException | InvalidKeySpecException e) {
@@ -81,12 +80,11 @@ public class KeyUtil {
     public X509Certificate getX509Certificate(String alias) {
         String fnameCert = getFnameCert(alias);
         
-        try {
+        try (FileInputStream is = new FileInputStream(fnameCert)) {
             CertificateFactory fac = CertificateFactory.getInstance("X509");
-            FileInputStream is = new FileInputStream(fnameCert);
             X509Certificate cert = (X509Certificate) fac.generateCertificate(is);
             return cert;
-        } catch (CertificateException | FileNotFoundException e) {
+        } catch (CertificateException | IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -95,11 +93,10 @@ public class KeyUtil {
     public void savePrivateKey(String alias, PrivateKey privateKey) {
         String fnamePriv = getFnamePrivKey(alias);
         
-        try {	
+        try (FileOutputStream keyfos = new FileOutputStream(fnamePriv)) {	
             byte[] key = privateKey.getEncoded();
-            FileOutputStream keyfos = new FileOutputStream(fnamePriv);
             keyfos.write(Base64.getEncoder().encodeToString(key).getBytes());
-            keyfos.close();
+            keyfos.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -141,13 +138,6 @@ public class KeyUtil {
     ////////////////////////////////////////////////////////////
     // User data gen
     ////////////////////////////////////////////////////////////
-    
-//    public X500Name getX500Name(String name) {
-//        X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);
-//        builder.addRDN(BCStyle.CN, name);
-//        builder.addRDN(BCStyle.NAME, name);
-//        return builder.build();
-//    }
     
     public X500Name getX500Name(User user) {
         X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);

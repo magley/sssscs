@@ -29,18 +29,6 @@ public class StandardConfig {
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
-
-//	@Bean
-//	public KeyPairUtil keyPairUtil() {
-//		return new KeyPairUtil();
-//	}
-//	
-//	@Bean
-//	public KeyStoreUtil keyStoreUtil() {
-//		KeyStoreUtil ksUtil = new KeyStoreUtil();
-//		ksUtil.loadKeyStore();
-//		return ksUtil;
-//	}
 	
 	@Bean
 	public KeyUtil keyUtil() {

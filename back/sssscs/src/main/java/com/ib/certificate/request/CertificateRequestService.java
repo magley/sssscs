@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.exception.BadExpirationDateException;
-import com.ib.certificate.exception.InvalidCertificateTypeException;
+import com.ib.certificate.exception.CertificateParentMissingException;
 import com.ib.certificate.exception.IssuerUnauthorizedException;
 import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.user.User;
@@ -22,7 +22,7 @@ public class CertificateRequestService implements ICertificateRequestService {
 	@Override
 	public CertificateRequest makeRequest(CertificateRequest request) {
 		if (!request.isTypeValid()) {
-			throw new InvalidCertificateTypeException();
+			throw new CertificateParentMissingException();
 		}
 		
 		if (request.isExpired()) {
