@@ -67,7 +67,7 @@ public class CertificateController {
 			// TODO: Get user from JWT.
 			User user = req.getParent().getOwner();
 			
-			List<CertificateRequest> requestsUserCanSign = certificateRequestService.findByIssuee(user);
+			List<CertificateRequest> requestsUserCanSign = certificateRequestService.findRequestsByUserResponsibleForThem(user);
 			if (!requestsUserCanSign.contains(req)) {
 				// TODO: Uncomment once we retrieve real user from JWT.
 				// throw new EntityNotFoundException(CertificateRequest.class, req.getId());
@@ -86,7 +86,7 @@ public class CertificateController {
 			// TODO: Get user from JWT.
 			User user = req.getParent().getOwner();
 			
-			List<CertificateRequest> requestsUserCanSign = certificateRequestService.findByIssuee(user);
+			List<CertificateRequest> requestsUserCanSign = certificateRequestService.findRequestsByUserResponsibleForThem(user);
 			if (!requestsUserCanSign.contains(req)) {
 				// TODO: Uncomment once we retrieve real user from JWT.
 				// throw new EntityNotFoundException(CertificateRequest.class, req.getId());
@@ -110,8 +110,8 @@ public class CertificateController {
 	@GetMapping("/request/incoming/{id}")
 	public ResponseEntity<List<CertificateRequestDto>> getRequestsIssuedTo(@PathVariable Long id) {
 		// TODO: Get user from JWT instead of using @PathVariable.
-		User issuee  = userService.findById(id);	
-		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuee);
+		User user  = userService.findById(id);	
+		List<CertificateRequest> requests = certificateRequestService.findRequestsByUserResponsibleForThem(user);
 		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
 		
 		return ResponseEntity.ok(result);

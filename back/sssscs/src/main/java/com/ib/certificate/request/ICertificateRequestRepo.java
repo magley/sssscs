@@ -15,5 +15,5 @@ public interface ICertificateRequestRepo extends JpaRepository<CertificateReques
 	public Optional<CertificateRequest> findByIdAndStatus(Long id, Status status);
 	public List<CertificateRequest> findByCreator(User creator);
 	@Query("select r from CertificateRequest r left join r.parent c where ((c.owner.id = :issueeId) or (:includeEmpty = true and c = null))")
-	public List<CertificateRequest> findByIssuee(Long issueeId, boolean includeEmpty);
+	public List<CertificateRequest> findRequestsByUserResponsibleForThem(Long issueeId, boolean includeEmpty);
 }
