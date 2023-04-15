@@ -9,6 +9,7 @@ import com.ib.user.User;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -59,6 +60,7 @@ public class Certificate {
 	private Type type;
 	
 	@Column(nullable = false)
+	@Embedded
 	@AttributeOverrides({
 		@AttributeOverride( name = "name", column = @Column(name = "subject_data_name")),
 		@AttributeOverride( name = "surname", column = @Column(name = "subject_data_surname")),
