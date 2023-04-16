@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.exception.BadExpirationDateException;
 import com.ib.certificate.exception.CertificateParentMissingException;
-import com.ib.certificate.exception.IssuerUnauthorizedException;
+import com.ib.certificate.exception.CreatorUnauthorizedException;
 import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.user.User;
 import com.ib.user.User.Role;
@@ -30,21 +30,15 @@ public class CertificateRequestService implements ICertificateRequestService {
 		}
 		
 		if (!request.isCreatorAuthorized()) {
-			throw new IssuerUnauthorizedException();
+			throw new CreatorUnauthorizedException();
 		}
-		
+
 		return certificateRequestRepo.save(request);
 	}
 	
 	@Override
 	public CertificateRequest findByIdAndStatus(Long id, Status status) {
 		return certificateRequestRepo.findByIdAndStatus(id, status).orElseThrow(() -> new EntityNotFoundException(CertificateRequest.class, id));
-	}
-
-	@Override
-	public CertificateRequest setStatus(CertificateRequest req, Status status) {
-		req.setStatus(status);
-		return certificateRequestRepo.save(req);
 	}
 	
 	@Override
@@ -69,8 +63,15 @@ public class CertificateRequestService implements ICertificateRequestService {
 
 	@Override
 	public void reject(CertificateRequest req, String reason) {
-		setStatus(req, Status.REJECTED);
+		req.setStatus(Status.REJECTED);
 		req.setRejectionReason(reason);
+		certificateRequestRepo.save(req);
+	}
+	
+
+	@Override
+	public void accept(CertificateRequest req) {
+		req.setStatus(Status.ACCEPTED);
 		certificateRequestRepo.save(req);
 	}
 

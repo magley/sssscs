@@ -1,4 +1,4 @@
-// Copied from professor Vidakovic's material with some minor changes
+// Copied from professor Vidaković's material with some changes.
 
 package com.ib.util.security;
 
@@ -22,10 +22,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
-
 	@Autowired
 	private IUserService userService;
-
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 
@@ -72,10 +70,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		return authenticationToken;
 	}
 
-	private UserDetails getUserDetailsFromJwtToken(String jwtToken)
-			throws JwtException, IllegalArgumentException, UsernameNotFoundException {
-		// Not only do we retrieve the username from the token here, we also make sure
-		// it's valid.
+	private UserDetails getUserDetailsFromJwtToken(String jwtToken) throws JwtException, IllegalArgumentException, UsernameNotFoundException {
 		String username = jwtTokenUtil.getUsernameFromToken(jwtToken);
 		return this.userService.loadUserByUsername(username);
 	}

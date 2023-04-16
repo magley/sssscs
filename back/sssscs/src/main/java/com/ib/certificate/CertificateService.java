@@ -28,9 +28,10 @@ import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.dto.CertificateSummaryItemDto;
 import com.ib.certificate.exception.InvalidCertificateTypeException;
 import com.ib.certificate.request.CertificateRequest;
-import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.certificate.request.ICertificateRequestService;
 import com.ib.pki.KeyUtil;
+import com.ib.user.User;
+import com.ib.user.User.Role;
 import com.ib.util.exception.EntityNotFoundException;
 
 @Service
@@ -46,15 +47,36 @@ public class CertificateService implements ICertificateService {
 	public Certificate findById(Long id) {
 		return certificateRepo.findById(id).orElseThrow(() -> new EntityNotFoundException(Certificate.class, id));
 	}
+	
+	private boolean isAuthorizedToAcceptOrReject(CertificateRequest req, User user) {
+		if (req.getParent() != null) {
+			var requestsUserCanSign = certificateRequestService.findRequestsByUserResponsibleForThem(user);
+			return requestsUserCanSign.contains(req);
+		}
+		return user.getRole() == Role.ADMIN;
+	}
 
 	@Override
-	public Certificate accept(CertificateRequest req) {
-		certificateRequestService.setStatus(req, Status.ACCEPTED);	
+	public Certificate accept(CertificateRequest req, User caller) {
+		if (!isAuthorizedToAcceptOrReject(req, caller)) {
+			throw new EntityNotFoundException(CertificateRequest.class, req.getId());
+		}
+		
+		certificateRequestService.accept(req);
+		
 		Certificate c = new Certificate(req);
 		c = certificateRepo.save(c);
-
 		createX509Certificate(c);
 		return c;
+	}
+
+	@Override
+	public void reject(CertificateRequest req, String reason, User caller) {
+		if (!isAuthorizedToAcceptOrReject(req, caller)) {
+			throw new EntityNotFoundException(CertificateRequest.class, req.getId());
+		}
+		
+		certificateRequestService.reject(req, reason);
 	}
 	
 	@Override

@@ -7,8 +7,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ import com.ib.user.dto.UserLoginDto;
 import com.ib.util.DTO;
 import com.ib.util.security.JwtTokenUtil;
 
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 
 @RestController
@@ -31,12 +33,13 @@ public class UserController {
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 
-	@PostMapping
-	public ResponseEntity<User> register(@DTO(UserCreateDto.class) User user) {
-		return ResponseEntity.ok(userService.register(user));
+	@PostMapping("/session/register")
+	public ResponseEntity<?> register(@DTO(UserCreateDto.class) User user) {
+		userService.register(user);
+		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
 	}
 	
-	@PutMapping("/login")
+	@PostMapping("/session/login")
 	public ResponseEntity<String> login(@Valid @RequestBody UserLoginDto dto) {
 		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
 		Authentication auth = null;
@@ -45,9 +48,10 @@ public class UserController {
 		} catch (BadCredentialsException ex) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email or password!");
 		}
+
 		User user = (User) auth.getPrincipal();
-		// TODO: json mb
 		String token = jwtTokenUtil.generateToken(user.getEmail(), user.getId(), user.getRole().toString());
+		
 		return ResponseEntity.ok(token);
 	}
 }
