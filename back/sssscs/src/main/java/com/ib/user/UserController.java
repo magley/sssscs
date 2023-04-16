@@ -34,14 +34,14 @@ public class UserController {
 	private JwtTokenUtil jwtTokenUtil;
 
 	@PermitAll
-	@PostMapping
+	@PostMapping("/session/register")
 	public ResponseEntity<?> register(@DTO(UserCreateDto.class) User user) {
 		userService.register(user);
 		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
 	}
 	
 	@PermitAll
-	@PostMapping("/login")
+	@PostMapping("/session/login")
 	public ResponseEntity<String> login(@Valid @RequestBody UserLoginDto dto) {
 		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
 		Authentication auth = null;
