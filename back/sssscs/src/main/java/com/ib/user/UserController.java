@@ -21,6 +21,7 @@ import com.ib.user.dto.UserLoginDto;
 import com.ib.util.DTO;
 import com.ib.util.security.JwtTokenUtil;
 
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 
 @RestController
@@ -33,12 +34,14 @@ public class UserController {
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 
+	@PermitAll
 	@PostMapping
 	public ResponseEntity<User> register(@DTO(UserCreateDto.class) User user) {
 		return ResponseEntity.ok(userService.register(user));
 	}
 	
-	@PutMapping("/login")
+	@PermitAll
+	@PostMapping("/login")
 	public ResponseEntity<String> login(@Valid @RequestBody UserLoginDto dto) {
 		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
 		Authentication auth = null;
