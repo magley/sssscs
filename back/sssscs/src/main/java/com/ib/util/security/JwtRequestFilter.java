@@ -63,7 +63,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		UserDetails userDetails;
 		try {
 			userDetails = this.getUserDetailsFromJwtToken(jwt);
-			System.err.println(userDetails.toString());
 		} catch (JwtException | IllegalArgumentException | UsernameNotFoundException e) {
 			return null;
 		}

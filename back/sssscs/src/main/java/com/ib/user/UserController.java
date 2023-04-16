@@ -35,8 +35,9 @@ public class UserController {
 
 	@PermitAll
 	@PostMapping
-	public ResponseEntity<User> register(@DTO(UserCreateDto.class) User user) {
-		return ResponseEntity.ok(userService.register(user));
+	public ResponseEntity<?> register(@DTO(UserCreateDto.class) User user) {
+		userService.register(user);
+		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
 	}
 	
 	@PermitAll
