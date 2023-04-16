@@ -9,7 +9,7 @@ public class IssuerUnauthorizedException extends EntityException {
 	private static final long serialVersionUID = 5135572596582665574L;
 
 	public IssuerUnauthorizedException() {
-		super("Issuer unauthorized for this type of certificate.");
+		super("User unauthorized to create this type of certificate.");
 	}
 
 }

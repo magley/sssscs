@@ -1,8 +1,12 @@
 package com.ib.util.exception;
 
-public abstract class EntityException extends RuntimeException {
+import java.io.Serial;
 
-    public EntityException(String message) {
+public abstract class EntityException extends RuntimeException {
+	@Serial
+	private static final long serialVersionUID = 6089383742016495500L;
+
+	public EntityException(String message) {
         super(message);
     }
 }

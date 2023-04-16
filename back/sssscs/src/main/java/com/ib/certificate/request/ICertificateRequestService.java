@@ -1,8 +1,8 @@
-package com.ib.certificate;
+package com.ib.certificate.request;
 
 import java.util.List;
 
-import com.ib.certificate.CertificateRequest.Status;
+import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.user.User;
 
 public interface ICertificateRequestService {
@@ -10,7 +10,7 @@ public interface ICertificateRequestService {
 	public CertificateRequest findByIdAndStatus(Long id, Status status);
 	public CertificateRequest setStatus(CertificateRequest reqeust, Status status);
 	public boolean canAutoAccept(CertificateRequest request);
-	public List<CertificateRequest> findByIssuer(User issuer);
-	public List<CertificateRequest> findByIssuee(User issuee);
+	public List<CertificateRequest> findByCreator(User creator);
+	public List<CertificateRequest> findRequestsByUserResponsibleForThem(User user);
 	public void reject(CertificateRequest req, String reason);
 }

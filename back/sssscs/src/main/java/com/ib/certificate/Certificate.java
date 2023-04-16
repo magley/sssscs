@@ -2,9 +2,14 @@ package com.ib.certificate;
 
 import java.time.LocalDateTime;
 
+import com.ib.certificate.request.CertificateRequest;
+import com.ib.pki.SubjectData;
 import com.ib.user.User;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -13,7 +18,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,7 +43,7 @@ public class Certificate {
 	
 	//@Column(nullable = false)
 	@ManyToOne(fetch = FetchType.LAZY)
-	private User issuer;
+	private User owner;
 	
 	//@Column(nullable = true)
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -55,11 +59,27 @@ public class Certificate {
 	@Enumerated(value = EnumType.STRING)
 	private Type type;
 	
+	@Column(nullable = false)
+	@Embedded
+	@AttributeOverrides({
+		@AttributeOverride( name = "name", column = @Column(name = "subject_data_name")),
+		@AttributeOverride( name = "surname", column = @Column(name = "subject_data_surname")),
+		@AttributeOverride( name = "email", column = @Column(name = "subject_data_email")),
+		@AttributeOverride( name = "organization", column = @Column(name = "subject_data_organization")),
+		@AttributeOverride( name = "commonName", column = @Column(name = "subject_data_common_name"))
+	})
+	private SubjectData subjectData;
+	
 	public Certificate(CertificateRequest req) {
-		setIssuer(req.getIssuer());
 		setParent(req.getParent());
+		setOwner(req.getCreator());
 		setType(req.getType());
 		setValidFrom(LocalDateTime.now());
 		setValidTo(req.getValidTo());
+		setSubjectData(req.getSubjectData());
+	}
+	
+	public String getSerialNumber() {
+		return id.toString();
 	}
 }

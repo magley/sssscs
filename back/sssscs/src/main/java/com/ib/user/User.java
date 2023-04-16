@@ -29,6 +29,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "users") // Must not be "user".
 public class User implements UserDetails {
+	private static final long serialVersionUID = 6494659258011938199L;
 
 	public enum Role {
 		REGULAR,

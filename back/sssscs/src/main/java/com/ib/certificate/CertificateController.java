@@ -3,9 +3,7 @@ package com.ib.certificate;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.convert.TypeMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,37 +14,37 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ib.certificate.CertificateRequest.Status;
 import com.ib.certificate.dto.CertificateRequestCreateDto;
 import com.ib.certificate.dto.CertificateRequestDto;
 import com.ib.certificate.dto.CertificateSummaryItemDto;
+import com.ib.certificate.request.CertificateRequest;
+import com.ib.certificate.request.CertificateRequest.Status;
+import com.ib.certificate.request.ICertificateRequestService;
 import com.ib.user.IUserService;
 import com.ib.user.User;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/cert")
 public class CertificateController {
 	@Autowired
 	private ICertificateService certificateService;
-	
 	@Autowired
 	private ICertificateRequestService certificateRequestService;
-	
 	@Autowired
 	private IUserService userService;
-	
 	@Autowired
 	private ModelMapper modelMapper;
 	
 	@PostMapping("/request")
-	public ResponseEntity<String> makeRequest(/*@DTO(CertificateRequestCreateDto.class)*/ @RequestBody CertificateRequestCreateDto certificate) {
-		// TODO: Automatic mapping.
-		
+	public ResponseEntity<String> makeRequest(@Valid @RequestBody CertificateRequestCreateDto certificate) {
 		CertificateRequest req = new CertificateRequest();
-		req.setIssuer(userService.findById(certificate.getIssuerId()));
+		req.setSubjectData(certificate.getSubjectData());
 		req.setType(certificate.getType());
 		req.setValidTo(certificate.getValidTo());
 		req.setStatus(Status.PENDING);
+		req.setCreator(userService.findById(certificate.getCreatorId()));
 		if (certificate.getParentId() != null) {
 			Certificate parent = certificateService.findById(certificate.getParentId());
 			req.setParent(parent);
@@ -65,19 +63,17 @@ public class CertificateController {
 	public ResponseEntity<String> acceptRequest(@PathVariable Long id) {
 		CertificateRequest req = certificateRequestService.findByIdAndStatus(id, Status.PENDING);
 		
-		User issuee = userService.findById(1L); // TODO: Fetch user ID from token.
-		if (issuee == null) {
-			return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
+		if (req.getParent() != null) {
+			// TODO: Get user from JWT.
+			User user = req.getParent().getOwner();
+			
+			List<CertificateRequest> requestsUserCanSign = certificateRequestService.findRequestsByUserResponsibleForThem(user);
+			if (!requestsUserCanSign.contains(req)) {
+				// TODO: Uncomment once we retrieve real user from JWT.
+				// throw new EntityNotFoundException(CertificateRequest.class, req.getId());
+			}
 		}
-		
-		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuee);
-		if (!requests.contains(req)) {
-			// return new ResponseEntity<>("Request not found", HttpStatus.NOT_FOUND);
-		}
-		
-		// TODO: It's ugly how accept is in CertificateService 
-		// and reject is in CertificateRequestService, but there's 
-		// no way to decouple them. Accepting *must* call both.
+	
 		Certificate cert = certificateService.accept(req);
 		return ResponseEntity.ok(cert.toString());
 	}
@@ -86,25 +82,26 @@ public class CertificateController {
 	public ResponseEntity<?> rejectRequest(@PathVariable Long id, @RequestBody String reason) {
 		CertificateRequest req = certificateRequestService.findByIdAndStatus(id, Status.PENDING);
 		
-		User issuee = userService.findById(1L); // TODO: Fetch user ID from token.
-		if (issuee == null) {
-			return new ResponseEntity<>("User does not exist", HttpStatus.NOT_FOUND);
-		}
-		
-		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuee);
-		if (!requests.contains(req)) {
-			// return new ResponseEntity<>("Request not found", HttpStatus.NOT_FOUND);
+		if (req.getParent() != null) {
+			// TODO: Get user from JWT.
+			User user = req.getParent().getOwner();
+			
+			List<CertificateRequest> requestsUserCanSign = certificateRequestService.findRequestsByUserResponsibleForThem(user);
+			if (!requestsUserCanSign.contains(req)) {
+				// TODO: Uncomment once we retrieve real user from JWT.
+				// throw new EntityNotFoundException(CertificateRequest.class, req.getId());
+			}
 		}
 		
 		certificateRequestService.reject(req, reason);
 		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
 	}
 	
-	@GetMapping("/request/{id}")
-	public ResponseEntity<List<CertificateRequestDto>> getMyRequests(@PathVariable Long id) {
-		User issuer = userService.findById(id);
+	@GetMapping("/request/created/{id}")
+	public ResponseEntity<List<CertificateRequestDto>> getRequestsCreatedBy(@PathVariable Long id) {
+		User creator = userService.findById(id);
 		
-		List<CertificateRequest> requests = certificateRequestService.findByIssuer(issuer);	
+		List<CertificateRequest> requests = certificateRequestService.findByCreator(creator);
 		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
 		
 		return ResponseEntity.ok(result);
@@ -112,9 +109,9 @@ public class CertificateController {
 	
 	@GetMapping("/request/incoming/{id}")
 	public ResponseEntity<List<CertificateRequestDto>> getRequestsIssuedTo(@PathVariable Long id) {
-		User issuee = userService.findById(id);
-		
-		List<CertificateRequest> requests = certificateRequestService.findByIssuee(issuee);
+		// TODO: Get user from JWT instead of using @PathVariable.
+		User user  = userService.findById(id);	
+		List<CertificateRequest> requests = certificateRequestService.findRequestsByUserResponsibleForThem(user);
 		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
 		
 		return ResponseEntity.ok(result);
@@ -122,12 +119,15 @@ public class CertificateController {
 	
 	@GetMapping
 	public ResponseEntity<List<CertificateSummaryItemDto>> getAllCertificates() {
-		List<Certificate> certs = certificateService.getAll();
-		
-		// TODO: Add Subject in Certificate class to show in this list.
-		List<CertificateSummaryItemDto> result = certs.stream().map(r -> modelMapper.map(r, CertificateSummaryItemDto.class)).toList();
-		
-		return ResponseEntity.ok(result);
+		return ResponseEntity.ok(certificateService.getAllSummary());
+	}
+	
+	
+	@GetMapping("/valid/{id}")
+	public ResponseEntity<?> isValid(@PathVariable Long id) {
+		Certificate cert = certificateService.findById(id);
+		boolean isValid = certificateService.isValid(cert);
+		return new ResponseEntity<>(isValid, HttpStatus.OK);
 	}
 	
 }
