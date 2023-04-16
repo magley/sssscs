@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.exception.BadExpirationDateException;
 import com.ib.certificate.exception.CertificateParentMissingException;
-import com.ib.certificate.exception.IssuerUnauthorizedException;
+import com.ib.certificate.exception.CreatorUnauthorizedException;
 import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.user.User;
 import com.ib.user.User.Role;
@@ -30,7 +30,7 @@ public class CertificateRequestService implements ICertificateRequestService {
 		}
 		
 		if (!request.isCreatorAuthorized()) {
-			throw new IssuerUnauthorizedException();
+			throw new CreatorUnauthorizedException();
 		}
 		
 		return certificateRequestRepo.save(request);

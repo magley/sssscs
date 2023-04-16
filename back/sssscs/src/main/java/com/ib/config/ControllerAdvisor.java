@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.ib.certificate.exception.CreatorUnauthorizedException;
 import com.ib.util.exception.EntityException;
 import com.ib.util.exception.EntityNotFoundException;
 import com.ib.util.validation.BadValidation;
@@ -25,6 +26,11 @@ public class ControllerAdvisor {
 	@ExceptionHandler({EntityNotFoundException.class})
 	public ResponseEntity<?> handleEntityNotFoundException(final EntityNotFoundException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler({CreatorUnauthorizedException.class})
+	public ResponseEntity<?> handleCreatorUnauhotirzedException(final CreatorUnauthorizedException e) {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
 	}
 
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
