@@ -3,6 +3,7 @@ package com.ib.certificate.request;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ib.certificate.Certificate.Type;
@@ -32,7 +33,7 @@ public class CertificateRequestService implements ICertificateRequestService {
 		if (!request.isCreatorAuthorized()) {
 			throw new CreatorUnauthorizedException();
 		}
-		
+
 		return certificateRequestRepo.save(request);
 	}
 	

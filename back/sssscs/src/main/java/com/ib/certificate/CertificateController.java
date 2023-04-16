@@ -58,8 +58,8 @@ public class CertificateController {
 	@PostMapping("/request")
 	public ResponseEntity<?> makeRequest(@Valid @RequestBody CertificateRequestCreateDto requestCreateDto) {
 		CertificateRequest req = requestFromCreateDto(requestCreateDto);
-
 		req = certificateRequestService.makeRequest(req);
+		
 		if (certificateRequestService.canAutoAccept(req)) {
 			User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			certificateService.accept(req, user);
@@ -89,25 +89,25 @@ public class CertificateController {
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
-	@GetMapping("/request/created/{id}")
-	public ResponseEntity<List<CertificateRequestDto>> getRequestsCreatedBy(@PathVariable Long id) {
-		User creator = userService.findById(id);
+	@GetMapping("/request/created")
+	public ResponseEntity<?> getOwnRequests() {
+		User creator = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
 		List<CertificateRequest> requests = certificateRequestService.findByCreator(creator);
 		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
 		
-		return ResponseEntity.ok(result);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
-	@GetMapping("/request/incoming/{id}")
-	public ResponseEntity<List<CertificateRequestDto>> getRequestsIssuedTo(@PathVariable Long id) {
-		// TODO: Get user from JWT instead of using @PathVariable.
-		User user  = userService.findById(id);	
+	@GetMapping("/request/incoming")
+	public ResponseEntity<?> getRequestsIssuedTo() {
+		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
 		List<CertificateRequest> requests = certificateRequestService.findRequestsByUserResponsibleForThem(user);
 		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
 		
-		return ResponseEntity.ok(result);
+		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
