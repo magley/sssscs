@@ -7,6 +7,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,6 +24,7 @@ import com.ib.util.security.JwtRequestFilter;
 import jakarta.persistence.EntityManager;
 
 @Configuration
+@EnableMethodSecurity
 public class ServerConfig implements WebMvcConfigurer {
 	private final ApplicationContext applicationContext;
 	private final EntityManager entityManager;

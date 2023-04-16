@@ -65,18 +65,19 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		UserDetails userDetails;
 		try {
 			userDetails = this.getUserDetailsFromJwtToken(jwt);
+			System.err.println(userDetails.toString());
 		} catch (JwtException | IllegalArgumentException | UsernameNotFoundException e) {
+			e.printStackTrace();
 			return null;
 		}
 		var authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 		return authenticationToken;
 	}
 
-	private UserDetails getUserDetailsFromJwtToken(String jwtToken)
-			throws JwtException, IllegalArgumentException, UsernameNotFoundException {
-		// Not only do we retrieve the username from the token here, we also make sure
-		// it's valid.
+	private UserDetails getUserDetailsFromJwtToken(String jwtToken) throws JwtException, IllegalArgumentException, UsernameNotFoundException {
 		String username = jwtTokenUtil.getUsernameFromToken(jwtToken);
+		System.err.println(jwtToken);
+		System.err.println(username);
 		return this.userService.loadUserByUsername(username);
 	}
 }
