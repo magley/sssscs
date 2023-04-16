@@ -40,12 +40,6 @@ public class CertificateRequestService implements ICertificateRequestService {
 	public CertificateRequest findByIdAndStatus(Long id, Status status) {
 		return certificateRequestRepo.findByIdAndStatus(id, status).orElseThrow(() -> new EntityNotFoundException(CertificateRequest.class, id));
 	}
-
-	@Override
-	public CertificateRequest setStatus(CertificateRequest req, Status status) {
-		req.setStatus(status);
-		return certificateRequestRepo.save(req);
-	}
 	
 	@Override
 	public boolean canAutoAccept(CertificateRequest request) {
@@ -69,8 +63,15 @@ public class CertificateRequestService implements ICertificateRequestService {
 
 	@Override
 	public void reject(CertificateRequest req, String reason) {
-		setStatus(req, Status.REJECTED);
+		req.setStatus(Status.REJECTED);
 		req.setRejectionReason(reason);
+		certificateRequestRepo.save(req);
+	}
+	
+
+	@Override
+	public void accept(CertificateRequest req) {
+		req.setStatus(Status.ACCEPTED);
 		certificateRequestRepo.save(req);
 	}
 

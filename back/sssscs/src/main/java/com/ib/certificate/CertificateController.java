@@ -24,6 +24,7 @@ import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.certificate.request.ICertificateRequestService;
 import com.ib.user.IUserService;
 import com.ib.user.User;
+import com.ib.util.exception.EntityNotFoundException;
 
 import jakarta.validation.Valid;
 
@@ -57,10 +58,11 @@ public class CertificateController {
 	@PostMapping("/request")
 	public ResponseEntity<?> makeRequest(@Valid @RequestBody CertificateRequestCreateDto requestCreateDto) {
 		CertificateRequest req = requestFromCreateDto(requestCreateDto);
-		
+
 		req = certificateRequestService.makeRequest(req);
 		if (certificateRequestService.canAutoAccept(req)) {
-			certificateService.accept(req);
+			User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			certificateService.accept(req, user);
 		}
 		
 		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
@@ -70,19 +72,9 @@ public class CertificateController {
 	@PutMapping("/request/accept/{id}")
 	public ResponseEntity<String> acceptRequest(@PathVariable Long id) {
 		CertificateRequest req = certificateRequestService.findByIdAndStatus(id, Status.PENDING);
+		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
-		if (req.getParent() != null) {
-			// TODO: Get user from JWT.
-			User user = req.getParent().getOwner();
-			
-			List<CertificateRequest> requestsUserCanSign = certificateRequestService.findRequestsByUserResponsibleForThem(user);
-			if (!requestsUserCanSign.contains(req)) {
-				// TODO: Uncomment once we retrieve real user from JWT.
-				// throw new EntityNotFoundException(CertificateRequest.class, req.getId());
-			}
-		}
-	
-		Certificate cert = certificateService.accept(req);
+		Certificate cert = certificateService.accept(req, user);
 		return ResponseEntity.ok(cert.toString());
 	}
 	
@@ -90,19 +82,9 @@ public class CertificateController {
 	@PutMapping("/request/reject/{id}")
 	public ResponseEntity<?> rejectRequest(@PathVariable Long id, @RequestBody String reason) {
 		CertificateRequest req = certificateRequestService.findByIdAndStatus(id, Status.PENDING);
+		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
-		if (req.getParent() != null) {
-			// TODO: Get user from JWT.
-			User user = req.getParent().getOwner();
-			
-			List<CertificateRequest> requestsUserCanSign = certificateRequestService.findRequestsByUserResponsibleForThem(user);
-			if (!requestsUserCanSign.contains(req)) {
-				// TODO: Uncomment once we retrieve real user from JWT.
-				// throw new EntityNotFoundException(CertificateRequest.class, req.getId());
-			}
-		}
-		
-		certificateRequestService.reject(req, reason);
+		certificateService.reject(req, reason, user);
 		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
 	}
 	
