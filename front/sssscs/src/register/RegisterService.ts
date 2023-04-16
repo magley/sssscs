@@ -21,6 +21,6 @@ export interface User {
 
 export class RegisterService {
     static async register(dto: UserCreateDto): Promise<AxiosResponse<User>> {
-        return await axios.post(`${Env.url}/api/user`, dto);
+        return await axios.post(`${Env.url}/api/user/session`, dto);
     }
 };

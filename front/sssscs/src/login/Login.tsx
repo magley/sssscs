@@ -1,31 +1,37 @@
 import Button from '@mui/material/Button';
 import { TextField, Box, Typography } from '@mui/material';
-import { LoginService, UserLoginDto, UserLoginResultDto } from "./LoginService";
+import { LoginService, UserLoginDto } from "./LoginService";
 import { AxiosError, AxiosResponse } from "axios";
 import { FieldValues, useForm } from "react-hook-form";
+import { AuthService } from '../auth/AuthService';
+import { useNavigate } from 'react-router-dom';
+import { isPropertySignature } from 'typescript';
+import { GlobalState } from '../App';
 
-/**
- * Send a login request to the server.
- * @param data Login credentials.
- */
-const tryLogin = async (data: FieldValues) => {
-    const dto: UserLoginDto = {
-        email: data['email'],
-        password: data['password']
-    }
-    LoginService.login(dto)
-        .then((res: AxiosResponse<UserLoginResultDto>) => {
-            console.log(res.data);
-            console.log(res.status);
-        })
-        .catch((err : AxiosError) => {
-            console.error(err.response?.data);
-            console.error(err.response?.status);
-        });
-}
 
-export const Login = () => {
+export const Login = (props: {gloState: GlobalState}) => {
     const { register, handleSubmit, formState: { errors } } = useForm({mode: 'all'});
+    const navigate = useNavigate();
+
+    /**
+     * Send a login request to the server.
+     * @param data Login credentials.
+     */
+    const tryLogin = async (data: FieldValues) => {
+        const dto: UserLoginDto = {
+            email: data['email'],
+            password: data['password']
+        }
+        LoginService.login(dto)
+            .then((res: AxiosResponse<string>) => {
+                AuthService.putToken(res.data);
+                props.gloState.updateLoggedIn();
+                navigate("/certificates");
+            }).catch((err : AxiosError) => {
+                console.error(err.response?.data);
+                console.error(err.response?.status);
+            });
+    }
 
     return (
         <Box component='form' noValidate onSubmit={handleSubmit(tryLogin)} sx={{maxWidth: '30rem'}}>
