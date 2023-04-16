@@ -22,14 +22,12 @@ import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.dto.CertificateSummaryItemDto;
 import com.ib.certificate.exception.InvalidCertificateTypeException;
 import com.ib.certificate.request.CertificateRequest;
-import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.certificate.request.ICertificateRequestService;
 import com.ib.pki.KeyUtil;
 import com.ib.user.User;

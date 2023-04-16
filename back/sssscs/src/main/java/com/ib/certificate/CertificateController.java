@@ -24,7 +24,6 @@ import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.certificate.request.ICertificateRequestService;
 import com.ib.user.IUserService;
 import com.ib.user.User;
-import com.ib.util.exception.EntityNotFoundException;
 
 import jakarta.validation.Valid;
 
