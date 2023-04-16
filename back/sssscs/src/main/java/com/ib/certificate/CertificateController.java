@@ -24,6 +24,7 @@ import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.certificate.request.ICertificateRequestService;
 import com.ib.user.IUserService;
 import com.ib.user.User;
+import com.ib.util.security.IAuthenticationFacade;
 
 import jakarta.validation.Valid;
 
@@ -35,9 +36,10 @@ public class CertificateController {
 	@Autowired
 	private ICertificateRequestService certificateRequestService;
 	@Autowired
-	private IUserService userService;
-	@Autowired
 	private ModelMapper modelMapper;
+	@Autowired
+    private IAuthenticationFacade auth;
+
 	
 	private CertificateRequest requestFromCreateDto(CertificateRequestCreateDto dto) {
 		CertificateRequest req = new CertificateRequest();
@@ -45,7 +47,7 @@ public class CertificateController {
 		req.setType(dto.getType());
 		req.setValidTo(dto.getValidTo());
 		req.setStatus(Status.PENDING);
-		req.setCreator((User)SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+		req.setCreator(auth.getUser());
 		if (dto.getParentId() != null) {
 			Certificate parent = certificateService.findById(dto.getParentId());
 			req.setParent(parent);
@@ -60,7 +62,7 @@ public class CertificateController {
 		req = certificateRequestService.makeRequest(req);
 		
 		if (certificateRequestService.canAutoAccept(req)) {
-			User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			User user = auth.getUser();
 			certificateService.accept(req, user);
 		}
 		
@@ -71,7 +73,7 @@ public class CertificateController {
 	@PutMapping("/request/accept/{id}")
 	public ResponseEntity<String> acceptRequest(@PathVariable Long id) {
 		CertificateRequest req = certificateRequestService.findByIdAndStatus(id, Status.PENDING);
-		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User user = auth.getUser();
 		
 		Certificate cert = certificateService.accept(req, user);
 		return ResponseEntity.ok(cert.toString());
@@ -81,7 +83,7 @@ public class CertificateController {
 	@PutMapping("/request/reject/{id}")
 	public ResponseEntity<?> rejectRequest(@PathVariable Long id, @RequestBody String reason) {
 		CertificateRequest req = certificateRequestService.findByIdAndStatus(id, Status.PENDING);
-		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User user = auth.getUser();
 		
 		certificateService.reject(req, reason, user);
 		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
@@ -90,7 +92,7 @@ public class CertificateController {
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
 	@GetMapping("/request/created")
 	public ResponseEntity<?> getOwnRequests() {
-		User creator = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User creator = auth.getUser();
 		
 		List<CertificateRequest> requests = certificateRequestService.findByCreator(creator);
 		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
@@ -101,7 +103,7 @@ public class CertificateController {
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
 	@GetMapping("/request/incoming")
 	public ResponseEntity<?> getRequestsIssuedTo() {
-		User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		User user = auth.getUser();
 		
 		List<CertificateRequest> requests = certificateRequestService.findRequestsByUserResponsibleForThem(user);
 		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();

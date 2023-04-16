@@ -50,9 +50,7 @@ public class UserController {
 		} catch (BadCredentialsException ex) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email or password!");
 		}
-		SecurityContext sc = SecurityContextHolder.getContext();
-		sc.setAuthentication(auth);
-		
+
 		User user = (User) auth.getPrincipal();
 		String token = jwtTokenUtil.generateToken(user.getEmail(), user.getId(), user.getRole().toString());
 		
