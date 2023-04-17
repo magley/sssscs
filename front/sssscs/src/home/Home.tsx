@@ -2,8 +2,8 @@ import { AuthService } from "../auth/AuthService"
 
 export const Home = () => {
     return (
-        <b>
-            {AuthService.getEmail()}
-        </b>
+        <>
+            <h1>sssscs</h1>
+        </>
     )
 }

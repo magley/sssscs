@@ -22,9 +22,9 @@ const NavbarItemsLoggedIn = (props: {gloState: GlobalState}) => {
         <>
             <NavLink to="/certificates">Certificates</NavLink>
             <Link to="/" onClick={() => {
-                    AuthService.delToken();      
+                    AuthService.removeJWT();      
                     navigate("/login");
-                    props.gloState.updateLoggedIn();
+                    props.gloState.updateIsLoggedIn();
                 }}>Logout</Link>
         </>
     )    

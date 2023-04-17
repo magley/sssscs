@@ -1,9 +1,7 @@
 import * as React from 'react';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Login } from './login/Login';
-import { NavLink, Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 import Register from './register/Register';
 import './App.css';
 import { MustBeLoggedIn, MustNotBeLoggedIn } from './auth/AuthGuard';
@@ -12,26 +10,18 @@ import { AuthService } from './auth/AuthService';
 import { CertMain } from './certs/CertMain';
 import { Navbar } from './navbar/Navbar';
 
+// TODO: Explore the Context API. 
+// We can share GlobalState without explicitly passing props.
+
 export interface GlobalState {
-    updateLoggedIn: () => void;
+    updateIsLoggedIn: () => void;
     isLoggedIn: boolean;
 };
 
 function App() {
-    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
-    const theme = React.useMemo(
-        () =>
-            createTheme({
-                palette: {
-                    mode: prefersDarkMode ? 'dark' : 'light',
-                },
-            }),
-        [prefersDarkMode],
-    );
-
     let [state, setState] = React.useState<GlobalState>({
-        isLoggedIn: false,
-        updateLoggedIn: () => {
+        isLoggedIn: AuthService.isLoggedIn(),
+        updateIsLoggedIn: () => {
             let newState = {...state};
             newState.isLoggedIn = AuthService.isLoggedIn();
     
@@ -40,7 +30,7 @@ function App() {
     });
 
     return (
-        <ThemeProvider theme={theme}>
+        <>
             <CssBaseline />
             <Navbar gloState={state}/>
 
@@ -57,13 +47,17 @@ function App() {
 
                 <Route path="*" element={<Page404 />} />
             </Routes>
-        </ThemeProvider>
+        </>
     );
 }
 
 function Page404() {
     return (
-        <b>404 not found.</b>
+        <>
+            <b>404 not found.</b>
+            <br/>
+            <Link to="/">Return home</Link>
+        </>
     )
 }
 

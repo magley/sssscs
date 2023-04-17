@@ -24,8 +24,8 @@ export const Login = (props: {gloState: GlobalState}) => {
         }
         LoginService.login(dto)
             .then((res: AxiosResponse<string>) => {
-                AuthService.putToken(res.data);
-                props.gloState.updateLoggedIn();
+                AuthService.putJWT(res.data);
+                props.gloState.updateIsLoggedIn();
                 navigate("/certificates");
             }).catch((err : AxiosError) => {
                 console.error(err.response?.data);

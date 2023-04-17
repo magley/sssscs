@@ -9,18 +9,8 @@ export interface UserCreateDto {
     phoneNumber: string
 };
 
-// TODO: Remove, temporary
-export interface User {
-    id: number,
-    email: string,
-    password: string,
-    name: string,
-    surname: string,
-    phoneNumber: string
-}
-
 export class RegisterService {
-    static async register(dto: UserCreateDto): Promise<AxiosResponse<User>> {
-        return await axios.post(`${Env.url}/api/user/session`, dto);
+    static async register(dto: UserCreateDto): Promise<AxiosResponse<null>> {
+        return await axios.post(`${Env.url}/api/user/session/register`, dto);
     }
 };

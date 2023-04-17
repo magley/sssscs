@@ -11,11 +11,11 @@ export interface JWTStruct {
 export class AuthService {
     private static JWT_KEY = "JWT";
 
-    static putToken(jwt: string): void {
+    static putJWT(jwt: string): void {
         localStorage.setItem(this.JWT_KEY, jwt);
     }
 
-    static delToken(): void {
+    static removeJWT(): void {
         localStorage.removeItem(this.JWT_KEY);
     }
 

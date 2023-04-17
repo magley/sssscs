@@ -1,6 +1,6 @@
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { AxiosResponse, AxiosError } from "axios";
-import { RegisterService, User, UserCreateDto } from "./RegisterService";
+import { RegisterService, UserCreateDto } from "./RegisterService";
 import { FieldValues, useForm } from "react-hook-form";
 
 const tryRegister = async (data: FieldValues) => {
@@ -12,7 +12,7 @@ const tryRegister = async (data: FieldValues) => {
         phoneNumber: data['phoneNumber']
     }
     RegisterService.register(dto)
-        .then((res: AxiosResponse<User>) => {
+        .then((res: AxiosResponse<null>) => {
             console.log(res.data);
             console.log(res.status);
         })
