@@ -19,6 +19,10 @@ export class AuthService {
         localStorage.removeItem(this.JWT_KEY);
     }
 
+    static getJWTString(): string {
+        return localStorage.getItem(this.JWT_KEY) ?? "";
+    }
+
     private static getJWT(jwt: string): JWTStruct {
         let parts = jwt.split(".");
         for (let i = 0; i < parts.length; i++) {
