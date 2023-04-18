@@ -1,6 +1,5 @@
-import axios, { AxiosResponse } from "axios";
-import { Env } from "../common/Environment";
-import {Buffer} from 'buffer';
+import { AxiosResponse } from "axios";
+import { axiosInstance } from "../http/HttpService";
 
 export interface UserLoginDto {
     email: string,
@@ -9,6 +8,6 @@ export interface UserLoginDto {
 
 export class LoginService {
     static async login(dto: UserLoginDto): Promise<AxiosResponse<string>> {
-        return await axios.post(`${Env.url}/api/user/session/login`, dto);
+        return await axiosInstance.post('user/session/login', dto);
     }
 };

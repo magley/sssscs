@@ -1,6 +1,5 @@
-import axios, { AxiosResponse } from "axios";
-import { Env } from "../common/Environment";
-import { AuthService } from "../auth/AuthService";
+import { AxiosResponse } from "axios";
+import { axiosInstance } from "../http/HttpService";
 
 export enum CertType {
     ROOT,
@@ -26,11 +25,6 @@ export interface CertSummary {
 
 export class CertService {
     static async fetchAllSummary(): Promise<AxiosResponse<Array<CertSummary>>> {
-        const config = {
-            headers: { Authorization: `Bearer ${AuthService.getJWTString()}` }
-        };
-        
-        
-        return await axios.get(`${Env.url}/api/cert`, config);
+        return await axiosInstance.get('cert');
     }
 }

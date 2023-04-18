@@ -1,5 +1,5 @@
-import axios, { AxiosResponse } from "axios";
-import { Env } from "../common/Environment";
+import { AxiosResponse } from "axios";
+import { axiosInstance } from "../http/HttpService";
 
 export interface UserCreateDto {
     email: string,
@@ -11,6 +11,6 @@ export interface UserCreateDto {
 
 export class RegisterService {
     static async register(dto: UserCreateDto): Promise<AxiosResponse<null>> {
-        return await axios.post(`${Env.url}/api/user/session/register`, dto);
+        return await axiosInstance.post('user/session/register', dto);
     }
 };
