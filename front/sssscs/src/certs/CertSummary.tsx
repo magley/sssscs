@@ -1,16 +1,16 @@
 import { useEffect } from "react"
 import { AuthService } from "../auth/AuthService"
-import { CertService, CertSummary, SubjectData } from "./CertService";
+import { CertService, CertificateSummaryDTO, SubjectData } from "./CertService";
 import * as React from 'react';
 import { AxiosResponse } from "axios";
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
-export const CertMain = () => {
-    let [certList, setCertList] = React.useState<Array<CertSummary>>([]);
+export const CertSummary = () => {
+    let [certList, setCertList] = React.useState<Array<CertificateSummaryDTO>>([]);
 
     useEffect(() => {
         CertService.fetchAllSummary()
-            .then((res: AxiosResponse<Array<CertSummary>>) => {
+            .then((res: AxiosResponse<Array<CertificateSummaryDTO>>) => {
                 setCertList(res.data);
             });
     }, []);
@@ -32,7 +32,7 @@ export const CertMain = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {certList.map((value: CertSummary) => (<TableRow>
+                        {certList.map((value: CertificateSummaryDTO) => (<TableRow>
                             <TableCell>
                                 {value.id}
                             </TableCell>

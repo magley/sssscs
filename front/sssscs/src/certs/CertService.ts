@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { axiosInstance } from "../http/HttpService";
 
 export enum CertType {
@@ -15,7 +15,7 @@ export interface SubjectData {
     commonName: string,
 }
 
-export interface CertSummary {
+export interface CertificateSummaryDTO {
     id: number,
     validFrom: Date,
     subjectData: SubjectData,
@@ -24,7 +24,11 @@ export interface CertSummary {
 
 
 export class CertService {
-    static async fetchAllSummary(): Promise<AxiosResponse<Array<CertSummary>>> {
-        return await axiosInstance.get('cert');
+    static async fetchAllSummary(): Promise<AxiosResponse<Array<CertificateSummaryDTO>>> {
+        return await axiosInstance.get(`cert`);
+    }
+
+    static async verify(certID: number): Promise<AxiosResponse<Boolean>> {
+        return await axiosInstance.get(`cert/valid/${certID}`);
     }
 }
