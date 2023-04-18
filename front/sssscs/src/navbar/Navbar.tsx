@@ -22,6 +22,8 @@ const NavbarItemsLoggedIn = (props: {gloState: GlobalState}) => {
         <>
             <NavLink to="/certificates">All Certificates</NavLink>
             <NavLink to="/certificates/verify">Verify Certificates</NavLink>
+            <NavLink to="/certificates/request/my">My Requests</NavLink>
+            
             <Link to="/" onClick={() => {
                     AuthService.removeJWT();      
                     navigate("/login");
