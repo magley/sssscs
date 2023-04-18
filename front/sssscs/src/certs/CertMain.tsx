@@ -1,12 +1,12 @@
 import { useEffect } from "react"
 import { AuthService } from "../auth/AuthService"
-import { CertService, CertSummary } from "./CertService";
+import { CertService, CertSummary, SubjectData } from "./CertService";
 import * as React from 'react';
 import { AxiosResponse } from "axios";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 
 export const CertMain = () => {
     let [certList, setCertList] = React.useState<Array<CertSummary>>([]);
-
 
     useEffect(() => {
         CertService.fetchAllSummary()
@@ -17,18 +17,66 @@ export const CertMain = () => {
 
     return (
         <>
-        <b>You can only see this if you're logged in.</b>
-        <br/>
-        <p>{AuthService.getEmail()}</p>
+        <h2>All Certificates</h2>
         <hr/>
 
-        <ul>
-            {
-                certList.map(cert => 
-                    <li>{JSON.stringify(cert)}</li>
-                )
-            }
-        </ul>
+        <div style={{ height: 400, width: '100%' }}>
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Identification Number</TableCell>
+                            <TableCell>Not Before</TableCell>
+                            <TableCell>Issued To</TableCell>
+                            <TableCell>Type</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {certList.map((value: CertSummary) => (<TableRow>
+                            <TableCell>
+                                {value.id}
+                            </TableCell>
+                            <TableCell>
+                                {new Date(value.validFrom).toISOString()}
+                            </TableCell>
+                            <TableCell>
+                                {subjectToCellStr(value.subjectData)}
+                            </TableCell>
+                            <TableCell>
+                                {value.type}
+                            </TableCell>
+                        </TableRow>))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </div>
         </>
     )
+}
+
+const subjectToCellStr = (s: SubjectData) => {
+    let str: string = "";
+    if (s.name !== "") {
+        str += s.name + " ";
+    }
+    if (s.surname !== "") {
+        str += s.surname + " ";
+    }
+    if (s.name !== "" || s.surname !== "") {
+        if (s.commonName !== "") {
+            str += `(${s.commonName}), `;
+        }
+    } else {
+        if (s.commonName !== "") {
+            str += `${s.commonName} `;
+        }
+    }
+    if (s.email !== "") {
+        str += s.email + ", ";
+    }
+    if (s.organization != "") {
+        str += s.organization;
+    }
+
+    return str;
 }
