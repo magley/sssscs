@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { CertRequestDTO, CertRequestService } from "./CertRequestService";
 import { Box, Button, TextField } from "@mui/material";
 import { FieldValues, useForm } from "react-hook-form";
+import { CertRequestTable } from "./CertRequestTable";
 
 export const CertRequestsIssuedToMe = () => {
     let [reqList, setReqList] = React.useState<Array<CertRequestDTO>>([]);
@@ -49,13 +50,7 @@ export const CertRequestsIssuedToMe = () => {
 
     return (
         <>
-            <ul>
-                {
-                    reqList.map((item: CertRequestDTO, index: number) => (
-                        <li onClick={() => onClickItem(index)}>{JSON.stringify(item)}</li>
-                    ))
-                }
-            </ul>
+            <CertRequestTable requests={reqList} onClickRow={onClickItem} />
 
             { selectedReq && (
                 <>

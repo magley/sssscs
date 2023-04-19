@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { CertRequestDTO, CertRequestService } from "./CertRequestService";
 import React from "react";
 import { AxiosResponse } from "axios";
+import { CertRequestTable } from "./CertRequestTable";
 
 export const MyCertRequests = () => {
     let [reqList, setReqList] = React.useState<Array<CertRequestDTO>>([]);
@@ -13,16 +14,9 @@ export const MyCertRequests = () => {
             });
     }, []);
 
-
     return (
         <>
-            <ul>
-                {
-                    reqList.map((item: CertRequestDTO) => (
-                        <li>{JSON.stringify(item)}</li>
-                    ))
-                }
-            </ul>
+            <CertRequestTable requests={reqList} showColumnStatus={true} />
         </>
     );
 }

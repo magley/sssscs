@@ -32,3 +32,30 @@ export class CertService {
         return await axiosInstance.get(`cert/valid/${certID}`);
     }
 }
+
+export const subjectToCellStr = (s: SubjectData) => {
+    let str: string = "";
+    if (s.name !== "") {
+        str += s.name + " ";
+    }
+    if (s.surname !== "") {
+        str += s.surname + " ";
+    }
+    if (s.name !== "" || s.surname !== "") {
+        if (s.commonName !== "") {
+            str += `(${s.commonName}), `;
+        }
+    } else {
+        if (s.commonName !== "") {
+            str += `${s.commonName} `;
+        }
+    }
+    if (s.email !== "") {
+        str += s.email + ", ";
+    }
+    if (s.organization != "") {
+        str += s.organization;
+    }
+
+    return str;
+}
