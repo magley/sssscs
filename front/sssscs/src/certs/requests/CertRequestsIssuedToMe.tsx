@@ -10,11 +10,15 @@ export const CertRequestsIssuedToMe = () => {
     let { register, handleSubmit, formState: {errors }} = useForm({mode: 'all'});
 
     useEffect(() => {
+        loadRequestsIntoReqList();
+    }, []);
+
+    const loadRequestsIntoReqList = async () => {
         CertRequestService.getIssuedToMe()
             .then((res: AxiosResponse<Array<CertRequestDTO>>) => {
                 setReqList(res.data);
             });
-    }, []);
+    }
     
     const onClickItem = (index: number) => {
         const selectedItem = reqList[index];
@@ -27,7 +31,8 @@ export const CertRequestsIssuedToMe = () => {
         }
         CertRequestService.accept(selectedReq.id)
             .then((res: AxiosResponse<void>) => {
-                
+                loadRequestsIntoReqList();
+                setSelectedReq(null);
             });
     }
 
@@ -37,7 +42,8 @@ export const CertRequestsIssuedToMe = () => {
         }
         CertRequestService.reject(selectedReq.id, data['reason'])
             .then((res: AxiosResponse<void>) => {
-
+                loadRequestsIntoReqList();
+                setSelectedReq(null);
             });
     }
 
