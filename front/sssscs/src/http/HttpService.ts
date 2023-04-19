@@ -5,7 +5,10 @@ import { Env } from "../common/Environment";
 import { AuthService } from "../auth/AuthService";
 
 export const axiosInstance = axios.create({
-    baseURL: `${Env.url}/api/`
+    baseURL: `${Env.url}/api/`,
+    headers: {
+        "Content-Type": "application/json"
+    }
 });
 
 axiosInstance.interceptors.request.use(

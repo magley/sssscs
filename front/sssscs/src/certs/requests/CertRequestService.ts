@@ -1,6 +1,7 @@
 import { AxiosResponse } from "axios";
 import { axiosInstance } from "../../http/HttpService";
 import { CertType, CertificateSummaryDTO, SubjectData } from "../CertService";
+import { Subject } from "react-hook-form/dist/utils/createSubject";
 
 export enum CertRequestStatus {
     PENDING,
@@ -18,6 +19,13 @@ export interface CertRequestDTO {
     rejectionReason: string | undefined,
 }
 
+export interface CertRequestCreateDTO {
+    type: string,
+    validTo: Date,
+    parentId: number | null,
+    subjectData: SubjectData,
+}
+
 export class CertRequestService {
     static async getOwn(): Promise<AxiosResponse<Array<CertRequestDTO>>> {
         return await axiosInstance.get(`cert/request/created`);
@@ -33,5 +41,9 @@ export class CertRequestService {
 
     static async reject(id: number, reason: string): Promise<AxiosResponse<void>> {
         return await axiosInstance.put(`cert/request/reject/${id}`, reason, {headers: {"Content-Type": "text/plain"}});
+    }
+
+    static async create(payload: CertRequestCreateDTO): Promise<AxiosResponse<void>> {
+        return await axiosInstance.post(`cert/request`, payload);
     }
 }

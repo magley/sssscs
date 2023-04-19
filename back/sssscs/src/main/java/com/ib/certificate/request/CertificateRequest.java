@@ -94,4 +94,15 @@ public class CertificateRequest {
 	public boolean isTypeValid() {
 		return type == Type.ROOT || parent != null;
 	}
+	
+	/**
+	 * @return True if this certificate will expire after its parent (if any).
+	 * This is invalid state and such certificate request should not be created.
+	 */
+	public boolean expiresAfterParent() {
+		if (parent == null) {
+			return false;
+		}
+		return getValidTo().isAfter(parent.getValidTo());
+	}
 }

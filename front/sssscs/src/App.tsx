@@ -12,6 +12,7 @@ import { Navbar } from './navbar/Navbar';
 import { CertVerify } from './certs/CertVerify';
 import { MyCertRequests } from './certs/requests/MyCertRequests';
 import { CertRequestsIssuedToMe } from './certs/requests/CertRequestsIssuedToMe';
+import { CertRequestCreate } from './certs/requests/CertRequestCreate';
 
 // TODO: Explore the Context API. 
 // We can share GlobalState without explicitly passing props.
@@ -49,6 +50,7 @@ function App() {
                     <Route path="/certificates/verify" element={<CertVerify />} />
                     <Route path="/certificates/request/my" element={<MyCertRequests />} />
                     <Route path="/certificates/request/to-me" element={<CertRequestsIssuedToMe />} />
+                    <Route path="/certificates/request/create" element={<CertRequestCreate />} />
                 </Route>
 
                 <Route path="*" element={<Page404 />} />

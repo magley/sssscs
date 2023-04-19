@@ -29,6 +29,10 @@ public class CertificateRequestService implements ICertificateRequestService {
 			throw new BadExpirationDateException();
 		}
 		
+		if (request.expiresAfterParent()) {
+			throw new BadExpirationDateException();
+		}
+		
 		if (!request.isCreatorAuthorized()) {
 			throw new CreatorUnauthorizedException();
 		}

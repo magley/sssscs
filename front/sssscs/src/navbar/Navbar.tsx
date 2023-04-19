@@ -21,6 +21,7 @@ const NavbarItemsLoggedIn = (props: {gloState: GlobalState}) => {
     return (
         <>
             <NavLink to="/certificates">All Certificates</NavLink>
+            <NavLink to="/certificates/request/create">Create New Certificate</NavLink>
             <NavLink to="/certificates/verify">Verify Certificates</NavLink>
             <NavLink to="/certificates/request/my">My Requests</NavLink>
             <NavLink to="/certificates/request/to-me">Requests Issued To Me</NavLink>
