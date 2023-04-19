@@ -102,10 +102,10 @@ public class CertificateController {
 	
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
 	@GetMapping("/request/incoming")
-	public ResponseEntity<?> getRequestsIssuedTo() {
+	public ResponseEntity<?> getPendingRequestsIssuedTo() {
 		User user = auth.getUser();
 		
-		List<CertificateRequest> requests = certificateRequestService.findRequestsByUserResponsibleForThem(user);
+		List<CertificateRequest> requests = certificateRequestService.findPendingRequestsIssuedTo(user);
 		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
 		
 		return new ResponseEntity<>(result, HttpStatus.OK);
