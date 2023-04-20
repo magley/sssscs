@@ -5,18 +5,13 @@ import { AxiosError, AxiosResponse } from "axios";
 import { FieldValues, useForm } from "react-hook-form";
 import { AuthService } from '../auth/AuthService';
 import { useNavigate } from 'react-router-dom';
-import { isPropertySignature } from 'typescript';
 import { GlobalState } from '../App';
 
 
 export const Login = (props: {gloState: GlobalState}) => {
-    const { register, handleSubmit, formState: { errors } } = useForm({mode: 'all'});
+    const { register, handleSubmit, formState: { errors }, setError } = useForm({mode: 'all'});
     const navigate = useNavigate();
 
-    /**
-     * Send a login request to the server.
-     * @param data Login credentials.
-     */
     const tryLogin = async (data: FieldValues) => {
         const dto: UserLoginDto = {
             email: data['email'],
@@ -30,6 +25,10 @@ export const Login = (props: {gloState: GlobalState}) => {
             }).catch((err : AxiosError) => {
                 console.error(err.response?.data);
                 console.error(err.response?.status);
+
+                if (err.response?.status === 400) {
+                    setError('password', {message: 'Wrong email or password'}, {shouldFocus: true});
+                }
             });
     }
 

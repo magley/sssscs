@@ -2,7 +2,7 @@ import * as React from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Login } from './login/Login';
 import { Link, Route, Routes } from 'react-router-dom';
-import Register from './register/Register';
+import { Register } from './register/Register';
 import './App.css';
 import { MustBeLoggedIn, MustNotBeLoggedIn } from './auth/AuthGuard';
 import { Home } from './home/Home';
