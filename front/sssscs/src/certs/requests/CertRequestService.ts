@@ -21,7 +21,6 @@ export interface CertRequestDTO {
 
 export interface CertRequestCreateDTO {
     type: string,
-    validTo: Date,
     parentId: number | null,
     subjectData: SubjectData,
 }

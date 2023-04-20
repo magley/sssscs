@@ -20,15 +20,9 @@ export const CertRequestCreate = () => {
     }, []);
 
     const sendRequest = async (data: FieldValues) => {
-        const validToAttempt = new Date(Date.parse(data['validTo']));
-        // TODO: Datetime validation.
-        // Raw strings are dumb, but the MUI date picker doesn't work well with
-        // hook forms.....
-
         const dto: CertRequestCreateDTO = {
             type: CertType[data['type']],
             parentId: Number(data['parentId']),
-            validTo: validToAttempt,
             subjectData: {
                 name: data['subjectName'],
                 surname: data['subjectSurname'],
@@ -87,14 +81,6 @@ export const CertRequestCreate = () => {
                     helperText={errors['parentId']?.message?.toString()}
                     />
                 <br/>
-
-                <TextField
-                    label="Not after"
-                    required
-                    {...register('validTo', {required: "Date requred"})}
-                    error={!!errors['validTo']}
-                    helperText={errors['validTo']?.message?.toString()}
-                    />
 
                 <InputLabel>Subject</InputLabel>
                 <Box>
