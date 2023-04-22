@@ -14,6 +14,7 @@ import com.ib.certificate.exception.CreatorUnauthorizedException;
 import com.ib.util.exception.EntityException;
 import com.ib.util.exception.EntityNotFoundException;
 import com.ib.util.validation.BadValidation;
+import com.ib.verification.exception.InvalidCodeException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -26,6 +27,11 @@ public class ControllerAdvisor {
 	
 	@ExceptionHandler({EntityException.class})
 	public ResponseEntity<?> handleEntityException(final EntityException e) {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler({InvalidCodeException.class})
+	public ResponseEntity<?> handleInvalidCodeException(final InvalidCodeException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ib.user.IUserService;
 import com.ib.user.User;
 import com.ib.verification.dto.VerificationCodeSendRequestDto;
+import com.ib.verification.dto.VerificationCodeVerifyDTO;
 
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
@@ -37,6 +38,13 @@ public class VerificationCodeController {
 		System.err.println(code.getCode());
 		System.err.println(code.getExpiraiton());
 		
+		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
+	}
+	
+	@PermitAll
+	@PostMapping("/verify")
+	public ResponseEntity<?> verifyUser(@Valid @RequestBody VerificationCodeVerifyDTO dto) {
+		service.verifyUser(dto);
 		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
 	}
 }

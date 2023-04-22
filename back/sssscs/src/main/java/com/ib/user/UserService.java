@@ -44,4 +44,9 @@ public class UserService implements IUserService {
 	public User findByEmail(String userEmail) {
 		return userRepo.findByEmail(userEmail).orElseThrow(() -> new EntityNotFoundException(User.class, userEmail));
 	}
+
+	@Override
+	public void verify(User user) {
+		user.setVerified(true);
+	}
 }

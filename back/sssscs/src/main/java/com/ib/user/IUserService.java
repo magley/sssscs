@@ -6,4 +6,5 @@ public interface IUserService extends UserDetailsService {
 	User register(User user);
 	User findById(Long issuer);
 	User findByEmail(String userEmail);
+	void verify(User user);
 }

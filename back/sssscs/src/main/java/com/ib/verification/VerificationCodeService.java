@@ -7,10 +7,16 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ib.user.IUserService;
 import com.ib.user.User;
 import com.ib.util.twilio.SendgridUtil;
 import com.ib.verification.dto.VerificationCodeSendRequestDto.Method;
+import com.ib.verification.dto.VerificationCodeVerifyDTO;
+import com.ib.verification.exception.InvalidCodeException;
 import com.ib.verification.exception.UnsupportedVerificationSendMethodException;
+import com.ib.verification.exception.VerificationCodeNotFoundException;
+
+import jakarta.validation.Valid;
 
 @Service
 public class VerificationCodeService implements IVerificationCodeService {
@@ -18,6 +24,8 @@ public class VerificationCodeService implements IVerificationCodeService {
 	private IVerificationCodeRepo repo;
 	@Autowired
 	private SendgridUtil sendgridUtil;
+	@Autowired
+	private IUserService userService;
 
 	@Override
 	public VerificationCode getOrCreateCode(User user) {
@@ -66,5 +74,24 @@ public class VerificationCodeService implements IVerificationCodeService {
 	
 	private String getCodeText(String code) {
 		return "Your code is <b>" + code + "</b>"; 
+	}
+
+	@Override
+	public void verifyUser(@Valid VerificationCodeVerifyDTO dto) {
+		User user = userService.findByEmail(dto.getUserEmail());
+		VerificationCode code = get(user);
+			
+		if (!code.getCode().equals(dto.getCode())) {
+			throw new InvalidCodeException();
+		}
+		
+		userService.verify(user);
+		code.setValid(false);
+		repo.save(code);
+	}
+
+	@Override
+	public VerificationCode get(User user) {
+		return repo.findByUserAndValidTrue(user).orElseThrow(() -> new VerificationCodeNotFoundException(user));
 	}
 }
