@@ -1,13 +1,18 @@
 export enum VerificationMethod {
-    EMAIL, SMS
+    EMAIL, SMS,
 };
 
 export interface VerificationCodeSendRequestDTO {
     userEmail: string,
     method: VerificationMethod,
-    dontActuallySend: boolean
+    dontActuallySend: boolean,
 };
 
 export interface VerifyPageRouterState {
-    email: string
+    email: string,
+}
+
+export interface VerificationCodeVerifyDTO {
+    userEmail: string,
+    code: string,
 }
