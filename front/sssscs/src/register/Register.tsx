@@ -1,29 +1,31 @@
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { AxiosResponse, AxiosError } from "axios";
-import { RegisterService, User, UserCreateDto } from "./RegisterService";
+import { RegisterService, UserCreateDto } from "./RegisterService";
 import { FieldValues, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
-const tryRegister = async (data: FieldValues) => {
-    const dto: UserCreateDto = {
-        email: data['email'],
-        name: data['name'],
-        surname: data['surname'],
-        password: data['password'],
-        phoneNumber: data['phoneNumber']
+export const Register = () => {
+    const { register, trigger, handleSubmit, formState: { errors }, setError } = useForm({mode: 'all'});
+    const navigate = useNavigate();
+
+    const tryRegister = async (data: FieldValues) => {
+        const dto: UserCreateDto = {
+            email: data['email'],
+            name: data['name'],
+            surname: data['surname'],
+            password: data['password'],
+            phoneNumber: data['phoneNumber']
+        }
+        RegisterService.register(dto)
+            .then((res: AxiosResponse<null>) => {
+                navigate("/login");
+            })
+            .catch((err : AxiosError) => {
+                if (err.response?.status === 400) {
+                    setError('email', {message: err.response?.data as string}, {shouldFocus: true});
+                }
+            });
     }
-    RegisterService.register(dto)
-        .then((res: AxiosResponse<User>) => {
-            console.log(res.data);
-            console.log(res.status);
-        })
-        .catch((err : AxiosError) => {
-            console.error(err.response?.data);
-            console.error(err.response?.status);
-        });
-}
-
-const Register = () => {
-    const { register, trigger, handleSubmit, formState: { errors } } = useForm({mode: 'all'});
 
     // TODO: Find a cleaner way to do this
     const { onChange, onBlur, name, ref } = register('password', {
@@ -139,5 +141,3 @@ const Register = () => {
         </Box>
     );
 }
-
-export default Register;

@@ -50,7 +50,7 @@ public class CertificateService implements ICertificateService {
 	
 	private boolean isAuthorizedToAcceptOrReject(CertificateRequest req, User user) {
 		if (req.getParent() != null) {
-			var requestsUserCanSign = certificateRequestService.findRequestsByUserResponsibleForThem(user);
+			var requestsUserCanSign = certificateRequestService.findPendingRequestsIssuedTo(user);
 			return requestsUserCanSign.contains(req);
 		}
 		return user.getRole() == Role.ADMIN;

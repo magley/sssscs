@@ -29,6 +29,10 @@ public class CertificateRequestService implements ICertificateRequestService {
 			throw new BadExpirationDateException();
 		}
 		
+		if (request.expiresAfterParent()) {
+			throw new BadExpirationDateException();
+		}
+		
 		if (!request.isCreatorAuthorized()) {
 			throw new CreatorUnauthorizedException();
 		}
@@ -76,7 +80,7 @@ public class CertificateRequestService implements ICertificateRequestService {
 	}
 
 	@Override
-	public List<CertificateRequest> findRequestsByUserResponsibleForThem(User user) {
-		return certificateRequestRepo.findRequestsByUserResponsibleForThem(user.getId(), user.getRole() == Role.ADMIN);
+	public List<CertificateRequest> findPendingRequestsIssuedTo(User user) {
+		return certificateRequestRepo.findPendingRequestsIssuedTo(user.getId(), user.getRole() == Role.ADMIN);
 	}
 }

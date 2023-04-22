@@ -1,5 +1,6 @@
 package com.ib.certificate;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.dto.CertificateRequestCreateDto;
 import com.ib.certificate.dto.CertificateRequestDto;
 import com.ib.certificate.dto.CertificateSummaryItemDto;
@@ -45,13 +47,26 @@ public class CertificateController {
 		CertificateRequest req = new CertificateRequest();
 		req.setSubjectData(dto.getSubjectData());
 		req.setType(dto.getType());
-		req.setValidTo(dto.getValidTo());
+
 		req.setStatus(Status.PENDING);
 		req.setCreator(auth.getUser());
 		if (dto.getParentId() != null) {
 			Certificate parent = certificateService.findById(dto.getParentId());
 			req.setParent(parent);
 		}
+			
+		if (dto.getType() == Type.ROOT) {
+			req.setValidTo(LocalDateTime.now().plusYears(1));
+		} else if (dto.getType() == Type.INTERMEDIATE) {
+			LocalDateTime desired = LocalDateTime.now().plusMonths(6);
+			if (desired.isAfter(req.getParent().getValidTo())) {
+				desired = req.getParent().getValidTo().minusDays(1);
+			}
+			req.setValidTo(desired);
+		} else {
+			req.setValidTo(LocalDateTime.now().plusMonths(2));
+		}
+		
 		return req;
 	}
 	
@@ -102,10 +117,10 @@ public class CertificateController {
 	
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
 	@GetMapping("/request/incoming")
-	public ResponseEntity<?> getRequestsIssuedTo() {
+	public ResponseEntity<?> getPendingRequestsIssuedTo() {
 		User user = auth.getUser();
 		
-		List<CertificateRequest> requests = certificateRequestService.findRequestsByUserResponsibleForThem(user);
+		List<CertificateRequest> requests = certificateRequestService.findPendingRequestsIssuedTo(user);
 		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class)).toList();
 		
 		return new ResponseEntity<>(result, HttpStatus.OK);

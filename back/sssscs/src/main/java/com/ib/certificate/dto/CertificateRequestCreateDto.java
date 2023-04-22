@@ -18,7 +18,5 @@ public class CertificateRequestCreateDto {
 	private Certificate.Type type;
 	@NotNull
 	private SubjectData subjectData;
-	@NotNull
-	private LocalDateTime validTo;
 	private Long parentId;
 }

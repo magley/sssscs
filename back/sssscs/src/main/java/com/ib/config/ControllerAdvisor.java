@@ -8,6 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ib.certificate.exception.CreatorUnauthorizedException;
 import com.ib.util.exception.EntityException;
@@ -18,6 +19,11 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class ControllerAdvisor {
+	@ExceptionHandler({ResponseStatusException.class})
+	public ResponseEntity<?> handleResponseStatusException(final ResponseStatusException e) {
+		return new ResponseEntity<>(e.getMessage(), e.getStatusCode());
+	}
+	
 	@ExceptionHandler({EntityException.class})
 	public ResponseEntity<?> handleEntityException(final EntityException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
