@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.ib.pki.KeyUtil;
+import com.ib.util.sendgrid.SendgridUtil;
 
 @Configuration
 public class StandardConfig {
@@ -34,5 +35,10 @@ public class StandardConfig {
 	public KeyUtil keyUtil() {
 		Security.addProvider(new BouncyCastleProvider());
 		return new KeyUtil();
+	}
+	
+	@Bean
+	public SendgridUtil sendgridUtil() {
+		return new SendgridUtil();
 	}
 }

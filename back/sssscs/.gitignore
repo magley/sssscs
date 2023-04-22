@@ -2,6 +2,9 @@
 # Hide database
 data/*.db
 
+# Hide sendgrid env vars
+data/sendgrid.env
+
 # Miscellaneous
 *.java.hsp
 *.sonarj
