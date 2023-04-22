@@ -46,7 +46,7 @@ public class SendgridUtil {
 		String to_email = env_vars.get(KEY_FROM); // We test with dummy emails so send everything to 1 email.
 		Email from = new Email(env_vars.get(KEY_FROM));
 	    Email to = new Email(to_email);
-	    Content content = new Content("text/plain", body);
+	    Content content = new Content("text/html", body);
 	    Mail mail = new Mail(from, subject, to, content);
 	    SendGrid sg = new SendGrid(env_vars.get(KEY_APIKEY));
 	    Request request = new Request();

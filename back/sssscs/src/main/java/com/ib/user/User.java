@@ -51,7 +51,9 @@ public class User implements UserDetails {
 	private String phoneNumber;
 	@Column(nullable = false)
 	@Enumerated(value = EnumType.STRING)
-	private Role role = Role.REGULAR;
+	private Role role = Role.REGULAR;	
+	@Column(nullable = false)
+	private Boolean verified = false;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

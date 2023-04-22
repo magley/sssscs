@@ -39,4 +39,9 @@ public class UserService implements IUserService {
 	public User findById(Long issuer) {
 		return userRepo.findById(issuer).orElseThrow(() -> new EntityNotFoundException(User.class, issuer));
 	}
+
+	@Override
+	public User findByEmail(String userEmail) {
+		return userRepo.findByEmail(userEmail).orElseThrow(() -> new EntityNotFoundException(User.class, userEmail));
+	}
 }

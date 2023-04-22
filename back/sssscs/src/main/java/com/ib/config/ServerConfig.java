@@ -59,6 +59,7 @@ public class ServerConfig implements WebMvcConfigurer {
 		http.headers().frameOptions().disable();
 		http.authorizeHttpRequests()
 			.requestMatchers("/api/user/session/**").permitAll()
+			.requestMatchers("/api/verification-code/**").permitAll()
 			.anyRequest().authenticated();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
