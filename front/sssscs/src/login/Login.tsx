@@ -6,6 +6,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { AuthService } from '../auth/AuthService';
 import { useNavigate } from 'react-router-dom';
 import { GlobalState } from '../App';
+import { VerifyPageRouterState } from '../verify/VerifyService';
 
 
 export const Login = (props: {gloState: GlobalState}) => {
@@ -28,6 +29,11 @@ export const Login = (props: {gloState: GlobalState}) => {
 
                 if (err.response?.status === 400) {
                     setError('password', {message: 'Wrong email or password'}, {shouldFocus: true});
+                } else if (err.response?.status === 422) {
+                    const routedState: VerifyPageRouterState = {
+                        email: dto.email
+                    };
+                    navigate("/verify", {state: routedState});
                 }
             });
     }
