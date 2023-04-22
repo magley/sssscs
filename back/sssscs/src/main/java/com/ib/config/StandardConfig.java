@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.ib.pki.KeyUtil;
-import com.ib.util.sendgrid.SendgridUtil;
+import com.ib.util.twilio.SendgridUtil;
 
 @Configuration
 public class StandardConfig {
