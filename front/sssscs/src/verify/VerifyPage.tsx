@@ -1,16 +1,16 @@
 import { Box, Button, MenuItem, Select, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
-import { useLocation } from "react-router-dom";
-import { VerificationCodeSendRequestDTO, VerificationCodeVerifyDTO, VerificationMethod, VerifyPageRouterState } from "./VerifyService";
-
-
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { VerificationCodeSendRequestDTO, VerificationCodeVerifyDTO, VerificationMethod, VerifyPageRouterState, VerifyService } from "./VerifyService";
+import { AxiosError, AxiosResponse } from "axios";
 
 export const VerifyPage = () => {
-    const { setValue, register, handleSubmit, formState: {errors}} = useForm({mode: 'all'});
-    const { register: register2, handleSubmit: handleSubmit2, formState: {errors: errors2}} = useForm({mode: 'all'});
+    const { setValue, register, handleSubmit, formState: {errors}, setError} = useForm({mode: 'all'});
+    const { register: register2, handleSubmit: handleSubmit2, formState: {errors: errors2}, setError: setError2} = useForm({mode: 'all'});
     const { state: routerLocationState } = useLocation();
     let [email, setEmail] = useState<string>("");
+    let navigate = useNavigate();
 
     useEffect(() => {
         const state = routerLocationState as VerifyPageRouterState;
@@ -25,9 +25,18 @@ export const VerifyPage = () => {
             method: data['type'] as VerificationMethod,
             dontActuallySend: true,
         }
+        setEmail(data['email']);
 
         console.log(dto);
-        setEmail(data['email']);
+        VerifyService.sendCode(dto)
+            .then((val: AxiosResponse<void>) => {
+                console.log("Success!");
+            })
+            .catch((err : AxiosError) => {
+                if (err.response?.status == 404) {
+                    setError('email', {message: "User not found."}, {shouldFocus: true});
+                }  
+            }); 
     }
 
     const verifyCode = async (data: FieldValues) => {
@@ -37,6 +46,13 @@ export const VerifyPage = () => {
         };
 
         console.log(dto);
+        VerifyService.verifyUser(dto)
+            .then((val: AxiosResponse<void>) => {
+                navigate('/login');
+            })
+            .catch((err: AxiosError) => {
+                setError2('code', {message: err.response?.data as string}, {shouldFocus: true});
+            });
     }
 
     return (
