@@ -86,6 +86,7 @@ public class VerificationCodeService implements IVerificationCodeService {
 		}
 
 		userService.verify(user);
+		userService.resetLoginCounter(user);
 		code.setValid(false);
 		repo.save(code);
 	}

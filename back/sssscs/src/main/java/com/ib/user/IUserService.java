@@ -10,4 +10,8 @@ public interface IUserService extends UserDetailsService {
 	User findByEmail(String userEmail);
 
 	void verify(User user);
+	
+	void resetLoginCounter(User user);
+	
+	void incrementLoginCounter(User user);
 }

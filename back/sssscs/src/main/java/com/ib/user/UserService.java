@@ -48,5 +48,18 @@ public class UserService implements IUserService {
 	@Override
 	public void verify(User user) {
 		user.setVerified(true);
+		userRepo.save(user);
+	}
+
+	@Override
+	public void resetLoginCounter(User user) {
+		user.setLoginCounter(0);
+		userRepo.save(user);
+	}
+
+	@Override
+	public void incrementLoginCounter(User user) {
+		user.setLoginCounter(user.getLoginCounter() + 1);
+		userRepo.save(user);
 	}
 }

@@ -30,6 +30,8 @@ public class UserController {
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 
+	private static final Integer loginsBefore2FactorAuthActivates = 5;
+
 	@PostMapping("/session/register")
 	public ResponseEntity<?> register(@DTO(UserCreateDto.class) User user) {
 		userService.register(user);
@@ -48,16 +50,13 @@ public class UserController {
 		}
 
 		User user = (User) auth.getPrincipal();
-
-		// TODO: user not verified OR server deemed it necessary to fire 2FA.
-		if (user.getVerified() == false) {
-			// Status 422, instead of 403, makes it easier to redirect on the front-end
-			// because normally we would never use 422 so it stands out.
+		if (user.getVerified() == false || user.getLoginCounter() == loginsBefore2FactorAuthActivates) {
+			// UNPROCESSABLE_ENTITY == 422, it stands out which helps us on the frontend.
 			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Verify your account.");
 		}
-
+		userService.incrementLoginCounter(user);
+		
 		String token = jwtTokenUtil.generateToken(user.getEmail(), user.getId(), user.getRole().toString());
-
 		return ResponseEntity.ok(token);
 	}
 }
