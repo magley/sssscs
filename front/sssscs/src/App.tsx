@@ -13,6 +13,7 @@ import { CertVerify } from './certs/CertVerify';
 import { MyCertRequests } from './certs/requests/MyCertRequests';
 import { CertRequestsIssuedToMe } from './certs/requests/CertRequestsIssuedToMe';
 import { CertRequestCreate } from './certs/requests/CertRequestCreate';
+import { VerifyPage } from './verify/VerifyPage';
 
 // TODO: Explore the Context API. 
 // We can share GlobalState without explicitly passing props.
@@ -44,6 +45,7 @@ function App() {
                 <Route element={<MustNotBeLoggedIn/>}>
                     <Route path='login' element={<Login gloState={state}/>} />
                     <Route path='register' element={<Register />} />
+                    <Route path='verify' element={<VerifyPage />} />
                 </Route>
                 <Route element={<MustBeLoggedIn/>}>
                     <Route path="/certificates" element={<CertSummary />} />
