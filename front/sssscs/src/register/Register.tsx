@@ -3,6 +3,7 @@ import { AxiosResponse, AxiosError } from "axios";
 import { RegisterService, UserCreateDto } from "./RegisterService";
 import { FieldValues, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { VerifyPageRouterState } from "../verify/VerifyService";
 
 export const Register = () => {
     const { register, trigger, handleSubmit, formState: { errors }, setError } = useForm({mode: 'all'});
@@ -18,7 +19,10 @@ export const Register = () => {
         }
         RegisterService.register(dto)
             .then((res: AxiosResponse<null>) => {
-                navigate("/login");
+                const routedState: VerifyPageRouterState = {
+                    email: dto.email
+                };
+                navigate("/verify", {state: routedState});
             })
             .catch((err : AxiosError) => {
                 if (err.response?.status === 400) {

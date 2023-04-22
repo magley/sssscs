@@ -1,18 +1,20 @@
 import { Box, Button, MenuItem, Select, TextField } from "@mui/material";
+import { useEffect } from "react";
 import { FieldValues, useForm } from "react-hook-form";
+import { useLocation } from "react-router-dom";
+import { VerificationCodeSendRequestDTO, VerificationMethod, VerifyPageRouterState } from "./VerifyService";
 
-export enum VerificationMethod {
-    EMAIL, SMS
-};
 
-export interface VerificationCodeSendRequestDTO {
-    userEmail: string,
-    method: VerificationMethod,
-    dontActuallySend: boolean
-};
 
 export const VerifyPage = () => {
-    const { register, control, handleSubmit, formState: {errors}} = useForm({mode: 'all'});
+    const { setValue, register, control, handleSubmit, formState: {errors}} = useForm({mode: 'all'});
+    const { state } = useLocation();
+
+    useEffect(() => {
+        const stateV = state as VerifyPageRouterState;
+        let emailFromState: string | null = stateV?.email;
+        setValue('email', emailFromState);
+    }, []);
     
     const sendCode = async (data: FieldValues) => {
         const dto: VerificationCodeSendRequestDTO = {
