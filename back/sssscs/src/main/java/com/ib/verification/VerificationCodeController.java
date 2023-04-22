@@ -23,7 +23,7 @@ public class VerificationCodeController {
 	private IVerificationCodeService service;
 	@Autowired
 	private IUserService userService;
-	
+
 	@PermitAll
 	@PostMapping("/send")
 	public ResponseEntity<?> sendVerificationCode(@Valid @RequestBody VerificationCodeSendRequestDto dto) {
@@ -33,18 +33,18 @@ public class VerificationCodeController {
 		if (dto.getDontActuallySend() == false) {
 			service.sendCode(code, dto.getMethod());
 		}
-		
+
 		System.err.println(dto);
 		System.err.println(code.getCode());
 		System.err.println(code.getExpiraiton());
-		
-		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
+
+		return new ResponseEntity<Void>((Void) null, HttpStatus.NO_CONTENT);
 	}
-	
+
 	@PermitAll
 	@PostMapping("/verify")
 	public ResponseEntity<?> verifyUser(@Valid @RequestBody VerificationCodeVerifyDTO dto) {
 		service.verifyUser(dto);
-		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
+		return new ResponseEntity<Void>((Void) null, HttpStatus.NO_CONTENT);
 	}
 }

@@ -9,9 +9,9 @@ import com.ib.util.twilio.SendgridUtil;
 public class SssscsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SssscsApplication.class, args);
-		
+
 		SendgridUtil sendgridUtil = new SendgridUtil();
-		//sendgridUtil.sendEmail("YOU WIN", "SHDKj=shd==kjsdhs===kJHDKJSDHskjdhskj");
-		//sendgridUtil.sendSMS("sssscs: 432481");
+		// sendgridUtil.sendEmail("YOU WIN", "SHDKj=shd==kjsdhs===kJHDKJSDHskjdhskj");
+		// sendgridUtil.sendSMS("sssscs: 432481");
 	}
 }

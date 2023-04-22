@@ -7,8 +7,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +18,6 @@ import com.ib.user.dto.UserLoginDto;
 import com.ib.util.DTO;
 import com.ib.util.security.JwtTokenUtil;
 
-import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 
 @RestController
@@ -36,12 +33,13 @@ public class UserController {
 	@PostMapping("/session/register")
 	public ResponseEntity<?> register(@DTO(UserCreateDto.class) User user) {
 		userService.register(user);
-		return new ResponseEntity<Void>((Void)null, HttpStatus.NO_CONTENT);
+		return new ResponseEntity<Void>((Void) null, HttpStatus.NO_CONTENT);
 	}
-	
+
 	@PostMapping("/session/login")
 	public ResponseEntity<String> login(@Valid @RequestBody UserLoginDto dto) {
-		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
+		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(),
+				dto.getPassword());
 		Authentication auth = null;
 		try {
 			auth = authManager.authenticate(authToken);
@@ -50,16 +48,16 @@ public class UserController {
 		}
 
 		User user = (User) auth.getPrincipal();
-		
+
 		// TODO: user not verified OR server deemed it necessary to fire 2FA.
 		if (user.getVerified() == false) {
 			// Status 422, instead of 403, makes it easier to redirect on the front-end
 			// because normally we would never use 422 so it stands out.
 			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Verify your account.");
 		}
-		
+
 		String token = jwtTokenUtil.generateToken(user.getEmail(), user.getId(), user.getRole().toString());
-		
+
 		return ResponseEntity.ok(token);
 	}
 }

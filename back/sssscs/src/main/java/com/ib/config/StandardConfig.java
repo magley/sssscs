@@ -20,23 +20,23 @@ public class StandardConfig {
 	public PasswordEncoder encoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
 		return authConfig.getAuthenticationManager();
 	}
-	
+
 	@Bean
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
-	
+
 	@Bean
 	public KeyUtil keyUtil() {
 		Security.addProvider(new BouncyCastleProvider());
 		return new KeyUtil();
 	}
-	
+
 	@Bean
 	public SendgridUtil sendgridUtil() {
 		return new SendgridUtil();

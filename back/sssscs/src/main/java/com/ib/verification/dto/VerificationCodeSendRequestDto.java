@@ -16,7 +16,7 @@ public class VerificationCodeSendRequestDto {
 	public enum Method {
 		EMAIL, SMS
 	}
-	
+
 	@NotNull
 	private String userEmail;
 	@NotNull

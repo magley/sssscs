@@ -6,12 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
@@ -31,7 +29,7 @@ import jakarta.persistence.EntityManager;
 public class ServerConfig implements WebMvcConfigurer {
 	private final ApplicationContext applicationContext;
 	private final EntityManager entityManager;
-	
+
 	@Autowired
 	private JwtRequestFilter jwtRequestFilter;
 
@@ -44,7 +42,8 @@ public class ServerConfig implements WebMvcConfigurer {
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 		// TODO: Try autowired object mapper
-		ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().applicationContext(this.applicationContext).build();
+		ObjectMapper objectMapper = Jackson2ObjectMapperBuilder.json().applicationContext(this.applicationContext)
+				.build();
 		argumentResolvers.add(new DTOModelMapper(objectMapper, entityManager));
 	}
 
@@ -57,10 +56,8 @@ public class ServerConfig implements WebMvcConfigurer {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable();
 		http.headers().frameOptions().disable();
-		http.authorizeHttpRequests()
-			.requestMatchers("/api/user/session/**").permitAll()
-			.requestMatchers("/api/verification-code/**").permitAll()
-			.anyRequest().authenticated();
+		http.authorizeHttpRequests().requestMatchers("/api/user/session/**").permitAll()
+				.requestMatchers("/api/verification-code/**").permitAll().anyRequest().authenticated();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 		http.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));

@@ -7,10 +7,10 @@ public class EntityNotFoundException extends EntityException {
 	private static final long serialVersionUID = 1822712875031490049L;
 
 	public EntityNotFoundException(Class<?> entityType, String key) {
-        super(String.format("%s with key %s not found", entityType.getName(), key));
-    }
-	
+		super(String.format("%s with key %s not found", entityType.getName(), key));
+	}
+
 	public EntityNotFoundException(Class<?> entityType, Long id) {
-        super(String.format("%s with id %d not found", entityType.getName(), id));
-    }
+		super(String.format("%s with id %d not found", entityType.getName(), id));
+	}
 }

@@ -30,12 +30,12 @@ public class VerificationCodeService implements IVerificationCodeService {
 	@Override
 	public VerificationCode getOrCreateCode(User user) {
 		Optional<VerificationCode> codeOpt = repo.findByUserAndValidTrue(user);
-		
+
 		if (codeOpt.isEmpty()) {
 			return generateCode(user);
 		} else {
 			VerificationCode code = codeOpt.get();
-			
+
 			if (isExpired(code)) {
 				code.setValid(false);
 				repo.save(code);
@@ -45,15 +45,15 @@ public class VerificationCodeService implements IVerificationCodeService {
 			}
 		}
 	}
-	
+
 	private VerificationCode generateCode(User user) {
 		Random rnd = new Random();
-	    String codeStr = String.format("%06d", rnd.nextInt(999999));
-	    
+		String codeStr = String.format("%06d", rnd.nextInt(999999));
+
 		VerificationCode code = new VerificationCode(null, codeStr, LocalDateTime.now().plusMinutes(30), user, true);
 		return repo.save(code);
 	}
-	
+
 	private Boolean isExpired(VerificationCode code) {
 		return code.getExpiraiton().isBefore(LocalDateTime.now());
 	}
@@ -71,20 +71,20 @@ public class VerificationCodeService implements IVerificationCodeService {
 			throw new UnsupportedVerificationSendMethodException(method);
 		}
 	}
-	
+
 	private String getCodeText(String code) {
-		return "Your code is <b>" + code + "</b>"; 
+		return "Your code is <b>" + code + "</b>";
 	}
 
 	@Override
 	public void verifyUser(@Valid VerificationCodeVerifyDTO dto) {
 		User user = userService.findByEmail(dto.getUserEmail());
 		VerificationCode code = get(user);
-			
+
 		if (!code.getCode().equals(dto.getCode())) {
 			throw new InvalidCodeException();
 		}
-		
+
 		userService.verify(user);
 		code.setValid(false);
 		repo.save(code);

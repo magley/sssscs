@@ -15,7 +15,7 @@ public class UserService implements IUserService {
 	private PasswordEncoder passwordEncoder;
 	@Autowired
 	private IUserRepo userRepo;
-	
+
 	@Override
 	public User register(User user) {
 		if (isEmailTaken(user.getEmail())) {
@@ -24,15 +24,15 @@ public class UserService implements IUserService {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepo.save(user);
 	}
-	
+
 	private boolean isEmailTaken(String email) {
 		return userRepo.findByEmail(email).isPresent();
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		return userRepo.findByEmail(email).orElseThrow(
-				() -> new UsernameNotFoundException("User not found with this username: " + email));
+		return userRepo.findByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found with this username: " + email));
 	}
 
 	@Override

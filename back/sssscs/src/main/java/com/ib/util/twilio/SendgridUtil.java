@@ -26,10 +26,10 @@ public class SendgridUtil {
 	private static final String KEY_SMSFROM = "SMSFROM";
 	private static final String ENV_LOCATION = "./data/sendgrid.env";
 	private Map<String, String> env_vars;
-	
+
 	public SendgridUtil() {
 		env_vars = new HashMap<>();
-		
+
 		String line = null;
 		try (BufferedReader reader = new BufferedReader(new FileReader(ENV_LOCATION))) {
 			while ((line = reader.readLine()) != null) {
@@ -41,19 +41,19 @@ public class SendgridUtil {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void sendEmail(String subject, String body) {
 		String to_email = env_vars.get(KEY_FROM); // We test with dummy emails so send everything to 1 email.
 		Email from = new Email(env_vars.get(KEY_FROM));
-	    Email to = new Email(to_email);
-	    Content content = new Content("text/html", body);
-	    Mail mail = new Mail(from, subject, to, content);
-	    SendGrid sg = new SendGrid(env_vars.get(KEY_APIKEY));
-	    Request request = new Request();
-	    
-    	request.setMethod(Method.POST);
-    	request.setEndpoint("mail/send");
-    	try {
+		Email to = new Email(to_email);
+		Content content = new Content("text/html", body);
+		Mail mail = new Mail(from, subject, to, content);
+		SendGrid sg = new SendGrid(env_vars.get(KEY_APIKEY));
+		Request request = new Request();
+
+		request.setMethod(Method.POST);
+		request.setEndpoint("mail/send");
+		try {
 			request.setBody(mail.build());
 			Response response;
 			response = sg.api(request);
@@ -62,22 +62,19 @@ public class SendgridUtil {
 			System.err.println("===========================");
 			System.err.println(response.getStatusCode());
 			System.err.println(response.getBody());
-    		System.err.println(response.getHeaders());
-    		System.err.println("===========================");
-    	}
-    	 catch (IOException e) {
- 			e.printStackTrace();
- 		}
+			System.err.println(response.getHeaders());
+			System.err.println("===========================");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	public void sendSMS(String body) {
 		Twilio.init(env_vars.get(KEY_SID), env_vars.get(KEY_SMSTOKEN));
-		Message msg = Message.creator(
-			new PhoneNumber(env_vars.get(KEY_SMSTO)),
-			new PhoneNumber(env_vars.get(KEY_SMSFROM)),
-			body
-		).create();
-		
+		Message msg = Message
+				.creator(new PhoneNumber(env_vars.get(KEY_SMSTO)), new PhoneNumber(env_vars.get(KEY_SMSFROM)), body)
+				.create();
+
 		System.err.println("Sending sms to " + msg.getTo() + ":");
 		System.err.println(msg.getBody());
 		System.err.println("===========================");

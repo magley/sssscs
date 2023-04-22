@@ -20,33 +20,34 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class ControllerAdvisor {
-	@ExceptionHandler({ResponseStatusException.class})
+	@ExceptionHandler({ ResponseStatusException.class })
 	public ResponseEntity<?> handleResponseStatusException(final ResponseStatusException e) {
 		return new ResponseEntity<>(e.getMessage(), e.getStatusCode());
 	}
-	
-	@ExceptionHandler({EntityException.class})
+
+	@ExceptionHandler({ EntityException.class })
 	public ResponseEntity<?> handleEntityException(final EntityException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
-	
-	@ExceptionHandler({InvalidCodeException.class})
+
+	@ExceptionHandler({ InvalidCodeException.class })
 	public ResponseEntity<?> handleInvalidCodeException(final InvalidCodeException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler({EntityNotFoundException.class})
+	@ExceptionHandler({ EntityNotFoundException.class })
 	public ResponseEntity<?> handleEntityNotFoundException(final EntityNotFoundException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 	}
-	
-	@ExceptionHandler({CreatorUnauthorizedException.class})
+
+	@ExceptionHandler({ CreatorUnauthorizedException.class })
 	public ResponseEntity<?> handleCreatorUnauhotirzedException(final CreatorUnauthorizedException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
 	}
 
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
-	public ResponseEntity<BadValidation> handleConstraintViolationException(MethodArgumentNotValidException e, HttpServletRequest req) {
+	public ResponseEntity<BadValidation> handleConstraintViolationException(MethodArgumentNotValidException e,
+			HttpServletRequest req) {
 		List<FieldError> errors = e.getFieldErrors();
 		StringBuilder sb = new StringBuilder("Request finished with validation errors:\n");
 		for (FieldError fe : errors) {
