@@ -7,8 +7,8 @@ import { VerificationCodeSendRequestDTO, VerificationCodeVerifyDTO, Verification
 
 
 export const VerifyPage = () => {
-    const { setValue, register, control, handleSubmit, formState: {errors}} = useForm({mode: 'all'});
-    const { register: register2 } = useForm({mode: 'all'});
+    const { setValue, register, handleSubmit, formState: {errors}} = useForm({mode: 'all'});
+    const { register: register2, handleSubmit: handleSubmit2, formState: {errors: errors2}} = useForm({mode: 'all'});
     const { state: routerLocationState } = useLocation();
     let [email, setEmail] = useState<string>("");
 
@@ -66,18 +66,18 @@ export const VerifyPage = () => {
                 </Button>
             </Box>
 
-            <Box component='form' noValidate onSubmit={handleSubmit(verifyCode)}>
+            <Box component='form' noValidate onSubmit={handleSubmit2(verifyCode)}>
                 <TextField
                     label="Code"
-                    {...register('code', { 
+                    {...register2('code', { 
                         required: 'Please enter the code', 
                         pattern: {
                             value: /^[0-9]{6}$/,
                             message: "Code must be 6-digits"
                         }
                     })}
-                    error={!!errors['code']}
-                    helperText={errors['code']?.message?.toString()}
+                    error={!!errors2['code']}
+                    helperText={errors2['code']?.message?.toString()}
                     />
 
                 <Button variant="contained" type="submit">
