@@ -52,7 +52,7 @@ public class VerificationCodeService implements IVerificationCodeService {
 		Random rnd = new Random();
 		String codeStr = String.format("%06d", rnd.nextInt(999999));
 
-		VerificationCode code = new VerificationCode(null, codeStr, LocalDateTime.now().plusMinutes(30), user, MAX_ATTEMPTS);
+		VerificationCode code = new VerificationCode(null, codeStr, LocalDateTime.now().plusSeconds(30), user, MAX_ATTEMPTS);
 		return repo.save(code);
 	}
 
@@ -82,7 +82,12 @@ public class VerificationCodeService implements IVerificationCodeService {
 	public void verifyUser(@Valid VerificationCodeVerifyDTO dto) {
 		User user = userService.findByEmail(dto.getUserEmail());
 		VerificationCode code = get(user);
-
+		
+		if (isExpired(code)) {
+			repo.delete(code);
+			code = get(user);
+		}
+		
 		if (!code.getCode().equals(dto.getCode())) {
 			decrementAttemptsLeft(user, code);
 			throw new InvalidCodeException();
