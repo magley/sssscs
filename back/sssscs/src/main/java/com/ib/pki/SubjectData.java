@@ -25,9 +25,9 @@ public class SubjectData {
 	private String email = "";
 	private String organization = "";
 	private String commonName = "";
-	
+
 	// TODO: Maybe just create a SubjectDataDTO ?
-	
+
 	@JsonIgnore
 	public X500Name getX500Name() {
 		X500NameBuilder builder = new X500NameBuilder(BCStyle.INSTANCE);

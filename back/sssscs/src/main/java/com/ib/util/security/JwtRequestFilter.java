@@ -51,14 +51,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		String header = request.getHeader("Authorization");
 		return getTokenFromHeader(header);
 	}
-	
+
 	public String getTokenFromHeader(String header) {
 		if (header == null || !header.contains("Bearer")) {
 			return null;
 		}
 		return header.substring(header.indexOf("Bearer ") + 7);
 	}
-	
+
 	public UsernamePasswordAuthenticationToken getAuthFromToken(String jwt) {
 		UserDetails userDetails;
 		try {
@@ -66,11 +66,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		} catch (JwtException | IllegalArgumentException | UsernameNotFoundException e) {
 			return null;
 		}
-		var authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+		var authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null,
+				userDetails.getAuthorities());
 		return authenticationToken;
 	}
 
-	private UserDetails getUserDetailsFromJwtToken(String jwtToken) throws JwtException, IllegalArgumentException, UsernameNotFoundException {
+	private UserDetails getUserDetailsFromJwtToken(String jwtToken)
+			throws JwtException, IllegalArgumentException, UsernameNotFoundException {
 		String username = jwtTokenUtil.getUsernameFromToken(jwtToken);
 		return this.userService.loadUserByUsername(username);
 	}

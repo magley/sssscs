@@ -1,7 +1,5 @@
 package com.ib.certificate.dto;
 
-import java.time.LocalDateTime;
-
 import com.ib.certificate.Certificate;
 import com.ib.pki.SubjectData;
 

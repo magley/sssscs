@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.ib.pki.KeyUtil;
+import com.ib.util.twilio.SendgridUtil;
 
 @Configuration
 public class StandardConfig {
@@ -19,20 +20,25 @@ public class StandardConfig {
 	public PasswordEncoder encoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Bean
 	public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
 		return authConfig.getAuthenticationManager();
 	}
-	
+
 	@Bean
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
-	
+
 	@Bean
 	public KeyUtil keyUtil() {
 		Security.addProvider(new BouncyCastleProvider());
 		return new KeyUtil();
+	}
+
+	@Bean
+	public SendgridUtil sendgridUtil() {
+		return new SendgridUtil();
 	}
 }

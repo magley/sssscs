@@ -1,5 +1,7 @@
 package com.ib.user;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,8 +34,7 @@ public class User implements UserDetails {
 	private static final long serialVersionUID = 6494659258011938199L;
 
 	public enum Role {
-		REGULAR,
-		ADMIN
+		REGULAR, ADMIN
 	}
 
 	@Id
@@ -52,7 +53,23 @@ public class User implements UserDetails {
 	@Column(nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	private Role role = Role.REGULAR;
-
+	@Column(nullable = false)
+	private Boolean verified = false;
+	/**
+	 * How many times has the user successfully logged in since the last time
+	 * we asked him to perform 2FA.
+	 * 
+	 * When this value reaches "maximum", the user has to verify his identity.
+	 * Maximum value is defined in <i>UserController</i>.
+	 * Once the user verifies it's him, this value is reset to 0 again.
+	 */
+	@Column(nullable = false)
+	private Integer loginCounter = 0;
+	@Column(nullable = false)
+	private Boolean blocked = false;
+	@Column(nullable = true)
+	private LocalDateTime blockEndDate;
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return List.of(new SimpleGrantedAuthority("ROLE_" + this.getRole().toString()));

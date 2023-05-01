@@ -24,27 +24,28 @@ public class CertificateRequestService implements ICertificateRequestService {
 		if (!request.isTypeValid()) {
 			throw new CertificateParentMissingException();
 		}
-		
+
 		if (request.isExpired()) {
 			throw new BadExpirationDateException();
 		}
-		
+
 		if (request.expiresAfterParent()) {
 			throw new BadExpirationDateException();
 		}
-		
+
 		if (!request.isCreatorAuthorized()) {
 			throw new CreatorUnauthorizedException();
 		}
 
 		return certificateRequestRepo.save(request);
 	}
-	
+
 	@Override
 	public CertificateRequest findByIdAndStatus(Long id, Status status) {
-		return certificateRequestRepo.findByIdAndStatus(id, status).orElseThrow(() -> new EntityNotFoundException(CertificateRequest.class, id));
+		return certificateRequestRepo.findByIdAndStatus(id, status)
+				.orElseThrow(() -> new EntityNotFoundException(CertificateRequest.class, id));
 	}
-	
+
 	@Override
 	public boolean canAutoAccept(CertificateRequest request) {
 		if (request.getType() != Type.ROOT) {
@@ -52,14 +53,14 @@ public class CertificateRequestService implements ICertificateRequestService {
 				return true;
 			}
 		}
-		
+
 		if (request.getCreator().getRole() == Role.ADMIN) {
 			return true;
 		}
-	
+
 		return false;
 	}
-	
+
 	@Override
 	public List<CertificateRequest> findByCreator(User creator) {
 		return certificateRequestRepo.findByCreator(creator);
@@ -71,7 +72,6 @@ public class CertificateRequestService implements ICertificateRequestService {
 		req.setRejectionReason(reason);
 		certificateRequestRepo.save(req);
 	}
-	
 
 	@Override
 	public void accept(CertificateRequest req) {

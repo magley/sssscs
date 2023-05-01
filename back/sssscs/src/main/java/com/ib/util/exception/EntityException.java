@@ -7,6 +7,6 @@ public abstract class EntityException extends RuntimeException {
 	private static final long serialVersionUID = 6089383742016495500L;
 
 	public EntityException(String message) {
-        super(message);
-    }
+		super(message);
+	}
 }
