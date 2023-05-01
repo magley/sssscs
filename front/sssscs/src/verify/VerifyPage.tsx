@@ -36,7 +36,7 @@ export const VerifyPage = () => {
                 if (err.response?.status == 404) {
                     setError('email', {message: "User not found."}, {shouldFocus: true});
                 } else if (err.response?.status === 429) {
-                    setError('password', {message: 'Too many attempts. This account is temporariliy blocked.'}, {shouldFocus: true});
+                    setError('password', {message: 'Too many attempts. This account is temporarily blocked.'}, {shouldFocus: true});
                 }
             }); 
     }
