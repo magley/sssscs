@@ -36,7 +36,7 @@ public class VerificationCodeController {
 
 		System.err.println(dto);
 		System.err.println(code.getCode());
-		System.err.println(code.getExpiraiton());
+		System.err.println(code.getExpiration());
 
 		return new ResponseEntity<Void>((Void) null, HttpStatus.NO_CONTENT);
 	}

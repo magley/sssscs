@@ -29,7 +29,7 @@ public class VerificationCode {
 	@Column(nullable = true)
 	private String code = null;
 	@Column(nullable = false)
-	private LocalDateTime expiraiton;
+	private LocalDateTime expiration;
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 	@Column(nullable = false)

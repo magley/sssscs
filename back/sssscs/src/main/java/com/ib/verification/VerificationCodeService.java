@@ -55,7 +55,7 @@ public class VerificationCodeService implements IVerificationCodeService {
 	}
 
 	private Boolean isExpired(VerificationCode code) {
-		return code.getExpiraiton().isBefore(LocalDateTime.now());
+		return code.getExpiration().isBefore(LocalDateTime.now());
 	}
 
 	@Override
