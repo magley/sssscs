@@ -50,10 +50,15 @@ public class UserController {
 		}
 
 		User user = (User) auth.getPrincipal();
+		if (userService.isBlocked(user)) {
+			// TOO_MANY_REQUESTS == 429, it stands out which helps us on the frontend.
+			throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "You are blocked.");
+		}
 		if (user.getVerified() == false || user.getLoginCounter() == loginsBefore2FactorAuthActivates) {
 			// UNPROCESSABLE_ENTITY == 422, it stands out which helps us on the frontend.
 			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Verify your account.");
 		}
+
 		userService.incrementLoginCounter(user);
 		
 		String token = jwtTokenUtil.generateToken(user.getEmail(), user.getId(), user.getRole().toString());

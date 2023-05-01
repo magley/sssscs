@@ -14,6 +14,7 @@ import com.ib.verification.dto.VerificationCodeSendRequestDto.Method;
 import com.ib.verification.dto.VerificationCodeVerifyDTO;
 import com.ib.verification.exception.InvalidCodeException;
 import com.ib.verification.exception.UnsupportedVerificationSendMethodException;
+import com.ib.verification.exception.VerificationAttemptPenaltyException;
 import com.ib.verification.exception.VerificationCodeNotFoundException;
 
 import jakarta.validation.Valid;
@@ -26,6 +27,8 @@ public class VerificationCodeService implements IVerificationCodeService {
 	private SendgridUtil sendgridUtil;
 	@Autowired
 	private IUserService userService;
+	
+	private static final Long MAX_ATTEMPTS = 3L;
 
 	@Override
 	public VerificationCode getOrCreateCode(User user) {
@@ -49,7 +52,7 @@ public class VerificationCodeService implements IVerificationCodeService {
 		Random rnd = new Random();
 		String codeStr = String.format("%06d", rnd.nextInt(999999));
 
-		VerificationCode code = new VerificationCode(null, codeStr, LocalDateTime.now().plusMinutes(30), user);
+		VerificationCode code = new VerificationCode(null, codeStr, LocalDateTime.now().plusMinutes(30), user, MAX_ATTEMPTS);
 		return repo.save(code);
 	}
 
@@ -81,6 +84,7 @@ public class VerificationCodeService implements IVerificationCodeService {
 		VerificationCode code = get(user);
 
 		if (!code.getCode().equals(dto.getCode())) {
+			decrementAttemptsLeft(user, code);
 			throw new InvalidCodeException();
 		}
 
@@ -92,5 +96,15 @@ public class VerificationCodeService implements IVerificationCodeService {
 	@Override
 	public VerificationCode get(User user) {
 		return repo.findByUser(user).orElseThrow(() -> new VerificationCodeNotFoundException(user));
+	}
+	
+	// Will block user.
+	private void decrementAttemptsLeft(User user, VerificationCode code) throws VerificationAttemptPenaltyException {
+		code.setAttemptsLeft(code.getAttemptsLeft() - 1);
+		repo.save(code);
+		if (code.getAttemptsLeft() <= 0) {
+			userService.blockUserForAnHour(user);
+			throw new VerificationAttemptPenaltyException();
+		}
 	}
 }

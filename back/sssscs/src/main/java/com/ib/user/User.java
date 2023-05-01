@@ -1,5 +1,7 @@
 package com.ib.user;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -63,6 +65,10 @@ public class User implements UserDetails {
 	 */
 	@Column(nullable = false)
 	private Integer loginCounter = 0;
+	@Column(nullable = false)
+	private Boolean blocked = false;
+	@Column(nullable = true)
+	private LocalDateTime blockEndDate;
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

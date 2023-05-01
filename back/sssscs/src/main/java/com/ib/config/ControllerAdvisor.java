@@ -15,6 +15,7 @@ import com.ib.util.exception.EntityException;
 import com.ib.util.exception.EntityNotFoundException;
 import com.ib.util.validation.BadValidation;
 import com.ib.verification.exception.InvalidCodeException;
+import com.ib.verification.exception.VerificationAttemptPenaltyException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -35,6 +36,11 @@ public class ControllerAdvisor {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
+	@ExceptionHandler({ VerificationAttemptPenaltyException.class })
+	public ResponseEntity<?> handleVerificationPenaltyException(final VerificationAttemptPenaltyException e) {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.TOO_MANY_REQUESTS); // 429.
+	}
+	
 	@ExceptionHandler({ EntityNotFoundException.class })
 	public ResponseEntity<?> handleEntityNotFoundException(final EntityNotFoundException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

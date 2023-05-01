@@ -1,5 +1,7 @@
 package com.ib.user;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -61,5 +63,31 @@ public class UserService implements IUserService {
 	public void incrementLoginCounter(User user) {
 		user.setLoginCounter(user.getLoginCounter() + 1);
 		userRepo.save(user);
+	}
+
+	@Override
+	public void blockUserForAnHour(User user) {
+		user.setBlocked(true);
+		user.setBlockEndDate(LocalDateTime.now().plusHours(1L));
+		userRepo.save(user);
+	}
+	
+	@Override 
+	public void unblockUser(User user) {
+		user.setBlocked(false);
+		user.setBlockEndDate(null);
+		userRepo.save(user);
+	}
+
+	@Override
+	public Boolean isBlocked(User user) {
+		if (user.getBlocked() == false) {
+			return false;
+		}
+		if (user.getBlockEndDate().isBefore(LocalDateTime.now())) {
+			unblockUser(user);
+			return false;
+		}
+		return true;
 	}
 }

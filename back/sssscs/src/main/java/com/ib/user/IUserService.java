@@ -14,4 +14,11 @@ public interface IUserService extends UserDetailsService {
 	void resetLoginCounter(User user);
 	
 	void incrementLoginCounter(User user);
+	
+	void blockUserForAnHour(User user);
+	
+	void unblockUser(User user);
+	
+	// Checks and updates.
+	Boolean isBlocked(User user);
 }

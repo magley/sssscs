@@ -32,4 +32,6 @@ public class VerificationCode {
 	private LocalDateTime expiration;
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
+	@Column(nullable = false)
+	private Long attemptsLeft;
 }

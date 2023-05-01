@@ -35,7 +35,9 @@ export const VerifyPage = () => {
             .catch((err : AxiosError) => {
                 if (err.response?.status == 404) {
                     setError('email', {message: "User not found."}, {shouldFocus: true});
-                }  
+                } else if (err.response?.status === 429) {
+                    setError('password', {message: 'Too many attempts. This account is temporariliy blocked.'}, {shouldFocus: true});
+                }
             }); 
     }
 
