@@ -9,5 +9,5 @@ import com.ib.user.User;
 
 @Repository
 public interface IVerificationCodeRepo extends JpaRepository<VerificationCode, Long> {
-	Optional<VerificationCode> findByUserAndValidTrue(User user);
+	Optional<VerificationCode> findByUser(User user);
 }

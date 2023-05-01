@@ -29,7 +29,7 @@ public class VerificationCodeService implements IVerificationCodeService {
 
 	@Override
 	public VerificationCode getOrCreateCode(User user) {
-		Optional<VerificationCode> codeOpt = repo.findByUserAndValidTrue(user);
+		Optional<VerificationCode> codeOpt = repo.findByUser(user);
 
 		if (codeOpt.isEmpty()) {
 			return generateCode(user);
@@ -37,8 +37,7 @@ public class VerificationCodeService implements IVerificationCodeService {
 			VerificationCode code = codeOpt.get();
 
 			if (isExpired(code)) {
-				code.setValid(false);
-				repo.save(code);
+				repo.delete(code);
 				return generateCode(user);
 			} else {
 				return code;
@@ -50,7 +49,7 @@ public class VerificationCodeService implements IVerificationCodeService {
 		Random rnd = new Random();
 		String codeStr = String.format("%06d", rnd.nextInt(999999));
 
-		VerificationCode code = new VerificationCode(null, codeStr, LocalDateTime.now().plusMinutes(30), user, true);
+		VerificationCode code = new VerificationCode(null, codeStr, LocalDateTime.now().plusMinutes(30), user);
 		return repo.save(code);
 	}
 
@@ -87,12 +86,11 @@ public class VerificationCodeService implements IVerificationCodeService {
 
 		userService.verify(user);
 		userService.resetLoginCounter(user);
-		code.setValid(false);
-		repo.save(code);
+		repo.delete(code);
 	}
 
 	@Override
 	public VerificationCode get(User user) {
-		return repo.findByUserAndValidTrue(user).orElseThrow(() -> new VerificationCodeNotFoundException(user));
+		return repo.findByUser(user).orElseThrow(() -> new VerificationCodeNotFoundException(user));
 	}
 }
