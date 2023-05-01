@@ -59,6 +59,7 @@ export const VerifyPage = () => {
         <>
             <Box component='form' noValidate onSubmit={handleSubmit(sendCode)}>
                 <TextField
+                    disabled={true}
                     type="email"
                     label="Your account email"
                     {...register('email', { required: 'Please enter your email'})}
