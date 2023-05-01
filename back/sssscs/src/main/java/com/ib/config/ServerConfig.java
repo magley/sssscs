@@ -56,8 +56,11 @@ public class ServerConfig implements WebMvcConfigurer {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable();
 		http.headers().frameOptions().disable();
-		http.authorizeHttpRequests().requestMatchers("/api/user/session/**").permitAll()
-				.requestMatchers("/api/verification-code/**").permitAll().anyRequest().authenticated();
+		http.authorizeHttpRequests()
+				.requestMatchers("/**").permitAll()
+				.requestMatchers("/api/user/session/**").permitAll()
+				.requestMatchers("/api/verification-code/**").permitAll()
+				.anyRequest().authenticated();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 		http.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
