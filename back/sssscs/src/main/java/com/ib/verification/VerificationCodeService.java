@@ -1,7 +1,6 @@
 package com.ib.verification;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,9 +88,7 @@ public class VerificationCodeService implements IVerificationCodeService {
 			code = get(user, reason, codeStr);
 		}
 		if (codeStr != null && !code.getCode().equals(codeStr)) {
-			if (reason == Reason.TWO_FA) {
-				decrementAttemptsLeft(user, code);
-			}
+			decrementAttemptsLeft(user, code);
 			throw new InvalidCodeException();
 		}
 		return code;
