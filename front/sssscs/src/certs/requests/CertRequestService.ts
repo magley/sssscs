@@ -1,7 +1,6 @@
 import { AxiosResponse } from "axios";
 import { axiosInstance } from "../../http/HttpService";
-import { CertType, CertificateSummaryDTO, SubjectData } from "../CertService";
-import { Subject } from "react-hook-form/dist/utils/createSubject";
+import { CertType, SubjectData } from "../CertService";
 
 export enum CertRequestStatus {
     PENDING,
@@ -28,6 +27,10 @@ export interface CertRequestCreateDTO {
 export class CertRequestService {
     static async getOwn(): Promise<AxiosResponse<Array<CertRequestDTO>>> {
         return await axiosInstance.get(`cert/request/created`);
+    }
+
+    static async getAll(): Promise<AxiosResponse<Array<CertRequestDTO>>> {
+        return await axiosInstance.get(`cert/request/all`);
     }
 
     static async getIssuedToMe(): Promise<AxiosResponse<Array<CertRequestDTO>>> {
