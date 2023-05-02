@@ -5,10 +5,15 @@ export enum VerificationMethod {
     EMAIL, SMS,
 };
 
+export enum VerificationReason {
+    TWO_FA, RESET_PASSWORD,
+}
+
 export interface VerificationCodeSendRequestDTO {
     userEmail: string,
     method: VerificationMethod,
     dontActuallySend: boolean,
+    reason: VerificationReason,
 };
 
 export interface VerifyPageRouterState {

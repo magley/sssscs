@@ -2,7 +2,7 @@ import { Box, Button, MenuItem, Select, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { VerificationCodeSendRequestDTO, VerificationCodeVerifyDTO, VerificationMethod, VerifyPageRouterState, VerifyService } from "./VerifyService";
+import { VerificationCodeSendRequestDTO, VerificationCodeVerifyDTO, VerificationMethod, VerificationReason, VerifyPageRouterState, VerifyService } from "./VerifyService";
 import { AxiosError, AxiosResponse } from "axios";
 
 export const VerifyPage = () => {
@@ -24,6 +24,7 @@ export const VerifyPage = () => {
             userEmail: data['email'],
             method: data['type'] as VerificationMethod,
             dontActuallySend: true,
+            reason: VerificationReason.TWO_FA,
         }
         setEmail(data['email']);
 

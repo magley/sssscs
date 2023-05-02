@@ -52,6 +52,12 @@ public class UserService implements IUserService {
 		user.setVerified(true);
 		userRepo.save(user);
 	}
+	
+	@Override
+	public void resetPassword(User user, String newPassword) {
+		user.setPassword(passwordEncoder.encode(newPassword));
+		userRepo.save(user);
+	}
 
 	@Override
 	public void resetLoginCounter(User user) {

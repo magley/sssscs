@@ -1,6 +1,6 @@
 package com.ib.verification.dto;
 
-import com.ib.verification.VerificationCode.Reason;
+import com.ib.util.validation.Password;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,17 +14,12 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class VerificationCodeSendRequestDto {
-	public enum Method {
-		EMAIL, SMS
-	}
-
+public class VerificationCodeResetDto {
 	@NotNull
 	private String userEmail;
 	@NotNull
-	private Method method;
+	private String code;
 	@NotNull
-	private Boolean dontActuallySend;
-	@NotNull
-	private Reason reason;
+	@Password
+	private String newPassword;
 }

@@ -22,6 +22,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 public class VerificationCode {
+	
+	public enum Reason {
+		TWO_FA,
+		RESET_PASSWORD
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -34,4 +40,5 @@ public class VerificationCode {
 	private User user;
 	@Column(nullable = false)
 	private Long attemptsLeft;
+	private Reason reason;
 }
