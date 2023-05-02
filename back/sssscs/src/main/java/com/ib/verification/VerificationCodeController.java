@@ -3,6 +3,7 @@ package com.ib.verification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ib.user.IUserService;
 import com.ib.user.User;
+import com.ib.verification.dto.VerificationCodeResetDto;
 import com.ib.verification.dto.VerificationCodeSendRequestDto;
 import com.ib.verification.dto.VerificationCodeVerifyDTO;
 
@@ -28,7 +30,7 @@ public class VerificationCodeController {
 	@PostMapping("/send")
 	public ResponseEntity<?> sendVerificationCode(@Valid @RequestBody VerificationCodeSendRequestDto dto) {
 		User user = userService.findByEmail(dto.getUserEmail());
-		VerificationCode code = service.getOrCreateCode(user);
+		VerificationCode code = service.getOrCreateCode(user, dto.getReason());
 
 		if (dto.getDontActuallySend() == false) {
 			service.sendCode(code, dto.getMethod());
@@ -46,5 +48,12 @@ public class VerificationCodeController {
 	public ResponseEntity<?> verifyUser(@Valid @RequestBody VerificationCodeVerifyDTO dto) {
 		service.verifyUser(dto);
 		return new ResponseEntity<Void>((Void) null, HttpStatus.NO_CONTENT);
+	}
+
+	@PermitAll
+	@PostMapping(value = "/reset-password")
+	public ResponseEntity<?> resetPassword(@Validated @RequestBody VerificationCodeResetDto dto) {
+		service.resetPassword(dto);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

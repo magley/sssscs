@@ -21,4 +21,6 @@ public interface IUserService extends UserDetailsService {
 	
 	// Checks and updates.
 	Boolean isBlocked(User user);
+	
+	void resetPassword(User user, String newPassword);
 }
