@@ -2,7 +2,7 @@ import { Box, Button, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
-import { VerificationCodeVerifyDTO, VerifyPageRouterState, VerifyService } from "./VerifyService";
+import { VerificationCodeVerifyDTO, VerificationReason, VerifyPageRouterState, VerifyService } from "./VerifyService";
 import { AxiosError, AxiosResponse } from "axios";
 import { VerificationSendForm } from "./VerificationSendForm";
 
@@ -16,7 +16,7 @@ export const VerifyPage = () => {
         const state = routerLocationState as VerifyPageRouterState;
         let emailFromState: string | null = state?.email;
         setEmail(emailFromState);
-    }, []);
+    }, [routerLocationState]);
 
     const verifyCode = async (data: FieldValues) => {
         const dto: VerificationCodeVerifyDTO = {
@@ -36,7 +36,7 @@ export const VerifyPage = () => {
 
     return (
         <>
-            <VerificationSendForm email={email} setEmail={setEmail}/>
+            <VerificationSendForm email={email} setEmail={setEmail} reason={VerificationReason.TWO_FA} emailReadOnly={true}/>
             <Box component='form' noValidate onSubmit={handleSubmit(verifyCode)}>
                 <TextField
                     label="Code"

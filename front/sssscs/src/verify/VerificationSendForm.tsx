@@ -5,19 +5,20 @@ import React, { useEffect } from "react"
 import { FieldValues, useForm } from "react-hook-form"
 import { VerificationCodeSendRequestDTO, VerificationMethod, VerificationReason, VerifyService } from "./VerifyService"
 
-export const VerificationSendForm = ({email, setEmail} : {email: string, setEmail: React.Dispatch<string>}) => {
+export const VerificationSendForm = ({email, setEmail, reason, emailReadOnly} :
+    {email: string, setEmail: React.Dispatch<string>, reason: VerificationReason, emailReadOnly: boolean}) => {
     const { setValue, register, handleSubmit, formState: {errors}, setError} = useForm({mode: 'all'});
 
     useEffect(() => {
         setValue('email', email);
-    })
+    }, [email, setValue])
 
     const sendCode = async (data: FieldValues) => {
         const dto: VerificationCodeSendRequestDTO = {
             userEmail: data['email'],
             method: data['type'] as VerificationMethod,
             dontActuallySend: true,
-            reason: VerificationReason.TWO_FA,
+            reason: reason,
         }
         setEmail(data['email']);
 
@@ -38,10 +39,9 @@ export const VerificationSendForm = ({email, setEmail} : {email: string, setEmai
     return (
         <Box component='form' noValidate onSubmit={handleSubmit(sendCode)}>
         <TextField
-            disabled={true}
             type="email"
-            value={email}
             label="Your account email"
+            disabled={emailReadOnly}
             {...register('email', { required: 'Please enter your email'})}
             error={!!errors['email']}
             helperText={errors['email']?.message?.toString()}

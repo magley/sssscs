@@ -4,7 +4,7 @@ import { LoginService, UserLoginDto } from "./LoginService";
 import { AxiosError, AxiosResponse } from "axios";
 import { FieldValues, useForm } from "react-hook-form";
 import { AuthService } from '../auth/AuthService';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { GlobalState } from '../App';
 import { VerifyPageRouterState } from '../verify/VerifyService';
 
@@ -41,6 +41,7 @@ export const Login = (props: {gloState: GlobalState}) => {
     }
 
     return (
+        <>
         <Box component='form' noValidate onSubmit={handleSubmit(tryLogin)} sx={{maxWidth: '30rem'}}>
             <Typography variant='h4' sx={{mb: 2}}>
                 Login
@@ -68,5 +69,7 @@ export const Login = (props: {gloState: GlobalState}) => {
                 Sign In
             </Button>
         </Box>
+        <Link to='/reset-password'>Forgot password?</Link>
+        </>
     );
 }
