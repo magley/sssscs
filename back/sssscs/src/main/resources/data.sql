@@ -9,4 +9,4 @@ insert into users (email, password, role, name, surname, phone_number, verified,
 insert into certificate (status, subject_data_common_name, type, valid_from, valid_to, owner_id, parent_id) values('GOOD', 'root_admin', 'ROOT', '2021-01-01', '2023-12-06', 1, null);
 insert into certificate (status, subject_data_common_name, type, valid_from, valid_to, owner_id, parent_id) values('GOOD', 'end_regular', 'END', '2021-01-01', '2023-12-06', 2, 1);
 insert into certificate (status, subject_data_common_name, type, valid_from, valid_to, owner_id, parent_id) values('GOOD', 'end_regular2', 'END', '2021-01-01', '2023-12-06', 2, 1);
-insert into certificate (status, subject_data_common_name, type, valid_from, valid_to, owner_id, parent_id) values('GOOD', 'end_admin', 'END', '2021-01-01', '2023-12-06', 2, 2);
+insert into certificate (status, subject_data_common_name, type, valid_from, valid_to, owner_id, parent_id) values('GOOD', 'end_admin', 'END', '2021-01-01', '2023-12-06', 1, 1);
