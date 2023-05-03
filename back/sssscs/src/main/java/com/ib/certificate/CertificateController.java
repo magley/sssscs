@@ -148,4 +148,10 @@ public class CertificateController {
 		boolean isValid = certificateService.isValid(cert);
 		return new ResponseEntity<>(isValid, HttpStatus.OK);
 	}
+	
+	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
+	@PutMapping("/revoke/{certificateId}")
+	public void revoke(@PathVariable Long certificateId, @RequestBody String revocationReason) {
+		certificateService.revoke(certificateId, revocationReason);
+	}
 }

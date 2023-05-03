@@ -21,9 +21,12 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.ib.certificate.Certificate.Status;
 import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.dto.CertificateSummaryItemDto;
 import com.ib.certificate.exception.InvalidCertificateTypeException;
@@ -33,6 +36,7 @@ import com.ib.pki.KeyUtil;
 import com.ib.user.User;
 import com.ib.user.User.Role;
 import com.ib.util.exception.EntityNotFoundException;
+import com.ib.util.security.IAuthenticationFacade;
 
 @Service
 public class CertificateService implements ICertificateService {
@@ -42,10 +46,25 @@ public class CertificateService implements ICertificateService {
 	private ICertificateRequestService certificateRequestService;
 	@Autowired
 	private KeyUtil keyUtil;
+	@Autowired
+	private ModelMapper modelMapper;
+	@Autowired
+	private IAuthenticationFacade auth;
 
 	@Override
 	public Certificate findById(Long id) {
 		return certificateRepo.findById(id).orElseThrow(() -> new EntityNotFoundException(Certificate.class, id));
+	}
+
+	@Override
+	public Certificate findByIdAndOwner(Long id, User owner) {
+		return certificateRepo.findByIdAndOwner(id, owner)
+				.orElseThrow(() -> new EntityNotFoundException(Certificate.class, id));
+	}
+	
+	@Override
+	public List<Certificate> findByParent(Certificate parent) {
+		return certificateRepo.findByParent(parent);
 	}
 
 	private boolean isAuthorizedToAcceptOrReject(CertificateRequest req, User user) {
@@ -64,7 +83,7 @@ public class CertificateService implements ICertificateService {
 
 		certificateRequestService.accept(req);
 
-		Certificate c = new Certificate(req);
+		Certificate c = Certificate.from(req);
 		c = certificateRepo.save(c);
 		createX509Certificate(c);
 		return c;
@@ -100,18 +119,7 @@ public class CertificateService implements ICertificateService {
 
 	@Override
 	public List<CertificateSummaryItemDto> getAllSummary() {
-		List<Certificate> certs = getAll();
-		List<CertificateSummaryItemDto> result = new ArrayList<>();
-		for (Certificate cert : certs) {
-			CertificateSummaryItemDto item = new CertificateSummaryItemDto();
-			item.setId(cert.getId());
-			item.setType(cert.getType());
-			item.setValidFrom(cert.getValidFrom());
-			item.setSubjectData(cert.getSubjectData());
-			result.add(item);
-		}
-
-		return result;
+		return getAll().stream().map(c -> modelMapper.map(c, CertificateSummaryItemDto.class)).toList();
 	}
 
 	@Override
@@ -271,5 +279,23 @@ public class CertificateService implements ICertificateService {
 			return true;
 		}
 		return false;
+	}
+
+	@Transactional
+	@Override
+	public void revoke(Long certificateId, String revocationReason) {
+		User owner = auth.getUser();
+		Certificate certificate = (owner.getRole() == Role.ADMIN) ? this.findById(certificateId)
+				: this.findByIdAndOwner(certificateId, owner);
+		this.revoke(certificate, revocationReason);
+	}
+
+	private void revoke(Certificate certificate, String revocationReason) {
+		if (certificate.getStatus() != Status.REVOKED && certificate.getType() != Type.END) {
+			this.findByParent(certificate).forEach(c -> this.revoke(c, revocationReason));
+		}
+		certificate.setStatus(Status.REVOKED);
+		certificate.setRevocationReason(revocationReason);
+		certificateRepo.save(certificate);
 	}
 }

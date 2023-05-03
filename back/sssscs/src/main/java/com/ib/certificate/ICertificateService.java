@@ -9,6 +9,10 @@ import com.ib.user.User;
 public interface ICertificateService {
 	public Certificate findById(Long id);
 
+	public Certificate findByIdAndOwner(Long id, User owner);
+	
+	public List<Certificate> findByParent(Certificate parent);
+
 	public Certificate accept(CertificateRequest req, User caller);
 
 	public void reject(CertificateRequest req, String reason, User caller);
@@ -20,4 +24,6 @@ public interface ICertificateService {
 	public List<CertificateSummaryItemDto> getAllSummary();
 
 	public boolean isValid(Certificate cert);
+	
+	public void revoke(Long certificateId, String revocationReason);
 }
