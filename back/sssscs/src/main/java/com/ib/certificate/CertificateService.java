@@ -279,8 +279,8 @@ public class CertificateService implements ICertificateService {
 	@Transactional
 	@Override
 	public void revoke(Long certificateId, String revocationReason) {
-		User user = auth.getUser();
 		Certificate certificate = this.findById(certificateId);
+		User user = auth.getUser();
 		if (user.getRole() != Role.ADMIN && certificate.getOwner().getId() != user.getId()) {
 			throw new RevocationUnauthorizedException();
 		}
