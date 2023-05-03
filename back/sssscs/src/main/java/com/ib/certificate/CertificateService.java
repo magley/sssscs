@@ -11,7 +11,6 @@ import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bouncycastle.asn1.x500.X500Name;
@@ -29,7 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ib.certificate.Certificate.Status;
 import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.dto.CertificateSummaryItemDto;
+import com.ib.certificate.exception.CertificateAlreadyRevokedException;
 import com.ib.certificate.exception.InvalidCertificateTypeException;
+import com.ib.certificate.exception.RevocationUnauthorizedException;
 import com.ib.certificate.request.CertificateRequest;
 import com.ib.certificate.request.ICertificateRequestService;
 import com.ib.pki.KeyUtil;
@@ -54,12 +55,6 @@ public class CertificateService implements ICertificateService {
 	@Override
 	public Certificate findById(Long id) {
 		return certificateRepo.findById(id).orElseThrow(() -> new EntityNotFoundException(Certificate.class, id));
-	}
-
-	@Override
-	public Certificate findByIdAndOwner(Long id, User owner) {
-		return certificateRepo.findByIdAndOwner(id, owner)
-				.orElseThrow(() -> new EntityNotFoundException(Certificate.class, id));
 	}
 	
 	@Override
@@ -284,9 +279,14 @@ public class CertificateService implements ICertificateService {
 	@Transactional
 	@Override
 	public void revoke(Long certificateId, String revocationReason) {
-		User owner = auth.getUser();
-		Certificate certificate = (owner.getRole() == Role.ADMIN) ? this.findById(certificateId)
-				: this.findByIdAndOwner(certificateId, owner);
+		User user = auth.getUser();
+		Certificate certificate = this.findById(certificateId);
+		if (user.getRole() != Role.ADMIN && certificate.getOwner() != user) {
+			throw new RevocationUnauthorizedException();
+		}
+		if (certificate.getStatus() == Status.REVOKED) {
+			throw new CertificateAlreadyRevokedException();
+		}
 		this.revoke(certificate, revocationReason);
 	}
 

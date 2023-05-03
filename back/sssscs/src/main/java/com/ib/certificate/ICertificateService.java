@@ -8,8 +8,6 @@ import com.ib.user.User;
 
 public interface ICertificateService {
 	public Certificate findById(Long id);
-
-	public Certificate findByIdAndOwner(Long id, User owner);
 	
 	public List<Certificate> findByParent(Certificate parent);
 
