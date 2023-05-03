@@ -100,16 +100,19 @@ public class CertificateService implements ICertificateService {
 
 	@Override
 	public boolean validate(Certificate cert) {
-		if (isExpired(cert))
+		if (isExpired(cert)) {
 			return false;
-		if (isInvalidSignature(cert))
+		}
+		if (isInvalidSignature(cert)) {
 			return false;
-
+		}
+		if (isRevoked(cert)) {
+			return false;
+		}
 		if (isTrusted(cert)) {
 			return true;
-		} else {
-			return validate(cert.getParent());
 		}
+		return validate(cert.getParent());
 	}
 
 	@Override
@@ -253,6 +256,10 @@ public class CertificateService implements ICertificateService {
 			return true;
 		}
 		return false;
+	}
+	
+	private boolean isRevoked(Certificate cert) {
+		return cert.getStatus() == Status.REVOKED;
 	}
 
 	private boolean isInvalidSignature(Certificate cert) {
