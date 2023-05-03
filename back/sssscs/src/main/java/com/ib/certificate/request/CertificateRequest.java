@@ -105,10 +105,10 @@ public class CertificateRequest {
 	}
 
 	public boolean isChildOfRevokedParent() {
-		return parent.getStatus() == Certificate.Status.REVOKED;
+		return parent != null &&  parent.getStatus() == Certificate.Status.REVOKED;
 	}
 
 	public boolean parentIsEndCertificate() {
-		return parent.getType() == Type.END;
+		return parent != null &&  parent.getType() == Type.END;
 	}
 }
