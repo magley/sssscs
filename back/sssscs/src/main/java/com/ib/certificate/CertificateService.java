@@ -298,7 +298,10 @@ public class CertificateService implements ICertificateService {
 	}
 
 	private void revoke(Certificate certificate, String revocationReason) {
-		if (certificate.getStatus() != Status.REVOKED && certificate.getType() != Type.END) {
+		if (certificate.getStatus() == Status.REVOKED) {
+			return;
+		}
+		if (certificate.getType() != Type.END) {
 			this.findByParent(certificate).forEach(c -> this.revoke(c, revocationReason));
 		}
 		certificate.setStatus(Status.REVOKED);
