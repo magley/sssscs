@@ -303,6 +303,7 @@ public class CertificateService implements ICertificateService {
 		}
 		certificate.setStatus(Status.REVOKED);
 		certificate.setRevocationReason(revocationReason);
+		certificateRequestService.findByParent(certificate).forEach(c -> certificateRequestService.reject(c, revocationReason));
 		certificateRepo.save(certificate);
 	}
 }

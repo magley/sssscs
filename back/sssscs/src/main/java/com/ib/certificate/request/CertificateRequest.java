@@ -103,4 +103,12 @@ public class CertificateRequest {
 		}
 		return getValidTo().isAfter(parent.getValidTo());
 	}
+
+	public boolean isChildOfRevokedParent() {
+		return parent.getStatus() == Certificate.Status.REVOKED;
+	}
+
+	public boolean parentIsEndCertificate() {
+		return parent.getType() == Type.END;
+	}
 }
