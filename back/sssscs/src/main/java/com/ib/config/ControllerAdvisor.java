@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ib.certificate.exception.CreatorUnauthorizedException;
+import com.ib.certificate.exception.RevocationUnauthorizedException;
 import com.ib.util.exception.EntityException;
 import com.ib.util.exception.EntityNotFoundException;
 import com.ib.util.validation.BadValidation;
@@ -47,7 +48,12 @@ public class ControllerAdvisor {
 	}
 
 	@ExceptionHandler({ CreatorUnauthorizedException.class })
-	public ResponseEntity<?> handleCreatorUnauhotirzedException(final CreatorUnauthorizedException e) {
+	public ResponseEntity<?> handleCreatorUnauthorizedException(final CreatorUnauthorizedException e) {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+	}
+	
+	@ExceptionHandler({ RevocationUnauthorizedException.class })
+	public ResponseEntity<?> handleRevocationUnauthorizedException(final RevocationUnauthorizedException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
 	}
 

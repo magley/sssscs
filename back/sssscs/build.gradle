@@ -35,6 +35,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'com.sendgrid:sendgrid-java:4.0.1'
 	implementation 'com.twilio.sdk:twilio:9.3.0'
+	implementation fileTree(dir: 'lib', include: '*.jar')
 	compileOnly("org.springframework.boot:spring-boot-devtools")
 }
 

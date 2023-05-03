@@ -2,13 +2,12 @@ package com.ib.certificate.request;
 
 import java.util.List;
 
+import com.ib.certificate.Certificate;
+import com.ib.certificate.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ib.certificate.Certificate.Type;
-import com.ib.certificate.exception.BadExpirationDateException;
-import com.ib.certificate.exception.CertificateParentMissingException;
-import com.ib.certificate.exception.CreatorUnauthorizedException;
 import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.user.User;
 import com.ib.user.User.Role;
@@ -35,6 +34,14 @@ public class CertificateRequestService implements ICertificateRequestService {
 
 		if (!request.isCreatorAuthorized()) {
 			throw new CreatorUnauthorizedException();
+		}
+
+		if (request.isChildOfRevokedParent()) {
+			throw new ChildOfRevokedCertificateException();
+		}
+
+		if (request.parentIsEndCertificate()) {
+			throw new ParentIsEndCertificateException();
 		}
 
 		return certificateRequestRepo.save(request);
@@ -87,5 +94,10 @@ public class CertificateRequestService implements ICertificateRequestService {
 	@Override
 	public List<CertificateRequest> findPendingRequestsIssuedTo(User user) {
 		return certificateRequestRepo.findPendingRequestsIssuedTo(user.getId(), user.getRole() == Role.ADMIN);
+	}
+
+	@Override
+	public List<CertificateRequest> findByParent(Certificate parent) {
+		return certificateRequestRepo.findByParent(parent);
 	}
 }
