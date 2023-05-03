@@ -48,4 +48,8 @@ export class CertRequestService {
     static async create(payload: CertRequestCreateDTO): Promise<AxiosResponse<void>> {
         return await axiosInstance.post(`cert/request`, payload);
     }
+
+    static async revoke(certificateId: number, revocationReason: string): Promise<AxiosResponse<void>> {
+        return await axiosInstance.put(`cert/revoke/${certificateId}`, revocationReason, {headers: {"Content-Type": "text/plain"}})
+    }
 }

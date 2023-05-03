@@ -1,10 +1,16 @@
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { axiosInstance } from "../http/HttpService";
 
 export enum CertType {
     ROOT,
 	INTERMEDIATE,
 	END
+}
+
+export enum CertStatus {
+    GOOD,
+    REVOKED,
+    UNKNOWN,
 }
 
 export interface SubjectData {
@@ -20,6 +26,8 @@ export interface CertificateSummaryDTO {
     validFrom: Date,
     subjectData: SubjectData,
     type: CertType,
+    status: CertStatus,
+    revocationReason?: String,
 }
 
 
@@ -53,7 +61,7 @@ export const subjectToCellStr = (s: SubjectData) => {
     if (s.email !== "") {
         str += s.email + ", ";
     }
-    if (s.organization != "") {
+    if (s.organization !== "") {
         str += s.organization;
     }
 
