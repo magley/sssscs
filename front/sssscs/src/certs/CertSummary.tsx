@@ -28,6 +28,7 @@ export const CertSummary = () => {
     const onClickItem = (index: number) => {
         const selectedItem = certList[index];
         setSelectedCert(selectedItem);
+        setRevocationError('');
     }
 
     const revokeSelectedCert = async (data: FieldValues) => {

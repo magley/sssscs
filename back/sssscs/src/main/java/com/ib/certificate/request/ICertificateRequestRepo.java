@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.ib.certificate.request.CertificateRequest.Status;
@@ -18,5 +17,5 @@ public interface ICertificateRequestRepo extends JpaRepository<CertificateReques
 	public List<CertificateRequest> findByCreator(User creator);
 
 	@Query("select r from CertificateRequest r left join r.parent c where (((c.owner.id = :issueeId) or (:includeEmpty = true and c = null)) and r.status = 'PENDING')")
-	public List<CertificateRequest> findPendingRequestsIssuedTo(@Param(value="issueeId") Long issueeId, @Param(value="includeEmpty") boolean includeEmpty);
+	public List<CertificateRequest> findPendingRequestsIssuedTo(Long issueeId, boolean includeEmpty);
 }
