@@ -281,7 +281,7 @@ public class CertificateService implements ICertificateService {
 	public void revoke(Long certificateId, String revocationReason) {
 		User user = auth.getUser();
 		Certificate certificate = this.findById(certificateId);
-		if (user.getRole() != Role.ADMIN && certificate.getOwner() != user) {
+		if (user.getRole() != Role.ADMIN && certificate.getOwner().getId() != user.getId()) {
 			throw new RevocationUnauthorizedException();
 		}
 		if (certificate.getStatus() == Status.REVOKED) {
