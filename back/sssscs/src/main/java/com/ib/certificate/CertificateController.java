@@ -112,6 +112,16 @@ public class CertificateController {
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
+	
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+	@GetMapping("/request/all")
+	public ResponseEntity<?> getAllRequests() {
+		List<CertificateRequest> requests = certificateRequestService.findAll();
+		List<CertificateRequestDto> result = requests.stream().map(r -> modelMapper.map(r, CertificateRequestDto.class))
+				.toList();
+
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}	
 
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
 	@GetMapping("/request/incoming")

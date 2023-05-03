@@ -65,6 +65,11 @@ public class CertificateRequestService implements ICertificateRequestService {
 	public List<CertificateRequest> findByCreator(User creator) {
 		return certificateRequestRepo.findByCreator(creator);
 	}
+	
+	@Override
+	public List<CertificateRequest> findAll() {
+		return certificateRequestRepo.findAll();
+	}
 
 	@Override
 	public void reject(CertificateRequest req, String reason) {

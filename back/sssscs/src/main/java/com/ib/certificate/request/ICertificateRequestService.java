@@ -13,6 +13,8 @@ public interface ICertificateRequestService {
 	public boolean canAutoAccept(CertificateRequest request);
 
 	public List<CertificateRequest> findByCreator(User creator);
+	
+	public List<CertificateRequest> findAll();
 
 	public List<CertificateRequest> findPendingRequestsIssuedTo(User user);
 

@@ -1,18 +1,18 @@
 import { useEffect } from "react";
-import { CertRequestDTO, CertRequestService } from "./CertRequestService";
+import { CertRequestDTO } from "./CertRequestService";
 import React from "react";
 import { AxiosResponse } from "axios";
 import { CertRequestTable } from "./CertRequestTable";
 
-export const MyCertRequests = () => {
+export const CertRequests = (props: {requestsProvider: () => Promise<AxiosResponse<CertRequestDTO[]>>}) => {
     let [reqList, setReqList] = React.useState<Array<CertRequestDTO>>([]);
 
     useEffect(() => {
-        CertRequestService.getOwn()
+        props.requestsProvider()
             .then((res: AxiosResponse<Array<CertRequestDTO>>) => {
                 setReqList(res.data);
             });
-    }, []);
+    }, [props]);
 
     return (
         <>
