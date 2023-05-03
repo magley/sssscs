@@ -1,9 +1,10 @@
 import { useEffect } from "react"
-import { AuthService } from "../auth/AuthService"
-import { CertService, CertificateSummaryDTO, SubjectData, subjectToCellStr } from "./CertService";
+import { CertService, CertificateSummaryDTO } from "./CertService";
 import * as React from 'react';
 import { AxiosResponse } from "axios";
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { CertSummaryTable } from "./CertSummaryTable";
+
+
 
 export const CertSummary = () => {
     let [certList, setCertList] = React.useState<Array<CertificateSummaryDTO>>([]);
@@ -21,34 +22,7 @@ export const CertSummary = () => {
         <hr/>
 
         <div style={{ height: 400, width: '100%' }}>
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Identification Number</TableCell>
-                            <TableCell>Not Before</TableCell>
-                            <TableCell>Issued To</TableCell>
-                            <TableCell>Type</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {certList.map((value: CertificateSummaryDTO) => (<TableRow>
-                            <TableCell>
-                                {value.id}
-                            </TableCell>
-                            <TableCell>
-                                {new Date(value.validFrom).toISOString()}
-                            </TableCell>
-                            <TableCell>
-                                {subjectToCellStr(value.subjectData)}
-                            </TableCell>
-                            <TableCell>
-                                {value.type}
-                            </TableCell>
-                        </TableRow>))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <CertSummaryTable summaries={certList} />    
         </div>
         </>
     )
