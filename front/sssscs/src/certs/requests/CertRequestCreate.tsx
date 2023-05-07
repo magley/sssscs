@@ -7,7 +7,7 @@ import { CertRequestCreateDTO, CertRequestService } from "./CertRequestService";
 
 
 export const CertRequestCreate = () => {
-    const { register, control, handleSubmit, formState: { errors }, watch} = useForm({mode: 'all'});
+    const { register, control, handleSubmit, setError, formState: { errors }, watch} = useForm({mode: 'all'});
     const [ allowedTypes, setAllowedTypes ] = useState<Array<CertType>>([]);
 
     useEffect(() => {
@@ -35,6 +35,7 @@ export const CertRequestCreate = () => {
         if (dto.type != CertType[CertType.ROOT]) {
             if (dto.parentId == null || dto.parentId <= 0) {
                 console.error("Need parent!");
+                setError('parentId', {message: "Need parent!"}, {shouldFocus: true});
                 return;
             }
         } else {
@@ -48,6 +49,7 @@ export const CertRequestCreate = () => {
             })
             .catch((err) => {
                 console.error(err.response.data);
+                setError('parentId', {message: err.response.data}, {shouldFocus: true});
             })
     }
 

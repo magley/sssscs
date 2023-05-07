@@ -43,7 +43,7 @@ export const CertVerify = () => {
                 <Button variant='contained' type='submit'>Verify</Button>
             </Box>
             {
-                isValid &&
+                isValid != null &&
                 <p>
                     {isValid ? "Certificate is valid" : "Certificate is not valid"}
                 </p>

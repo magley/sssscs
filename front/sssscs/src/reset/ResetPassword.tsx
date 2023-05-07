@@ -26,7 +26,6 @@ export const ResetPassword = () => {
             code: data['code'],
             newPassword: data['newPassword'],
         }
-        console.log(dto);
         VerifyService.resetPassword(dto)
             .then((val: AxiosResponse<void>) => {
                 console.log("Successfully reset password");
