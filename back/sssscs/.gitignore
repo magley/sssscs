@@ -1,3 +1,7 @@
+# Keys and certs
+
+keys/*.key
+certs/*.crt
 
 # Hide database
 data/*.db
