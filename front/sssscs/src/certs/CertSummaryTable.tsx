@@ -15,7 +15,7 @@ export const CertSummaryTable = (props: CertSummaryTableProps) => {
                 const url = window.URL.createObjectURL(new Blob([res.data]));
                 const link = document.createElement("a");
                 link.href = url;
-                link.setAttribute("download", id + ".cert");
+                link.setAttribute("download", id + ".crt");
                 link.click();
             })
             .catch((err : AxiosError) => {
