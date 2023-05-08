@@ -1,5 +1,6 @@
 package com.ib.certificate;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.springframework.core.io.FileSystemResource;
@@ -28,4 +29,6 @@ public interface ICertificateService {
 	public void revoke(Long certificateId, String revocationReason);
 
 	public FileSystemResource download(Long certificateId);
+
+	public boolean isValid(InputStream certStream);
 }

@@ -1,11 +1,11 @@
 package com.ib.certificate;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.dto.CertificateRequestCreateDto;
@@ -161,5 +164,17 @@ public class CertificateController {
 	@GetMapping("/download/{certificateId}")
 	public ResponseEntity<FileSystemResource> download(@PathVariable Long certificateId) {
 		return ResponseEntity.ok(certificateService.download(certificateId));
+	}
+
+	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
+	@PostMapping("/valid")
+	public ResponseEntity<Boolean> isValidFile(@RequestParam MultipartFile certFile) {
+		boolean isValid = false;
+		try {
+			isValid = certificateService.isValid(certFile.getInputStream());
+		} catch (IOException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something is wrong with your file.");
+		}
+		return ResponseEntity.ok(isValid);
 	}
 }
