@@ -62,7 +62,7 @@ export const CertSummaryTable = (props: CertSummaryTableProps) => {
                                 {value.revocationReason}
                             </TableCell>
                             <TableCell>
-                                <IconButton color="primary" onClick={() => downloadCert(value.id)}>
+                                <IconButton color="primary" onClick={(e) => {downloadCert(value.id); e.stopPropagation();}}>
                                     <DownloadIcon/>
                                 </IconButton>
                             </TableCell>
