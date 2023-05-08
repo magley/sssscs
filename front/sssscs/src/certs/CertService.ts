@@ -24,6 +24,7 @@ export interface SubjectData {
 export interface CertificateSummaryDTO {
     id: number,
     validFrom: Date,
+    validTo: Date,
     subjectData: SubjectData,
     type: CertType,
     status: CertStatus,

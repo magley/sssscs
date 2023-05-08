@@ -29,6 +29,7 @@ export const CertSummaryTable = (props: CertSummaryTableProps) => {
                         <TableRow>
                             <TableCell>Identification Number</TableCell>
                             <TableCell>Not Before</TableCell>
+                            <TableCell>Not After</TableCell>
                             <TableCell>Issued To</TableCell>
                             <TableCell>Type</TableCell>
                             <TableCell>Status</TableCell>
@@ -44,6 +45,9 @@ export const CertSummaryTable = (props: CertSummaryTableProps) => {
                             </TableCell>
                             <TableCell>
                                 {new Date(value.validFrom).toISOString()}
+                            </TableCell>
+                            <TableCell>
+                                {new Date(value.validTo).toISOString()}
                             </TableCell>
                             <TableCell>
                                 {subjectToCellStr(value.subjectData)}
