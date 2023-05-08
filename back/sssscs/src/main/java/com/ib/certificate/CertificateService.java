@@ -315,6 +315,6 @@ public class CertificateService implements ICertificateService {
 	public FileSystemResource download(Long certificateId) {
 		Certificate cert = findById(certificateId);
 		// TODO: check if it is possible for file to not exist while db has it
-		return new FileSystemResource(KeyUtil.getFnameCert(cert.getSerialNumber()));
+		return new FileSystemResource(keyUtil.getFnameCert(cert.getSerialNumber()));
 	}
 }
