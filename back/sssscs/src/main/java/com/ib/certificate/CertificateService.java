@@ -328,16 +328,14 @@ public class CertificateService implements ICertificateService {
 
 	@Override
 	public boolean isValid(MultipartFile certFile) {
-		X509Certificate uploadedCert;
-		try (InputStream certStream = certFile.getInputStream()) {
-			uploadedCert = keyUtil.generateX509Certificate(certStream);
-		} catch (CertificateException e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not a valid certificate file.");
-		} catch (IOException e1) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error when reading your file.");
-		}
-		Long id = uploadedCert.getSerialNumber().longValue(); // TODO: can this bigInt to long cause problems?
+		Long id = getCertId(certFile);
 		Certificate cert = findById(id);
+		checkIfOwnCertificateFile(certFile, cert);
+		return isValid(cert);
+	}
+	
+	// TODO: maybe rename?
+	private void checkIfOwnCertificateFile(MultipartFile certFile, Certificate cert) {
 		try (InputStream certStream = certFile.getInputStream()) {
 			boolean equal = IOUtils.contentEquals(certStream, new FileInputStream(keyUtil.getFnameCert(cert.getSerialNumber())));
 			if (!equal) {
@@ -348,6 +346,17 @@ public class CertificateService implements ICertificateService {
 		} catch (IOException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error when reading cert file from our disk.");
 		}
-		return isValid(cert);
+	}
+	
+	private Long getCertId(MultipartFile certFile) {
+		X509Certificate uploadedCert;
+		try (InputStream certStream = certFile.getInputStream()) {
+			uploadedCert = keyUtil.generateX509Certificate(certStream);
+		} catch (CertificateException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not a valid certificate file.");
+		} catch (IOException e1) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error when reading your file.");
+		}
+		return uploadedCert.getSerialNumber().longValue(); // TODO: can this bigInt to long conversion cause problems?
 	}
 }
