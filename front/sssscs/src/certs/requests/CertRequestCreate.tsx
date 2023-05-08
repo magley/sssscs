@@ -7,12 +7,12 @@ import { CertRequestCreateDTO, CertRequestService } from "./CertRequestService";
 
 
 export const CertRequestCreate = () => {
-    const { register, control, handleSubmit, setError, formState: { errors }, watch} = useForm({mode: 'all'});
+    const { register, handleSubmit, formState: { errors }, watch} = useForm({mode: 'all'});
     const [ allowedTypes, setAllowedTypes ] = useState<Array<CertType>>([]);
 
     useEffect(() => {
         let t = [CertType.END, CertType.INTERMEDIATE, CertType.ROOT];
-        if (AuthService.getRole() != 'ADMIN') {
+        if (AuthService.getRole() !== 'ADMIN') {
             t.pop();
         }
 
@@ -32,7 +32,7 @@ export const CertRequestCreate = () => {
             },
         };
 
-        if (dto.type != CertType[CertType.ROOT]) {
+        if (dto.type !== CertType[CertType.ROOT]) {
             if (dto.parentId == null || dto.parentId <= 0) {
                 console.error("Need parent!");
                 setError('parentId', {message: "Need parent!"}, {shouldFocus: true});
@@ -67,17 +67,16 @@ export const CertRequestCreate = () => {
                     error={!!errors['type']}
                     >
                         { allowedTypes.map((t: CertType) => (
-                            <MenuItem value={t}>{CertType[t]}</MenuItem>
+                            <MenuItem key={t} value={t}>{CertType[t]}</MenuItem>
                         ))}
                 </Select>
                 <br/>
                     
                 <TextField
                     label="Parent certificate ID"
-                    disabled={watch("type") == CertType.ROOT}
-                    required={watch("type") != CertType.ROOT}
-                    defaultValue={0}
-                    value={watch("type") == CertType.ROOT ? 0 : watch('parentId')}
+                    disabled={watch("type") === CertType.ROOT}
+                    required={watch("type") !== CertType.ROOT}
+                    value={watch("type") === CertType.ROOT ? 0 : (watch('parentId') || 0)}
                     {...register('parentId', { required: 'Parent ID is required' })}
                     error={!!errors['parentId']}
                     helperText={errors['parentId']?.message?.toString()}

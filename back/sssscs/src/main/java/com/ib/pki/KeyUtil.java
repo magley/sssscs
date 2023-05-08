@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -39,7 +40,7 @@ public class KeyUtil {
 	// Filename generators
 	////////////////////////////////////////////////////////////
 
-	private String getFnameCert(String alias) {
+	public String getFnameCert(String alias) {
 		return DIR_CERTS + "/" + alias + ".crt";
 	}
 
@@ -79,13 +80,17 @@ public class KeyUtil {
 		String fnameCert = getFnameCert(alias);
 
 		try (FileInputStream is = new FileInputStream(fnameCert)) {
-			CertificateFactory fac = CertificateFactory.getInstance("X509");
-			X509Certificate cert = (X509Certificate) fac.generateCertificate(is);
-			return cert;
+			return generateX509Certificate(is);
 		} catch (CertificateException | IOException e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public X509Certificate generateX509Certificate(InputStream certStream) throws CertificateException {
+		CertificateFactory fac = CertificateFactory.getInstance("X509");
+		X509Certificate cert = (X509Certificate) fac.generateCertificate(certStream);
+		return cert;
 	}
 
 	public void savePrivateKey(String alias, PrivateKey privateKey) {

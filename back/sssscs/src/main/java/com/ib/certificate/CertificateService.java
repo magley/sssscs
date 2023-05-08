@@ -1,5 +1,9 @@
 package com.ib.certificate;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -13,6 +17,7 @@ import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -22,8 +27,12 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ib.certificate.Certificate.Status;
 import com.ib.certificate.Certificate.Type;
@@ -308,5 +317,46 @@ public class CertificateService implements ICertificateService {
 		certificate.setRevocationReason(revocationReason);
 		certificateRepo.save(certificate);
 		certificateRequestService.findByParent(certificate).forEach(c -> certificateRequestService.reject(c, revocationReason));
+	}
+
+	@Override
+	public FileSystemResource download(Long certificateId) {
+		Certificate cert = findById(certificateId);
+		// TODO: check if it is possible for file to not exist while db has it
+		return new FileSystemResource(keyUtil.getFnameCert(cert.getSerialNumber()));
+	}
+
+	@Override
+	public boolean isValid(MultipartFile certFile) {
+		Long id = getCertId(certFile);
+		Certificate cert = findById(id);
+		checkIfOwnCertificateFile(certFile, cert);
+		return isValid(cert);
+	}
+	
+	// TODO: maybe rename?
+	private void checkIfOwnCertificateFile(MultipartFile certFile, Certificate cert) {
+		try (InputStream certStream = certFile.getInputStream()) {
+			boolean equal = IOUtils.contentEquals(certStream, new FileInputStream(keyUtil.getFnameCert(cert.getSerialNumber())));
+			if (!equal) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded certificate was tampered with.");
+			}
+		} catch (FileNotFoundException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not a certificate file we own.");
+		} catch (IOException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error when reading cert file from our disk.");
+		}
+	}
+	
+	private Long getCertId(MultipartFile certFile) {
+		X509Certificate uploadedCert;
+		try (InputStream certStream = certFile.getInputStream()) {
+			uploadedCert = keyUtil.generateX509Certificate(certStream);
+		} catch (CertificateException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not a valid certificate file.");
+		} catch (IOException e1) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error when reading your file.");
+		}
+		return uploadedCert.getSerialNumber().longValue(); // TODO: can this bigInt to long conversion cause problems?
 	}
 }

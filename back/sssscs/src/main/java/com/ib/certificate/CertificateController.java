@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.dto.CertificateRequestCreateDto;
@@ -153,5 +156,19 @@ public class CertificateController {
 	@PutMapping("/revoke/{certificateId}")
 	public void revoke(@PathVariable Long certificateId, @RequestBody String revocationReason) {
 		certificateService.revoke(certificateId, revocationReason);
+	}
+
+	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
+	@GetMapping("/download/{certificateId}")
+	public ResponseEntity<FileSystemResource> download(@PathVariable Long certificateId) {
+		return ResponseEntity.ok(certificateService.download(certificateId));
+	}
+
+	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
+	@PostMapping("/valid")
+	public ResponseEntity<Boolean> isValidFile(@RequestParam MultipartFile certFile) {
+		boolean isValid = false;
+		isValid = certificateService.isValid(certFile);
+		return ResponseEntity.ok(isValid);
 	}
 }

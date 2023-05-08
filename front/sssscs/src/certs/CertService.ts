@@ -24,6 +24,7 @@ export interface SubjectData {
 export interface CertificateSummaryDTO {
     id: number,
     validFrom: Date,
+    validTo: Date,
     subjectData: SubjectData,
     type: CertType,
     status: CertStatus,
@@ -38,6 +39,14 @@ export class CertService {
 
     static async verify(certID: number): Promise<AxiosResponse<Boolean>> {
         return await axiosInstance.get(`cert/valid/${certID}`);
+    }
+
+    static async verifyFile(certFile: File): Promise<AxiosResponse<Boolean>> {
+        return await axiosInstance.postForm(`cert/valid`, { certFile });
+    }
+
+    static async download(certID: number): Promise<AxiosResponse<ArrayBuffer>> {
+        return await axiosInstance.get(`cert/download/${certID}`);
     }
 }
 

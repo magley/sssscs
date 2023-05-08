@@ -3,6 +3,7 @@ import { FieldValues, useForm } from "react-hook-form"
 import { CertService } from "./CertService";
 import { AxiosError, AxiosResponse } from "axios";
 import { useState } from "react";
+import { CertVerifyFile } from "./CertVerifyFile";
 
 export const CertVerify = () => {
     const { register, handleSubmit, setError, formState: {errors}} = useForm({mode: 'all'});
@@ -43,11 +44,12 @@ export const CertVerify = () => {
                 <Button variant='contained' type='submit'>Verify</Button>
             </Box>
             {
-                isValid != null &&
+                isValid !== null &&
                 <p>
                     {isValid ? "Certificate is valid" : "Certificate is not valid"}
                 </p>
             }
+            <CertVerifyFile></CertVerifyFile>
         </>
     )
 }

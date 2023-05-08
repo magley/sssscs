@@ -20,6 +20,8 @@ public class CertificateSummaryItemDto {
 	@NotNull
 	private LocalDateTime validFrom;
 	@NotNull
+	private LocalDateTime validTo;
+	@NotNull
 	private SubjectData subjectData;
 	@NotNull
 	private Type type;
