@@ -7,7 +7,7 @@ import { CertRequestCreateDTO, CertRequestService } from "./CertRequestService";
 
 
 export const CertRequestCreate = () => {
-    const { register, handleSubmit, formState: { errors }, watch} = useForm({mode: 'all'});
+    const { register, handleSubmit, formState: { errors }, watch, setError} = useForm({mode: 'all'});
     const [ allowedTypes, setAllowedTypes ] = useState<Array<CertType>>([]);
 
     useEffect(() => {
