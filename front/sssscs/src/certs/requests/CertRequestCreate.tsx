@@ -74,8 +74,7 @@ export const CertRequestCreate = () => {
                     label="Parent certificate ID"
                     disabled={watch("type") == CertType.ROOT}
                     required={watch("type") != CertType.ROOT}
-                    defaultValue={0}
-                    value={watch("type") == CertType.ROOT ? 0 : watch('parentId')}
+                    value={watch("type") == CertType.ROOT ? 0 : (watch('parentId') || 0)}
                     {...register('parentId', { required: 'Parent ID is required' })}
                     error={!!errors['parentId']}
                     helperText={errors['parentId']?.message?.toString()}
