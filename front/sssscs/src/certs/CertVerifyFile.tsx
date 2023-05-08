@@ -74,7 +74,7 @@ export const CertVerifyFile = () => {
                 </p>
             }
             {
-                !!errors["certFile"] && <p>{errors["certFile"]?.message?.toString()}</p>
+                !!errors["certFile"] && <p style={{color: "red"}}>{errors["certFile"]?.message?.toString()}</p>
             }
         </>
     )
