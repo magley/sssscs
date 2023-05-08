@@ -65,7 +65,7 @@ export const CertRequestCreate = () => {
                     error={!!errors['type']}
                     >
                         { allowedTypes.map((t: CertType) => (
-                            <MenuItem value={t}>{CertType[t]}</MenuItem>
+                            <MenuItem key={t} value={t}>{CertType[t]}</MenuItem>
                         ))}
                 </Select>
                 <br/>

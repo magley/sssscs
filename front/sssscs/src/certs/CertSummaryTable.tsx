@@ -39,7 +39,7 @@ export const CertSummaryTable = (props: CertSummaryTableProps) => {
                     </TableHead>
                     <TableBody>
                         {props.summaries.map((value: CertificateSummaryDTO, index: number) => (
-                        <TableRow onClick={() => props.onClickRow && props.onClickRow(index)}>
+                        <TableRow onClick={() => props.onClickRow && props.onClickRow(index)} key={value.id}>
                             <TableCell>
                                 {value.id}
                             </TableCell>
