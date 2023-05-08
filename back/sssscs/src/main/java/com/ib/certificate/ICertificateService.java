@@ -2,6 +2,8 @@ package com.ib.certificate;
 
 import java.util.List;
 
+import org.springframework.core.io.FileSystemResource;
+
 import com.ib.certificate.dto.CertificateSummaryItemDto;
 import com.ib.certificate.request.CertificateRequest;
 import com.ib.user.User;
@@ -24,4 +26,6 @@ public interface ICertificateService {
 	public boolean isValid(Certificate cert);
 	
 	public void revoke(Long certificateId, String revocationReason);
+
+	public FileSystemResource download(Long certificateId);
 }

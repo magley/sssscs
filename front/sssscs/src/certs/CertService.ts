@@ -39,6 +39,10 @@ export class CertService {
     static async verify(certID: number): Promise<AxiosResponse<Boolean>> {
         return await axiosInstance.get(`cert/valid/${certID}`);
     }
+
+    static async download(certID: number): Promise<AxiosResponse<ArrayBuffer>> {
+        return await axiosInstance.get(`cert/download/${certID}`);
+    }
 }
 
 export const subjectToCellStr = (s: SubjectData) => {

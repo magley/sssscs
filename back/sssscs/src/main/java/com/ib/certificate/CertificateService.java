@@ -22,6 +22,7 @@ import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -308,5 +309,12 @@ public class CertificateService implements ICertificateService {
 		certificate.setRevocationReason(revocationReason);
 		certificateRepo.save(certificate);
 		certificateRequestService.findByParent(certificate).forEach(c -> certificateRequestService.reject(c, revocationReason));
+	}
+
+	@Override
+	public FileSystemResource download(Long certificateId) {
+		Certificate cert = findById(certificateId);
+		// TODO: check if it is possible for file to not exist while db has it
+		return new FileSystemResource(keyUtil.getFnameCert(cert.getSerialNumber()));
 	}
 }

@@ -39,7 +39,7 @@ public class KeyUtil {
 	// Filename generators
 	////////////////////////////////////////////////////////////
 
-	private String getFnameCert(String alias) {
+	public String getFnameCert(String alias) {
 		return DIR_CERTS + "/" + alias + ".crt";
 	}
 
