@@ -25,7 +25,7 @@ export const CertRequestTable = (props: CertRequestTableProps) => {
                     </TableHead>
                     <TableBody>
                         {props.requests.map((value: CertRequestDTO, index: number) => (
-                            <TableRow onClick={() => props.onClickRow && props.onClickRow(index)}>
+                            <TableRow onClick={() => props.onClickRow && props.onClickRow(index)} key={value.id}>
                                 <TableCell>
                                     {value.id}
                                 </TableCell>

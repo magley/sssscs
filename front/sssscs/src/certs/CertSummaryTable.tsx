@@ -29,6 +29,7 @@ export const CertSummaryTable = (props: CertSummaryTableProps) => {
                         <TableRow>
                             <TableCell>Identification Number</TableCell>
                             <TableCell>Not Before</TableCell>
+                            <TableCell>Not After</TableCell>
                             <TableCell>Issued To</TableCell>
                             <TableCell>Type</TableCell>
                             <TableCell>Status</TableCell>
@@ -38,12 +39,15 @@ export const CertSummaryTable = (props: CertSummaryTableProps) => {
                     </TableHead>
                     <TableBody>
                         {props.summaries.map((value: CertificateSummaryDTO, index: number) => (
-                        <TableRow onClick={() => props.onClickRow && props.onClickRow(index)}>
+                        <TableRow onClick={() => props.onClickRow && props.onClickRow(index)} key={value.id}>
                             <TableCell>
                                 {value.id}
                             </TableCell>
                             <TableCell>
                                 {new Date(value.validFrom).toISOString()}
+                            </TableCell>
+                            <TableCell>
+                                {new Date(value.validTo).toISOString()}
                             </TableCell>
                             <TableCell>
                                 {subjectToCellStr(value.subjectData)}
@@ -58,7 +62,7 @@ export const CertSummaryTable = (props: CertSummaryTableProps) => {
                                 {value.revocationReason}
                             </TableCell>
                             <TableCell>
-                                <IconButton color="primary" onClick={() => downloadCert(value.id)}>
+                                <IconButton color="primary" onClick={(e) => {downloadCert(value.id); e.stopPropagation();}}>
                                     <DownloadIcon/>
                                 </IconButton>
                             </TableCell>
