@@ -1,9 +1,9 @@
 package com.ib.certificate;
 
-import java.io.InputStream;
 import java.util.List;
 
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ib.certificate.dto.CertificateSummaryItemDto;
 import com.ib.certificate.request.CertificateRequest;
@@ -30,5 +30,5 @@ public interface ICertificateService {
 
 	public FileSystemResource download(Long certificateId);
 
-	public boolean isValid(InputStream certStream);
+	public boolean isValid(MultipartFile certFile);
 }

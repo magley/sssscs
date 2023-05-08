@@ -170,11 +170,7 @@ public class CertificateController {
 	@PostMapping("/valid")
 	public ResponseEntity<Boolean> isValidFile(@RequestParam MultipartFile certFile) {
 		boolean isValid = false;
-		try {
-			isValid = certificateService.isValid(certFile.getInputStream());
-		} catch (IOException e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something is wrong with your file.");
-		}
+		isValid = certificateService.isValid(certFile);
 		return ResponseEntity.ok(isValid);
 	}
 }

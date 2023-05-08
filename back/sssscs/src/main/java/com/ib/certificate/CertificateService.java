@@ -31,6 +31,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ib.certificate.Certificate.Status;
@@ -326,16 +327,18 @@ public class CertificateService implements ICertificateService {
 	}
 
 	@Override
-	public boolean isValid(InputStream certStream) {
+	public boolean isValid(MultipartFile certFile) {
 		X509Certificate uploadedCert;
-		try {
+		try (InputStream certStream = certFile.getInputStream()) {
 			uploadedCert = keyUtil.generateX509Certificate(certStream);
 		} catch (CertificateException e) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not a valid certificate file.");
+		} catch (IOException e1) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown error when reading your file.");
 		}
 		Long id = uploadedCert.getSerialNumber().longValue(); // TODO: can this bigInt to long cause problems?
 		Certificate cert = findById(id);
-		try {
+		try (InputStream certStream = certFile.getInputStream()) {
 			boolean equal = IOUtils.contentEquals(certStream, new FileInputStream(keyUtil.getFnameCert(cert.getSerialNumber())));
 			if (!equal) {
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Uploaded certificate was tampered with.");

@@ -40,6 +40,10 @@ export class CertService {
         return await axiosInstance.get(`cert/valid/${certID}`);
     }
 
+    static async verifyFile(certFile: File): Promise<AxiosResponse<Boolean>> {
+        return await axiosInstance.postForm(`cert/valid`, { certFile });
+    }
+
     static async download(certID: number): Promise<AxiosResponse<ArrayBuffer>> {
         return await axiosInstance.get(`cert/download/${certID}`);
     }
