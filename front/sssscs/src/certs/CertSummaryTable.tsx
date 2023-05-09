@@ -1,5 +1,6 @@
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
+import KeyIcon from '@mui/icons-material/Key';
 import { CertService, CertificateSummaryDTO, subjectToCellStr } from "./CertService";
 import { AxiosError, AxiosResponse } from "axios";
 
@@ -22,6 +23,19 @@ export const CertSummaryTable = (props: CertSummaryTableProps) => {
                 // TODO: maybe need to catch?
             });
     }
+    const downloadKey = (id: number) => {
+        CertService.downloadPrivateKey(id)
+            .then((res: AxiosResponse<ArrayBuffer>) => {
+                const url = window.URL.createObjectURL(new Blob([res.data]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", id + ".key");
+                link.click();
+            })
+            .catch((err : AxiosError) => {
+                // TODO: maybe need to catch?
+            });
+    }
     return (
         <TableContainer component={Paper}>
                 <Table>
@@ -34,7 +48,8 @@ export const CertSummaryTable = (props: CertSummaryTableProps) => {
                             <TableCell>Type</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell>Revocation reason</TableCell>
-                            <TableCell>Download</TableCell>
+                            <TableCell>Download certificate</TableCell>
+                            <TableCell>Download key</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -64,6 +79,11 @@ export const CertSummaryTable = (props: CertSummaryTableProps) => {
                             <TableCell>
                                 <IconButton color="primary" onClick={(e) => {downloadCert(value.id); e.stopPropagation();}}>
                                     <DownloadIcon/>
+                                </IconButton>
+                            </TableCell>
+                            <TableCell>
+                                <IconButton color="primary" onClick={(e) => {downloadKey(value.id); e.stopPropagation();}}>
+                                    <KeyIcon/>
                                 </IconButton>
                             </TableCell>
                         </TableRow>))}

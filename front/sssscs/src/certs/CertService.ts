@@ -48,6 +48,10 @@ export class CertService {
     static async download(certID: number): Promise<AxiosResponse<ArrayBuffer>> {
         return await axiosInstance.get(`cert/download/${certID}`);
     }
+
+    static async downloadPrivateKey(certID: number): Promise<AxiosResponse<ArrayBuffer>> {
+        return await axiosInstance.get(`cert/download/private/${certID}`);
+    }
 }
 
 export const subjectToCellStr = (s: SubjectData) => {

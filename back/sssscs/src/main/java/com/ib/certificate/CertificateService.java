@@ -329,7 +329,7 @@ public class CertificateService implements ICertificateService {
 	@Override
 	public FileSystemResource downloadPrivate(Long certificateId) {
 		Certificate cert = findById(certificateId);
-		if (cert.getOwner().getId() == null || cert.getOwner().getId() == auth.getUser().getId()) {
+		if (cert.getOwner().getId() == null || !cert.getOwner().getId().equals(auth.getUser().getId())) {
 			throw new EntityNotFoundException(Certificate.class, certificateId);
 		}
 		return new FileSystemResource(keyUtil.getFnamePrivKey(cert.getSerialNumber()));
