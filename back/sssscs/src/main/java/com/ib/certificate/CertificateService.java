@@ -327,7 +327,7 @@ public class CertificateService implements ICertificateService {
 	}
 
 	@Override
-	public FileSystemResource downloadPrivate(Long certificateId) {
+	public FileSystemResource downloadPrivateKey(Long certificateId) {
 		Certificate cert = findById(certificateId);
 		if (cert.getOwner().getId() == null || !cert.getOwner().getId().equals(auth.getUser().getId())) {
 			throw new EntityNotFoundException(Certificate.class, certificateId);

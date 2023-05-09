@@ -167,7 +167,7 @@ public class CertificateController {
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
 	@GetMapping("/download/private/{certificateId}")
 	public ResponseEntity<FileSystemResource> downloadPrivate(@PathVariable Long certificateId) {
-		return ResponseEntity.ok(certificateService.downloadPrivate(certificateId));
+		return ResponseEntity.ok(certificateService.downloadPrivateKey(certificateId));
 	}
 
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
