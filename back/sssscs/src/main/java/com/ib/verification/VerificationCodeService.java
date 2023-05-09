@@ -76,7 +76,7 @@ public class VerificationCodeService implements IVerificationCodeService {
 		VerificationCode code = get(user, Reason.TWO_FA, dto.getCode());
 
 		userService.verify(user);
-		userService.resetLoginCounter(user);
+		userService.setLastTimeOf2FAToNow(user);
 		repo.delete(code);
 	}
 

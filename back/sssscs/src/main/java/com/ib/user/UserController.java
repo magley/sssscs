@@ -1,5 +1,7 @@
 package com.ib.user;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +32,6 @@ public class UserController {
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
 
-	private static final Integer loginsBefore2FactorAuthActivates = 5;
-
 	@PostMapping("/session/register")
 	public ResponseEntity<?> register(@DTO(UserCreateDto.class) User user) {
 		userService.register(user);
@@ -54,12 +54,10 @@ public class UserController {
 			// TOO_MANY_REQUESTS == 429, it stands out which helps us on the frontend.
 			throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "You are blocked.");
 		}
-		if (user.getVerified() == false || user.getLoginCounter() == loginsBefore2FactorAuthActivates) {
+		if (user.getVerified() == false || userService.isTimeFor2FA(user)) {
 			// UNPROCESSABLE_ENTITY == 422, it stands out which helps us on the frontend.
 			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Verify your account.");
 		}
-
-		userService.incrementLoginCounter(user);
 		
 		String token = jwtTokenUtil.generateToken(user.getEmail(), user.getId(), user.getRole().toString());
 		return ResponseEntity.ok(token);

@@ -1,6 +1,7 @@
 package com.ib.user;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -60,18 +61,6 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public void resetLoginCounter(User user) {
-		user.setLoginCounter(0);
-		userRepo.save(user);
-	}
-
-	@Override
-	public void incrementLoginCounter(User user) {
-		user.setLoginCounter(user.getLoginCounter() + 1);
-		userRepo.save(user);
-	}
-
-	@Override
 	public void blockUserForAnHour(User user) {
 		user.setBlocked(true);
 		user.setBlockEndDate(LocalDateTime.now().plusHours(1L));
@@ -95,5 +84,25 @@ public class UserService implements IUserService {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public void setLastTimeOf2FAToNow(User user) {
+		user.setLastTimeOf2FA(LocalDateTime.now());
+		userRepo.save(user);
+	}
+
+	@Override
+	public boolean isTimeFor2FA(User user) {
+		LocalDateTime lastTime = user.getLastTimeOf2FA();
+		
+		if (lastTime == null) {
+			return true;
+		}
+		
+		LocalDateTime now = LocalDateTime.now();
+		
+		long minutesPassed = ChronoUnit.MINUTES.between(lastTime, now);
+		return Math.abs(minutesPassed) > 5;
 	}
 }
