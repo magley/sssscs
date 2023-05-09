@@ -24,6 +24,8 @@ public class CertificateSummaryItemDto {
 	@NotNull
 	private SubjectData subjectData;
 	@NotNull
+	private Long ownerId;
+	@NotNull
 	private Type type;
 	@NotNull
 	private Status status;

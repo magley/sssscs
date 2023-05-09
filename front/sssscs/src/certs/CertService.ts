@@ -23,6 +23,7 @@ export interface SubjectData {
 
 export interface CertificateSummaryDTO {
     id: number,
+    ownerId: number,
     validFrom: Date,
     validTo: Date,
     subjectData: SubjectData,

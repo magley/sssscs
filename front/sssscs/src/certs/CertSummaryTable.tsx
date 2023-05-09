@@ -1,6 +1,7 @@
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import KeyIcon from '@mui/icons-material/Key';
+import { AuthService } from "./../auth/AuthService"
 import { CertService, CertificateSummaryDTO, subjectToCellStr } from "./CertService";
 import { AxiosError, AxiosResponse } from "axios";
 
@@ -82,9 +83,12 @@ export const CertSummaryTable = (props: CertSummaryTableProps) => {
                                 </IconButton>
                             </TableCell>
                             <TableCell>
-                                <IconButton color="primary" onClick={(e) => {downloadKey(value.id); e.stopPropagation();}}>
-                                    <KeyIcon/>
-                                </IconButton>
+                                {
+                                    value.ownerId === AuthService.getId() ?
+                                    <IconButton color="primary" onClick={(e) => {downloadKey(value.id); e.stopPropagation();}}>
+                                        <KeyIcon/>
+                                    </IconButton> : "N/A"
+                                }
                             </TableCell>
                         </TableRow>))}
                     </TableBody>
