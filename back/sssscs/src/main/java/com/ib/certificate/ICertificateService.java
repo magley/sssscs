@@ -30,5 +30,7 @@ public interface ICertificateService {
 
 	public FileSystemResource download(Long certificateId);
 
+	public FileSystemResource downloadPrivate(Long certificateId);
+
 	public boolean isValid(MultipartFile certFile);
 }

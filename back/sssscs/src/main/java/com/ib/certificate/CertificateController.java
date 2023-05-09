@@ -165,6 +165,12 @@ public class CertificateController {
 	}
 
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
+	@GetMapping("/download/private/{certificateId}")
+	public ResponseEntity<FileSystemResource> downloadPrivate(@PathVariable Long certificateId) {
+		return ResponseEntity.ok(certificateService.downloadPrivate(certificateId));
+	}
+
+	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
 	@PostMapping("/valid")
 	public ResponseEntity<Boolean> isValidFile(@RequestParam MultipartFile certFile) {
 		boolean isValid = false;
