@@ -44,7 +44,7 @@ public class KeyUtil {
 		return DIR_CERTS + "/" + alias + ".crt";
 	}
 
-	private String getFnamePrivKey(String alias) {
+	public String getFnamePrivKey(String alias) {
 		return DIR_KEYS + "/" + alias + ".key";
 	}
 
