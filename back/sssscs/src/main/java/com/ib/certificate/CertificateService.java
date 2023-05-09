@@ -327,6 +327,15 @@ public class CertificateService implements ICertificateService {
 	}
 
 	@Override
+	public FileSystemResource downloadPrivateKey(Long certificateId) {
+		Certificate cert = findById(certificateId);
+		if (cert.getOwner().getId() == null || !cert.getOwner().getId().equals(auth.getUser().getId())) {
+			throw new EntityNotFoundException(Certificate.class, certificateId);
+		}
+		return new FileSystemResource(keyUtil.getFnamePrivKey(cert.getSerialNumber()));
+	}
+
+	@Override
 	public boolean isValid(MultipartFile certFile) {
 		Long id = getCertId(certFile);
 		Certificate cert = findById(id);

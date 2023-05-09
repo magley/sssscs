@@ -23,6 +23,7 @@ export interface SubjectData {
 
 export interface CertificateSummaryDTO {
     id: number,
+    ownerId: number,
     validFrom: Date,
     validTo: Date,
     subjectData: SubjectData,
@@ -47,6 +48,10 @@ export class CertService {
 
     static async download(certID: number): Promise<AxiosResponse<ArrayBuffer>> {
         return await axiosInstance.get(`cert/download/${certID}`);
+    }
+
+    static async downloadPrivateKey(certID: number): Promise<AxiosResponse<ArrayBuffer>> {
+        return await axiosInstance.get(`cert/download/private/${certID}`);
     }
 }
 
