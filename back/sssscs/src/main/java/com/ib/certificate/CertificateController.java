@@ -64,7 +64,11 @@ public class CertificateController {
 			}
 			req.setValidTo(desired);
 		} else {
-			req.setValidTo(LocalDateTime.now().plusMonths(2));
+			LocalDateTime desired = LocalDateTime.now().plusMonths(2);
+			if (desired.isAfter(req.getParent().getValidTo())) {
+				desired = req.getParent().getValidTo().minusDays(1);
+			}
+			req.setValidTo(desired);
 		}
 
 		return req;
