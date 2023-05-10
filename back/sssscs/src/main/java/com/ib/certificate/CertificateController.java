@@ -44,10 +44,7 @@ public class CertificateController {
 	private IAuthenticationFacade auth;
 	
 	private void setRequestValidFor(CertificateRequest req, long months) {
-		long years = months / 12;
-		months = months % 12;
-		
-		LocalDateTime desired = LocalDateTime.now().plusYears(years).plusMonths(months);
+		LocalDateTime desired = LocalDateTime.now().plusMonths(months);
 		
 		if (req.getParent() != null) {
 			if (desired.isAfter(req.getParent().getValidTo())) {
