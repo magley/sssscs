@@ -15,6 +15,6 @@ public class AuthenticationFacade implements IAuthenticationFacade {
 
 	@Override
 	public User getUser() {
-		return (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 }

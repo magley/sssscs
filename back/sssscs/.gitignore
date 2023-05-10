@@ -1,6 +1,12 @@
-
 # Hide database
 data/*.db
+
+# Hide sendgrid env vars
+data/sendgrid.env
+
+# Hide certs and keys
+certs/*
+keys/*
 
 # Miscellaneous
 *.java.hsp

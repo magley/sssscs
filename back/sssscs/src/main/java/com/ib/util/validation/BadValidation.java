@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BadValidation {
 
-    @JsonInclude(value = Include.NON_NULL)
-    private Long timestamp;
-    private String message;
-    @JsonInclude(value = Include.NON_NULL)
-    private String error;
-    @JsonInclude(value = Include.NON_NULL)
-    private String path;
+	@JsonInclude(value = Include.NON_NULL)
+	private Long timestamp;
+	private String message;
+	@JsonInclude(value = Include.NON_NULL)
+	private String error;
+	@JsonInclude(value = Include.NON_NULL)
+	private String path;
 }

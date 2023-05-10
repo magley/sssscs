@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.0.4'
 	id 'io.spring.dependency-management' version '1.1.0'
+	id "org.owasp.dependencycheck" version "8.2.1"
 }
 
 group = 'com.ib'
@@ -19,6 +20,7 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.yaml:snakeyaml:2.0'
 	implementation "org.springframework.boot:spring-boot-starter-security"
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -33,6 +35,10 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'com.sendgrid:sendgrid-java:4.0.1'
+	implementation 'com.twilio.sdk:twilio:9.3.0'
+	implementation fileTree(dir: 'lib', include: '*.jar')
+	compileOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 tasks.named('test') {

@@ -2,13 +2,12 @@ package com.ib.certificate.request;
 
 import java.util.List;
 
+import com.ib.certificate.Certificate;
+import com.ib.certificate.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ib.certificate.Certificate.Type;
-import com.ib.certificate.exception.BadExpirationDateException;
-import com.ib.certificate.exception.CertificateParentMissingException;
-import com.ib.certificate.exception.CreatorUnauthorizedException;
 import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.user.User;
 import com.ib.user.User.Role;
@@ -24,23 +23,36 @@ public class CertificateRequestService implements ICertificateRequestService {
 		if (!request.isTypeValid()) {
 			throw new CertificateParentMissingException();
 		}
-		
-		if (request.isExpired()) {
-			throw new BadExpirationDateException();
-		}
-		
+
 		if (!request.isCreatorAuthorized()) {
 			throw new CreatorUnauthorizedException();
 		}
 
+		if (request.isChildOfRevokedParent()) {
+			throw new ChildOfRevokedCertificateException();
+		}
+
+		if (request.parentIsEndCertificate()) {
+			throw new ParentIsEndCertificateException();
+		}
+
+		if (request.isExpired()) {
+			throw new BadExpirationDateException();
+		}
+
+		if (request.expiresAfterParent()) {
+			throw new BadExpirationDateException();
+		}
+
 		return certificateRequestRepo.save(request);
 	}
-	
+
 	@Override
 	public CertificateRequest findByIdAndStatus(Long id, Status status) {
-		return certificateRequestRepo.findByIdAndStatus(id, status).orElseThrow(() -> new EntityNotFoundException(CertificateRequest.class, id));
+		return certificateRequestRepo.findByIdAndStatus(id, status)
+				.orElseThrow(() -> new EntityNotFoundException(CertificateRequest.class, id));
 	}
-	
+
 	@Override
 	public boolean canAutoAccept(CertificateRequest request) {
 		if (request.getType() != Type.ROOT) {
@@ -48,17 +60,22 @@ public class CertificateRequestService implements ICertificateRequestService {
 				return true;
 			}
 		}
-		
+
 		if (request.getCreator().getRole() == Role.ADMIN) {
 			return true;
 		}
-	
+
 		return false;
 	}
-	
+
 	@Override
 	public List<CertificateRequest> findByCreator(User creator) {
 		return certificateRequestRepo.findByCreator(creator);
+	}
+	
+	@Override
+	public List<CertificateRequest> findAll() {
+		return certificateRequestRepo.findAll();
 	}
 
 	@Override
@@ -67,7 +84,6 @@ public class CertificateRequestService implements ICertificateRequestService {
 		req.setRejectionReason(reason);
 		certificateRequestRepo.save(req);
 	}
-	
 
 	@Override
 	public void accept(CertificateRequest req) {
@@ -76,7 +92,12 @@ public class CertificateRequestService implements ICertificateRequestService {
 	}
 
 	@Override
-	public List<CertificateRequest> findRequestsByUserResponsibleForThem(User user) {
-		return certificateRequestRepo.findRequestsByUserResponsibleForThem(user.getId(), user.getRole() == Role.ADMIN);
+	public List<CertificateRequest> findPendingRequestsIssuedTo(User user) {
+		return certificateRequestRepo.findPendingRequestsIssuedTo(user.getId(), user.getRole() == Role.ADMIN);
+	}
+
+	@Override
+	public List<CertificateRequest> findByParent(Certificate parent) {
+		return certificateRequestRepo.findByParent(parent);
 	}
 }

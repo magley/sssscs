@@ -26,15 +26,11 @@ public class JwtTokenUtil {
 		claims.put("role", role);
 		return doGenerateToken(claims, username);
 	}
-	
+
 	private String doGenerateToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder()
-            .setIssuer("sssscs")
-            .setClaims(claims)
-            .setSubject(subject)
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(new Date().getTime() + JWT_LIFE))
-            .signWith(SignatureAlgorithm.HS512, secret).compact();
+		return Jwts.builder().setIssuer("sssscs").setClaims(claims).setSubject(subject).setIssuedAt(new Date())
+				.setExpiration(new Date(new Date().getTime() + JWT_LIFE)).signWith(SignatureAlgorithm.HS512, secret)
+				.compact();
 	}
 
 	public String getUsernameFromToken(String token) {
