@@ -103,6 +103,6 @@ public class UserService implements IUserService {
 		LocalDateTime now = LocalDateTime.now();
 		
 		long minutesPassed = ChronoUnit.MINUTES.between(lastTime, now);
-		return Math.abs(minutesPassed) > 5;
+		return minutesPassed > 5;
 	}
 }
