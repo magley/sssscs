@@ -43,7 +43,7 @@ public class CertificateController {
 	@Autowired
 	private IAuthenticationFacade auth;
 	
-	private void setRequestValidTo(CertificateRequest req, long months) {
+	private void setRequestValidFor(CertificateRequest req, long months) {
 		long years = months / 12;
 		months = months % 12;
 		
@@ -70,11 +70,11 @@ public class CertificateController {
 		}
 
 		if (dto.getType() == Type.ROOT) {
-			setRequestValidTo(req, 12);
+			setRequestValidFor(req, 12);
 		} else if (dto.getType() == Type.INTERMEDIATE) {
-			setRequestValidTo(req, 6);
+			setRequestValidFor(req, 6);
 		} else {
-			setRequestValidTo(req, 2);
+			setRequestValidFor(req, 2);
 		}
 
 		return req;
