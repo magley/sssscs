@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.0.4'
 	id 'io.spring.dependency-management' version '1.1.0'
+	id "org.owasp.dependencycheck" version "8.2.1"
 }
 
 group = 'com.ib'
@@ -19,6 +20,7 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.yaml:snakeyaml:2.0'
 	implementation "org.springframework.boot:spring-boot-starter-security"
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'

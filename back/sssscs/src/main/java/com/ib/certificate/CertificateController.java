@@ -42,6 +42,17 @@ public class CertificateController {
 	private ModelMapper modelMapper;
 	@Autowired
 	private IAuthenticationFacade auth;
+	
+	private void setRequestValidFor(CertificateRequest req, long months) {
+		LocalDateTime desired = LocalDateTime.now().plusMonths(months);
+		
+		if (req.getParent() != null) {
+			if (desired.isAfter(req.getParent().getValidTo())) {
+				desired = req.getParent().getValidTo().minusDays(1);
+			}
+		}
+		req.setValidTo(desired);
+	}
 
 	private CertificateRequest requestFromCreateDto(CertificateRequestCreateDto dto) {
 		CertificateRequest req = new CertificateRequest();
@@ -56,15 +67,11 @@ public class CertificateController {
 		}
 
 		if (dto.getType() == Type.ROOT) {
-			req.setValidTo(LocalDateTime.now().plusYears(1));
+			setRequestValidFor(req, 12);
 		} else if (dto.getType() == Type.INTERMEDIATE) {
-			LocalDateTime desired = LocalDateTime.now().plusMonths(6);
-			if (desired.isAfter(req.getParent().getValidTo())) {
-				desired = req.getParent().getValidTo().minusDays(1);
-			}
-			req.setValidTo(desired);
+			setRequestValidFor(req, 6);
 		} else {
-			req.setValidTo(LocalDateTime.now().plusMonths(2));
+			setRequestValidFor(req, 2);
 		}
 
 		return req;

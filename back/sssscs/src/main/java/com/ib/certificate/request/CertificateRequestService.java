@@ -24,14 +24,6 @@ public class CertificateRequestService implements ICertificateRequestService {
 			throw new CertificateParentMissingException();
 		}
 
-		if (request.isExpired()) {
-			throw new BadExpirationDateException();
-		}
-
-		if (request.expiresAfterParent()) {
-			throw new BadExpirationDateException();
-		}
-
 		if (!request.isCreatorAuthorized()) {
 			throw new CreatorUnauthorizedException();
 		}
@@ -42,6 +34,14 @@ public class CertificateRequestService implements ICertificateRequestService {
 
 		if (request.parentIsEndCertificate()) {
 			throw new ParentIsEndCertificateException();
+		}
+
+		if (request.isExpired()) {
+			throw new BadExpirationDateException();
+		}
+
+		if (request.expiresAfterParent()) {
+			throw new BadExpirationDateException();
 		}
 
 		return certificateRequestRepo.save(request);

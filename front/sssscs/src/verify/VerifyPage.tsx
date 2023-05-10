@@ -23,8 +23,7 @@ export const VerifyPage = () => {
             userEmail: email,
             code: data['code'],
         };
-
-        console.log(dto);
+        
         VerifyService.verifyUser(dto)
             .then((val: AxiosResponse<void>) => {
                 navigate('/login');

@@ -11,11 +11,11 @@ public interface IUserService extends UserDetailsService {
 
 	void verify(User user);
 	
-	void resetLoginCounter(User user);
-	
-	void incrementLoginCounter(User user);
-	
 	void blockUserForAnHour(User user);
+	
+	void setLastTimeOf2FAToNow(User user);
+	
+	boolean isTimeFor2FA(User user);
 	
 	void unblockUser(User user);
 	

@@ -22,7 +22,6 @@ export const VerificationSendForm = ({email, setEmail, reason, emailReadOnly} :
         }
         setEmail(data['email']);
 
-        console.log(dto);
         VerifyService.sendCode(dto)
             .then((val: AxiosResponse<void>) => {
                 console.log("Success!");
