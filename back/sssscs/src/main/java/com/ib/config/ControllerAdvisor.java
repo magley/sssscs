@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.ib.certificate.exception.CreatorUnauthorizedException;
 import com.ib.certificate.exception.RevocationUnauthorizedException;
+import com.ib.user.exception.WrongPasswordException;
 import com.ib.util.exception.EntityException;
 import com.ib.util.exception.EntityNotFoundException;
 import com.ib.util.validation.BadValidation;
@@ -29,6 +30,11 @@ public class ControllerAdvisor {
 
 	@ExceptionHandler({ EntityException.class })
 	public ResponseEntity<?> handleEntityException(final EntityException e) {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler({ WrongPasswordException.class })
+	public ResponseEntity<?> handleWrongPasswordException(final WrongPasswordException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 

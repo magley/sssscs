@@ -6,18 +6,20 @@ import java.time.temporal.ChronoUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ib.user.dto.PasswordRotationDto;
 import com.ib.user.exception.EmailTakenException;
+import com.ib.user.exception.WrongPasswordException;
 import com.ib.util.exception.EntityNotFoundException;
+import com.ib.util.security.PasswordUtil;
 
 @Service
 public class UserService implements IUserService {
 	@Autowired
-	private PasswordEncoder passwordEncoder;
-	@Autowired
 	private IUserRepo userRepo;
+	@Autowired
+	private PasswordUtil passwordUtil;
 
 	@Override
 	public User register(User user) {
@@ -25,7 +27,7 @@ public class UserService implements IUserService {
 			throw new EmailTakenException();
 		}
 		user.setLastTimeOfPasswordChange(LocalDateTime.now());
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setPassword(passwordUtil.encode(user.getPassword()));
 		return userRepo.save(user);
 	}
 
@@ -58,7 +60,7 @@ public class UserService implements IUserService {
 	@Override
 	public void resetPassword(User user, String newPassword) {
 		user.setLastTimeOfPasswordChange(LocalDateTime.now());
-		user.setPassword(passwordEncoder.encode(newPassword));
+		user.setPassword(passwordUtil.encode(newPassword));
 		userRepo.save(user);
 	}
 
@@ -105,7 +107,7 @@ public class UserService implements IUserService {
 		LocalDateTime now = LocalDateTime.now();
 		
 		long minutesPassed = ChronoUnit.MINUTES.between(lastTime, now);
-		return minutesPassed > 5;
+		return minutesPassed >= 5;
 	}
 	
 	@Override
@@ -119,6 +121,19 @@ public class UserService implements IUserService {
 		LocalDateTime now = LocalDateTime.now();
 		
 		long minutesPassed = ChronoUnit.MINUTES.between(lastTime, now);
-		return minutesPassed > 1;	
+		return minutesPassed >= 5;	
+	}
+
+	@Override
+	public void rotatePassword(PasswordRotationDto dto) {
+		User user = findByEmail(dto.getUserEmail());
+		
+		if (!passwordUtil.doPasswordsMatch(dto.getOldPassword(), user.getPassword())) {
+			throw new WrongPasswordException();
+		}
+		
+		user.setLastTimeOfPasswordChange(LocalDateTime.now());
+		user.setPassword(passwordUtil.encode(dto.getNewPassword()));
+		userRepo.save(user);
 	}
 }

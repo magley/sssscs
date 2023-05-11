@@ -1,13 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { PasswordRotationDTO } from "./PasswordService";
+import { useLocation, useNavigate } from "react-router-dom";
+import { PasswordRotationDTO, PasswordService } from "./PasswordService";
 import { Box, Button, TextField } from "@mui/material";
+import { AxiosResponse, AxiosError } from "axios";
+import { VerifyPageRouterState } from "../verify/VerifyService";
 
 export const RotatePassword = () => {
     const { register, trigger, handleSubmit, formState: {errors}, setError} = useForm({mode: 'all'});
     let [email, setEmail] = useState<string>("");
     let navigate = useNavigate();
+    const { state: routerLocationState } = useLocation();
+
+    useEffect(() => {
+        const state = routerLocationState as VerifyPageRouterState;
+        let emailFromState: string | null = state?.email;
+        setEmail(emailFromState);
+    }, [routerLocationState]);
 
     const { onChange, onBlur, name, ref } = register('newPassword', {
         required: 'Password is required',
@@ -24,13 +33,21 @@ export const RotatePassword = () => {
             newPassword: data['newPassword'],
         };
 
-        console.log(dto);
+        PasswordService.rotate_password(dto)
+        .then((res: AxiosResponse<null>) => {
+            navigate("/login");
+        })
+        .catch((err : AxiosError) => {
+            if (err.response?.status === 400) {
+                setError('oldPassword', {message: err.response?.data as string}, {shouldFocus: true});
+            }
+        });
     }
 
     return (
         <>
             <p>
-                In order to protect your account, we need you to change your email.
+                In order to protect your account, we need you to change your password.
             </p>
             <Box component='form' noValidate onSubmit={handleSubmit(rotatePassword)}>
                 <TextField
