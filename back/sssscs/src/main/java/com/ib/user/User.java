@@ -61,6 +61,8 @@ public class User implements UserDetails {
 	private Boolean blocked = false;
 	@Column(nullable = true)
 	private LocalDateTime blockEndDate;
+	@Column(nullable = true)
+	private LocalDateTime lastTimeOfPasswordChange = null;
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {

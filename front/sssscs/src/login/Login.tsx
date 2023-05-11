@@ -36,6 +36,8 @@ export const Login = (props: {gloState: GlobalState}) => {
                     navigate("/verify", {state: routedState});
                 } else if (err.response?.status === 429) {
                     setError('password', {message: 'We have detected unusual activity from your account and have put a temporary block for safety purposes.'}, {shouldFocus: true});
+                } else if (err.response?.status === 406) {
+                    navigate("/update-password");
                 }
             });
     }

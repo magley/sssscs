@@ -24,6 +24,7 @@ public class UserService implements IUserService {
 		if (isEmailTaken(user.getEmail())) {
 			throw new EmailTakenException();
 		}
+		user.setLastTimeOfPasswordChange(LocalDateTime.now());
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepo.save(user);
 	}
@@ -56,6 +57,7 @@ public class UserService implements IUserService {
 	
 	@Override
 	public void resetPassword(User user, String newPassword) {
+		user.setLastTimeOfPasswordChange(LocalDateTime.now());
 		user.setPassword(passwordEncoder.encode(newPassword));
 		userRepo.save(user);
 	}
@@ -104,5 +106,19 @@ public class UserService implements IUserService {
 		
 		long minutesPassed = ChronoUnit.MINUTES.between(lastTime, now);
 		return minutesPassed > 5;
+	}
+	
+	@Override
+	public boolean isTimeToChangePassword(User user) {
+		LocalDateTime lastTime = user.getLastTimeOfPasswordChange();
+		
+		if (lastTime == null) {
+			return true;
+		}
+		
+		LocalDateTime now = LocalDateTime.now();
+		
+		long minutesPassed = ChronoUnit.MINUTES.between(lastTime, now);
+		return minutesPassed > 1;	
 	}
 }

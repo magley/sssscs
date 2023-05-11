@@ -58,6 +58,10 @@ public class UserController {
 			// UNPROCESSABLE_ENTITY == 422, it stands out which helps us on the frontend.
 			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Verify your account.");
 		}
+		if (userService.isTimeToChangePassword(user)) {
+			// NOT_ACCEPTABLE == 406, it stands out which helps us on the frontend.
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Rotate your password");
+		}
 		
 		String token = jwtTokenUtil.generateToken(user.getEmail(), user.getId(), user.getRole().toString());
 		return ResponseEntity.ok(token);
