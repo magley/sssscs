@@ -39,6 +39,8 @@ export const RotatePassword = () => {
         })
         .catch((err : AxiosError) => {
             if (err.response?.status === 400) {
+                setError('newPassword', {message: err.response?.data as string}, {shouldFocus: true});
+            } else if (err.response?.status === 403) {
                 setError('oldPassword', {message: err.response?.data as string}, {shouldFocus: true});
             }
         });

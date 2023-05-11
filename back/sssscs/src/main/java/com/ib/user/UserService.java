@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.ib.user.dto.PasswordRotationDto;
 import com.ib.user.exception.EmailTakenException;
+import com.ib.user.exception.PasswordTooRecentException;
 import com.ib.user.exception.WrongPasswordException;
 import com.ib.util.exception.EntityNotFoundException;
 import com.ib.util.security.PasswordUtil;
@@ -20,15 +21,14 @@ public class UserService implements IUserService {
 	private IUserRepo userRepo;
 	@Autowired
 	private PasswordUtil passwordUtil;
+	private static final Integer MAX_PREVIOUS_PASSWORDS_SAVED = 5;
 
 	@Override
 	public User register(User user) {
 		if (isEmailTaken(user.getEmail())) {
 			throw new EmailTakenException();
 		}
-		user.setLastTimeOfPasswordChange(LocalDateTime.now());
-		user.setPassword(passwordUtil.encode(user.getPassword()));
-		return userRepo.save(user);
+		return setNewPassword(user, user.getPassword());
 	}
 
 	private boolean isEmailTaken(String email) {
@@ -59,9 +59,7 @@ public class UserService implements IUserService {
 	
 	@Override
 	public void resetPassword(User user, String newPassword) {
-		user.setLastTimeOfPasswordChange(LocalDateTime.now());
-		user.setPassword(passwordUtil.encode(newPassword));
-		userRepo.save(user);
+		setNewPassword(user, newPassword);
 	}
 
 	@Override
@@ -121,7 +119,7 @@ public class UserService implements IUserService {
 		LocalDateTime now = LocalDateTime.now();
 		
 		long minutesPassed = ChronoUnit.MINUTES.between(lastTime, now);
-		return minutesPassed >= 5;	
+		return minutesPassed >= 1;
 	}
 
 	@Override
@@ -132,8 +130,38 @@ public class UserService implements IUserService {
 			throw new WrongPasswordException();
 		}
 		
+		if (isPasswordTooRecent(user, dto.getNewPassword())) {
+			throw new PasswordTooRecentException();
+		}
+
+		setNewPassword(user, dto.getNewPassword());
+	}
+	
+	/**
+	 * SIDE EFFECT: Saves `user` to the database.
+	 */
+	private User setNewPassword(User user, String passwordPlaintext) {
 		user.setLastTimeOfPasswordChange(LocalDateTime.now());
-		user.setPassword(passwordUtil.encode(dto.getNewPassword()));
-		userRepo.save(user);
+		user.setPassword(passwordUtil.encode(passwordPlaintext));
+		
+		while (user.getLastNPasswords().size() >= MAX_PREVIOUS_PASSWORDS_SAVED) {
+			user.getLastNPasswords().remove(0);
+		}
+		user.getLastNPasswords().add(user.getPassword());
+		
+		return userRepo.save(user);
+	}
+	
+	private boolean isPasswordTooRecent(User user, String passwordPlaintext) {
+		if (passwordUtil.doPasswordsMatch(passwordPlaintext, user.getPassword())) {
+			return true;
+		}
+		
+		for (String oldPassword : user.getLastNPasswords()) {
+			if (passwordUtil.doPasswordsMatch(passwordPlaintext, oldPassword)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
