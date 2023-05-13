@@ -22,6 +22,8 @@ public class UserService implements IUserService {
 	@Autowired
 	private PasswordUtil passwordUtil;
 	private static final Integer MAX_PREVIOUS_PASSWORDS_SAVED = 5;
+	private static final Integer PERIOD_FOR_2FA_IN_MINTUES = 5;
+	private static final Integer PERIOD_FOR_PASSWORD_ROTATION_IN_MINUTES = 1;
 
 	@Override
 	public User register(User user) {
@@ -105,7 +107,7 @@ public class UserService implements IUserService {
 		LocalDateTime now = LocalDateTime.now();
 		
 		long minutesPassed = ChronoUnit.MINUTES.between(lastTime, now);
-		return minutesPassed >= 5;
+		return minutesPassed >= PERIOD_FOR_2FA_IN_MINTUES;
 	}
 	
 	@Override
@@ -119,7 +121,7 @@ public class UserService implements IUserService {
 		LocalDateTime now = LocalDateTime.now();
 		
 		long minutesPassed = ChronoUnit.MINUTES.between(lastTime, now);
-		return minutesPassed >= 1;
+		return minutesPassed >= PERIOD_FOR_PASSWORD_ROTATION_IN_MINUTES;
 	}
 
 	@Override
