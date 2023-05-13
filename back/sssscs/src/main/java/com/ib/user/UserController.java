@@ -1,7 +1,5 @@
 package com.ib.user;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.ib.user.dto.PasswordRotationDto;
 import com.ib.user.dto.UserCreateDto;
 import com.ib.user.dto.UserLoginDto;
 import com.ib.util.DTO;
@@ -58,8 +57,18 @@ public class UserController {
 			// UNPROCESSABLE_ENTITY == 422, it stands out which helps us on the frontend.
 			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Verify your account.");
 		}
+		if (userService.isTimeToChangePassword(user)) {
+			// NOT_ACCEPTABLE == 406, it stands out which helps us on the frontend.
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Rotate your password");
+		}
 		
 		String token = jwtTokenUtil.generateToken(user.getEmail(), user.getId(), user.getRole().toString());
 		return ResponseEntity.ok(token);
+	}
+	
+	@PostMapping("/rotate-password")
+	public ResponseEntity<?> rotate_password(@Valid @RequestBody PasswordRotationDto dto) {
+		userService.rotatePassword(dto);
+		return new ResponseEntity<>(0L, HttpStatus.OK);
 	}
 }

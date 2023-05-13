@@ -6,26 +6,31 @@ import java.time.temporal.ChronoUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ib.user.dto.PasswordRotationDto;
 import com.ib.user.exception.EmailTakenException;
+import com.ib.user.exception.PasswordTooRecentException;
+import com.ib.user.exception.WrongPasswordException;
 import com.ib.util.exception.EntityNotFoundException;
+import com.ib.util.security.PasswordUtil;
 
 @Service
 public class UserService implements IUserService {
 	@Autowired
-	private PasswordEncoder passwordEncoder;
-	@Autowired
 	private IUserRepo userRepo;
+	@Autowired
+	private PasswordUtil passwordUtil;
+	private static final Integer MAX_PREVIOUS_PASSWORDS_SAVED = 5;
+	private static final Integer PERIOD_FOR_2FA_IN_MINTUES = 5;
+	private static final Integer PERIOD_FOR_PASSWORD_ROTATION_IN_MINUTES = 1;
 
 	@Override
 	public User register(User user) {
 		if (isEmailTaken(user.getEmail())) {
 			throw new EmailTakenException();
 		}
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		return userRepo.save(user);
+		return setNewPassword(user, user.getPassword());
 	}
 
 	private boolean isEmailTaken(String email) {
@@ -56,8 +61,7 @@ public class UserService implements IUserService {
 	
 	@Override
 	public void resetPassword(User user, String newPassword) {
-		user.setPassword(passwordEncoder.encode(newPassword));
-		userRepo.save(user);
+		setNewPassword(user, newPassword);
 	}
 
 	@Override
@@ -103,6 +107,63 @@ public class UserService implements IUserService {
 		LocalDateTime now = LocalDateTime.now();
 		
 		long minutesPassed = ChronoUnit.MINUTES.between(lastTime, now);
-		return minutesPassed > 5;
+		return minutesPassed >= PERIOD_FOR_2FA_IN_MINTUES;
+	}
+	
+	@Override
+	public boolean isTimeToChangePassword(User user) {
+		LocalDateTime lastTime = user.getLastTimeOfPasswordChange();
+		
+		if (lastTime == null) {
+			return true;
+		}
+		
+		LocalDateTime now = LocalDateTime.now();
+		
+		long minutesPassed = ChronoUnit.MINUTES.between(lastTime, now);
+		return minutesPassed >= PERIOD_FOR_PASSWORD_ROTATION_IN_MINUTES;
+	}
+
+	@Override
+	public void rotatePassword(PasswordRotationDto dto) {
+		User user = findByEmail(dto.getUserEmail());
+		
+		if (!passwordUtil.doPasswordsMatch(dto.getOldPassword(), user.getPassword())) {
+			throw new WrongPasswordException();
+		}
+		
+		if (isPasswordTooRecent(user, dto.getNewPassword())) {
+			throw new PasswordTooRecentException();
+		}
+
+		setNewPassword(user, dto.getNewPassword());
+	}
+	
+	/**
+	 * SIDE EFFECT: Saves `user` to the database.
+	 */
+	private User setNewPassword(User user, String passwordPlaintext) {
+		user.setLastTimeOfPasswordChange(LocalDateTime.now());
+		user.setPassword(passwordUtil.encode(passwordPlaintext));
+		
+		while (user.getLastNPasswords().size() >= MAX_PREVIOUS_PASSWORDS_SAVED) {
+			user.getLastNPasswords().remove(0);
+		}
+		user.getLastNPasswords().add(user.getPassword());
+		
+		return userRepo.save(user);
+	}
+	
+	private boolean isPasswordTooRecent(User user, String passwordPlaintext) {
+		if (passwordUtil.doPasswordsMatch(passwordPlaintext, user.getPassword())) {
+			return true;
+		}
+		
+		for (String oldPassword : user.getLastNPasswords()) {
+			if (passwordUtil.doPasswordsMatch(passwordPlaintext, oldPassword)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

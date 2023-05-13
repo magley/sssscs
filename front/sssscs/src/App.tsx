@@ -14,8 +14,9 @@ import { CertRequests } from './certs/requests/CertRequests';
 import { CertRequestsIssuedToMe } from './certs/requests/CertRequestsIssuedToMe';
 import { CertRequestCreate } from './certs/requests/CertRequestCreate';
 import { VerifyPage } from './verify/VerifyPage';
-import { ResetPassword } from './reset/ResetPassword';
+import { ResetPassword } from './password/ResetPassword';
 import { CertRequestService } from './certs/requests/CertRequestService';
+import { RotatePassword } from './password/RotatePassword';
 
 // TODO: Explore the Context API. 
 // We can share GlobalState without explicitly passing props.
@@ -52,13 +53,14 @@ function App() {
                     <Route path='register' element={<Register />} />
                     <Route path='verify' element={<VerifyPage />} />
                     <Route path='reset-password' element={<ResetPassword />} />
+                    <Route path="/update-password" element={<RotatePassword />} />
                 </Route>
                 <Route element={<MustBeAllowedRole allowedRoles={["REGULAR", "ADMIN"]} />}>
                     <Route path="/certificates" element={<CertSummary />} />
                     <Route path="/certificates/verify" element={<CertVerify />} />
                     <Route path="/certificates/request/my" element={<CertRequests requestsProvider={CertRequestService.getOwn} />} />
                     <Route path="/certificates/request/to-me" element={<CertRequestsIssuedToMe />} />
-                    <Route path="/certificates/request/create" element={<CertRequestCreate />} />
+                    <Route path="/certificates/request/create" element={<CertRequestCreate />} />     
                 </Route>
                 <Route element={<MustBeAllowedRole allowedRoles={["ADMIN"]}/>}>
                     <Route path="/certificates/request/all" element={<CertRequests requestsProvider={CertRequestService.getAll}/>} />
