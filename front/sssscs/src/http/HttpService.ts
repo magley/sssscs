@@ -1,6 +1,6 @@
 // Axios instance with an interceptor that puts the JWT from localstorage into Authorization: Bearer.
 
-import axios, { InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { Env } from "../common/Environment";
 import { AuthService } from "../auth/AuthService";
 
@@ -17,3 +17,17 @@ axiosInstance.interceptors.request.use(
         return value;
     }
 );
+
+axiosInstance.interceptors.response.use(
+    (response: AxiosResponse<any, any>) => {
+        return response;
+    },
+    (error: any) => {
+        if (error.response.status === 401) {
+            AuthService.removeJWT();      
+            window.location.href = "/login";
+            // Changing GloState?
+        } 
+        return error;
+    }
+)
