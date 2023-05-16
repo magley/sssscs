@@ -40,10 +40,7 @@ public class ControllerAdvisor {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
 	}
 	
-	@ExceptionHandler({ ExpiredJwtException.class })
-	public ResponseEntity<?> handleExpiredJwtException(final ExpiredJwtException e) {
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
-	}
+	// Expired JWT returns 401 directly, see JwtRequestFilter.
 	
 	@ExceptionHandler({ PasswordTooRecentException.class })
 	public ResponseEntity<?> handlePasswordTooRecentException(final PasswordTooRecentException e) {

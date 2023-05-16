@@ -5,12 +5,14 @@ package com.ib.util.security;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ib.user.IUserService;
 
@@ -30,15 +32,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-		try {	
-			this.doJwtAuthenticationFilter(request);
-			chain.doFilter(request, response);
-		} catch (ExpiredJwtException ex) {
-			System.err.println(ex);
-		}
+		this.doJwtAuthenticationFilter(request, response);
+		chain.doFilter(request, response);
 	}
 
-	private void doJwtAuthenticationFilter(HttpServletRequest request) {
+	private void doJwtAuthenticationFilter(HttpServletRequest request, HttpServletResponse response) {
 		System.err.println(request.getRequestURL().toString() + " " + request.getMethod());
 		if (!request.getRequestURL().toString().contains("/api/")) {
 			return;
@@ -54,7 +52,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 			jwtTokenUtil.validateToken(jwtToken); // Throws expired token exception
 			SecurityContextHolder.getContext().setAuthentication(authenticationToken);	
 		} catch (ExpiredJwtException e) {
-			throw e;
+			// Do not throw an exception here! It won't work.
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			return;
 		} catch (Exception e) {
 			return;
 		}
