@@ -20,6 +20,7 @@ import com.ib.util.validation.BadValidation;
 import com.ib.verification.exception.InvalidCodeException;
 import com.ib.verification.exception.VerificationAttemptPenaltyException;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
@@ -37,6 +38,11 @@ public class ControllerAdvisor {
 	@ExceptionHandler({ WrongPasswordException.class })
 	public ResponseEntity<?> handleWrongPasswordException(final WrongPasswordException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+	}
+	
+	@ExceptionHandler({ ExpiredJwtException.class })
+	public ResponseEntity<?> handleExpiredJwtException(final ExpiredJwtException e) {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
 	}
 	
 	@ExceptionHandler({ PasswordTooRecentException.class })
