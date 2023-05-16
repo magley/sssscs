@@ -28,6 +28,6 @@ axiosInstance.interceptors.response.use(
             window.location.href = "/login";
             // Changing GloState?
         } 
-        return error;
+        return Promise.reject(error);
     }
 )
