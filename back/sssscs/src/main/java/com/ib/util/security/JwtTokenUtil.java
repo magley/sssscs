@@ -29,13 +29,9 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 @Component
 public class JwtTokenUtil {
 	private static final long JWT_LIFE = 10 * 1000;
-//	@Value("verysecret")
-//	private String secret;
-	
     private static final SecretKey secret = MacProvider.generateKey(SignatureAlgorithm.HS256);
     private static final byte[] secretBytes = secret.getEncoded();
     private static final String base64SecretBytes = Base64.getEncoder().encodeToString(secretBytes);
-    
 
 	public String generateToken(String username, Long id, String role) {
 		Map<String, Object> claims = new HashMap<>();
@@ -68,14 +64,12 @@ public class JwtTokenUtil {
 		return Jwts.parser().setSigningKey(base64SecretBytes).parseClaimsJws(token).getBody();
 	}
 	
-	public boolean validateToken(String authToken) {
+	public boolean validateToken(String authToken) throws ExpiredJwtException {
 		try {	
 			Jwts.parser().setSigningKey(base64SecretBytes).parseClaimsJws(authToken);
 			return true;
 		} catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
-			throw new BadCredentialsException("INVALID_CREDENTIALS", ex);
-		} catch (ExpiredJwtException ex) {
-			throw ex;
+			throw new BadCredentialsException("BAD_CREDENTIALS", ex);
 		}
 	}
 }

@@ -20,7 +20,6 @@ import com.ib.util.validation.BadValidation;
 import com.ib.verification.exception.InvalidCodeException;
 import com.ib.verification.exception.VerificationAttemptPenaltyException;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
@@ -39,8 +38,6 @@ public class ControllerAdvisor {
 	public ResponseEntity<?> handleWrongPasswordException(final WrongPasswordException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
 	}
-	
-	// Expired JWT returns 401 directly, see JwtRequestFilter.
 	
 	@ExceptionHandler({ PasswordTooRecentException.class })
 	public ResponseEntity<?> handlePasswordTooRecentException(final PasswordTooRecentException e) {

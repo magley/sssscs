@@ -72,13 +72,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		return header.substring(header.indexOf("Bearer ") + 7);
 	}
 
-	public UsernamePasswordAuthenticationToken getAuthFromToken(String jwt) {
+	public UsernamePasswordAuthenticationToken getAuthFromToken(String jwt) throws JwtException, IllegalArgumentException, UsernameNotFoundException {
 		UserDetails userDetails;
-		try {
-			userDetails = this.getUserDetailsFromJwtToken(jwt);
-		} catch (JwtException | IllegalArgumentException | UsernameNotFoundException e) {
-			throw e;
-		}
+		userDetails = this.getUserDetailsFromJwtToken(jwt);
 		var authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null,
 				userDetails.getAuthorities());
 		return authenticationToken;
