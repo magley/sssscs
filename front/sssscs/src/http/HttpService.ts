@@ -24,10 +24,14 @@ axiosInstance.interceptors.response.use(
     },
     (error: any) => {
         if (error.response.status === 401) {
-            AuthService.removeJWT();      
-            window.location.href = "/login";
-            // Changing GloState?
-        } 
+            logoutAndMoveToLoginPage();
+        }
         return Promise.reject(error);
     }
 )
+
+const logoutAndMoveToLoginPage = () => {
+    AuthService.removeJWT();      
+    window.location.href = "/login";
+    // Changing GloState?
+}
