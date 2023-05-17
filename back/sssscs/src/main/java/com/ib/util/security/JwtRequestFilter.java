@@ -44,11 +44,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 		try {
 			String jwtToken = this.getTokenFromRequest(request);
-			var authenticationToken = this.getAuthFromToken(jwtToken);
-			if (authenticationToken == null) {
-				return;
-			}
-			
+			var authenticationToken = this.getAuthFromToken(jwtToken);	
 			jwtTokenUtil.validateToken(jwtToken); // Throws expired token exception
 			SecurityContextHolder.getContext().setAuthentication(authenticationToken);	
 		} catch (ExpiredJwtException e) {
@@ -75,8 +71,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	public UsernamePasswordAuthenticationToken getAuthFromToken(String jwt) throws JwtException, IllegalArgumentException, UsernameNotFoundException {
 		UserDetails userDetails;
 		userDetails = this.getUserDetailsFromJwtToken(jwt);
-		var authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null,
-				userDetails.getAuthorities());
+		var authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 		return authenticationToken;
 	}
 
