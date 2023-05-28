@@ -17,4 +17,6 @@ public class CertificateRequestCreateDto {
 	@NotNull
 	private SubjectData subjectData;
 	private Long parentId;
+	@NotNull
+	private String token;
 }

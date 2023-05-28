@@ -1,5 +1,7 @@
 package com.ib.user;
 
+import com.ib.util.recaptcha.ReCAPTCHAUtil;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 import com.ib.user.dto.PasswordRotationDto;
 import com.ib.user.dto.UserCreateDto;
 import com.ib.user.dto.UserLoginDto;
-import com.ib.util.DTO;
 import com.ib.util.security.JwtTokenUtil;
 
 import jakarta.validation.Valid;
@@ -30,10 +31,15 @@ public class UserController {
 	private AuthenticationManager authManager;
 	@Autowired
 	private JwtTokenUtil jwtTokenUtil;
+	@Autowired
+	private ModelMapper mapper;
+	@Autowired
+	private ReCAPTCHAUtil captchaUtil;
 
 	@PostMapping("/session/register")
-	public ResponseEntity<?> register(@DTO(UserCreateDto.class) User user) {
-		userService.register(user);
+	public ResponseEntity<?> register(@Valid @RequestBody UserCreateDto dto) {
+		captchaUtil.processResponse(dto.getToken());
+		userService.register(mapper.map(dto, User.class));
 		return new ResponseEntity<Void>((Void) null, HttpStatus.NO_CONTENT);
 	}
 

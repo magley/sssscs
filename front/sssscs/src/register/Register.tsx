@@ -4,18 +4,28 @@ import { RegisterService, UserCreateDto } from "./RegisterService";
 import { FieldValues, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { VerifyPageRouterState } from "../verify/VerifyService";
+import { useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export const Register = () => {
     const { register, trigger, handleSubmit, formState: { errors }, setError } = useForm({mode: 'all'});
     const navigate = useNavigate();
+    const [token, setToken] = useState<string | null>("");
+    const [captchaError, setCaptchaError] = useState("");
 
     const tryRegister = async (data: FieldValues) => {
+        setCaptchaError("");
+        if (!token) {
+            setCaptchaError("Retry captcha");
+            return;
+        }
         const dto: UserCreateDto = {
             email: data['email'],
             name: data['name'],
             surname: data['surname'],
             password: data['password'],
-            phoneNumber: data['phoneNumber']
+            phoneNumber: data['phoneNumber'],
+            token: token,
         }
         RegisterService.register(dto)
             .then((res: AxiosResponse<null>) => {
@@ -27,6 +37,9 @@ export const Register = () => {
             .catch((err : AxiosError) => {
                 if (err.response?.status === 400) {
                     setError('email', {message: err.response?.data as string}, {shouldFocus: true});
+                }
+                else if (err.response?.status === 422) {
+                    setCaptchaError(err.response?.data as string);
                 }
             });
     }
@@ -41,6 +54,7 @@ export const Register = () => {
     });
 
     return (
+        <>
         <Box component='form' noValidate onSubmit={handleSubmit(tryRegister)} sx={{maxWidth: '30rem'}}>
             <Typography variant='h4' sx={{mb: 2}}>
                 Register
@@ -139,9 +153,18 @@ export const Register = () => {
                 error={!!errors['phoneNumber']}
                 helperText={errors['phoneNumber']?.message?.toString()}
             />
+            <ReCAPTCHA
+                sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY!}
+                onChange={(value) => setToken(value)}/>
             <Button variant="contained" type="submit">
                 Register
             </Button>
         </Box>
+        { captchaError !== "" && (
+            <>
+            {captchaError}
+            </>
+        )}
+        </>
     );
 }

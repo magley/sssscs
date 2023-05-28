@@ -6,7 +6,8 @@ export interface UserCreateDto {
     password: string,
     name: string,
     surname: string,
-    phoneNumber: string
+    phoneNumber: string,
+    token: string,
 };
 
 export class RegisterService {

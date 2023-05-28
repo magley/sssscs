@@ -29,4 +29,6 @@ public class UserCreateDto {
 	@NotNull
 	@Size(max = 18)
 	private String phoneNumber;
+	@NotNull
+	private String token;
 }

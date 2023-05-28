@@ -2,6 +2,7 @@ package com.ib.config;
 
 import java.security.Security;
 
+import com.ib.util.recaptcha.ReCAPTCHAUtil;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -40,5 +41,10 @@ public class StandardConfig {
 	@Bean
 	public SendgridUtil sendgridUtil() {
 		return new SendgridUtil();
+	}
+
+	@Bean
+	public ReCAPTCHAUtil reCAPTCHAUtil() {
+		return new ReCAPTCHAUtil();
 	}
 }

@@ -3,20 +3,15 @@ package com.ib.certificate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.ib.util.recaptcha.ReCAPTCHAUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ib.certificate.Certificate.Type;
@@ -42,6 +37,8 @@ public class CertificateController {
 	private ModelMapper modelMapper;
 	@Autowired
 	private IAuthenticationFacade auth;
+	@Autowired
+	private ReCAPTCHAUtil captchaUtil;
 	
 	private void setRequestValidFor(CertificateRequest req, long months) {
 		LocalDateTime desired = LocalDateTime.now().plusMonths(months);
@@ -80,6 +77,7 @@ public class CertificateController {
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
 	@PostMapping("/request")
 	public ResponseEntity<?> makeRequest(@Valid @RequestBody CertificateRequestCreateDto requestCreateDto) {
+		captchaUtil.processResponse(requestCreateDto.getToken());
 		CertificateRequest req = requestFromCreateDto(requestCreateDto);
 		req = certificateRequestService.makeRequest(req);
 
@@ -178,8 +176,9 @@ public class CertificateController {
 	}
 
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
-	@PostMapping("/valid")
-	public ResponseEntity<Boolean> isValidFile(@RequestParam MultipartFile certFile) {
+	@PostMapping(value = "/valid")
+	public ResponseEntity<Boolean> isValidFile(@RequestPart MultipartFile certFile, @RequestPart String token) {
+		captchaUtil.processResponse(token);
 		boolean isValid = false;
 		isValid = certificateService.isValid(certFile);
 		return ResponseEntity.ok(isValid);

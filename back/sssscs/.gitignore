@@ -1,8 +1,8 @@
 # Hide database
 data/*.db
 
-# Hide sendgrid env vars
-data/sendgrid.env
+# Hide env vars
+data/*.env
 
 # Hide certs and keys
 certs/*

@@ -2,6 +2,7 @@ package com.ib.config;
 
 import java.util.List;
 
+import com.ib.util.recaptcha.InvalidReCAPTCHAException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -67,6 +68,11 @@ public class ControllerAdvisor {
 	@ExceptionHandler({ RevocationUnauthorizedException.class })
 	public ResponseEntity<?> handleRevocationUnauthorizedException(final RevocationUnauthorizedException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+	}
+
+	@ExceptionHandler({ InvalidReCAPTCHAException.class })
+	public ResponseEntity<?> handleInvalidReCAPTCHAException(final InvalidReCAPTCHAException e) {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
 	}
 
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
