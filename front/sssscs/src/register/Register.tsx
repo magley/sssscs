@@ -11,7 +11,7 @@ export const Register = () => {
     const { register, trigger, handleSubmit, formState: { errors }, setError } = useForm({mode: 'all'});
     const navigate = useNavigate();
     const [token, setToken] = useState<string | null>("");
-    let [captchaError, setCaptchaError] = useState("");
+    const [captchaError, setCaptchaError] = useState("");
 
     const tryRegister = async (data: FieldValues) => {
         setCaptchaError("");
