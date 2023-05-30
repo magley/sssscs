@@ -77,7 +77,6 @@ public class CertificateController {
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
 	@PostMapping("/request")
 	public ResponseEntity<?> makeRequest(@Valid @RequestBody CertificateRequestCreateDto requestCreateDto) {
-		captchaUtil.processResponse(requestCreateDto.getToken());
 		CertificateRequest req = requestFromCreateDto(requestCreateDto);
 		req = certificateRequestService.makeRequest(req);
 
@@ -177,8 +176,7 @@ public class CertificateController {
 
 	@PreAuthorize("hasAnyAuthority('ROLE_REGULAR', 'ROLE_ADMIN')")
 	@PostMapping(value = "/valid")
-	public ResponseEntity<Boolean> isValidFile(@RequestPart MultipartFile certFile, @RequestPart String token) {
-		captchaUtil.processResponse(token);
+	public ResponseEntity<Boolean> isValidFile(@RequestParam MultipartFile certFile) {
 		boolean isValid = false;
 		isValid = certificateService.isValid(certFile);
 		return ResponseEntity.ok(isValid);

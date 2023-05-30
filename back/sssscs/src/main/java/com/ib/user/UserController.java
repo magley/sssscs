@@ -45,6 +45,7 @@ public class UserController {
 
 	@PostMapping("/session/login")
 	public ResponseEntity<String> login(@Valid @RequestBody UserLoginDto dto) {
+		captchaUtil.processResponse(dto.getToken());
 		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(),
 				dto.getPassword());
 		Authentication auth = null;

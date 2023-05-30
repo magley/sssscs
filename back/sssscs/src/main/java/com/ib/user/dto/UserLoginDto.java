@@ -13,4 +13,6 @@ public class UserLoginDto {
 	private String email;
 	@NotNull
 	private String password;
+	@NotNull
+	private String token;
 }

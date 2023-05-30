@@ -38,7 +38,7 @@ export const Register = () => {
                 if (err.response?.status === 400) {
                     setError('email', {message: err.response?.data as string}, {shouldFocus: true});
                 }
-                else if (err.response?.status === 422) {
+                else if (err.response?.status === 418) {
                     setCaptchaError(err.response?.data as string);
                 }
             });
