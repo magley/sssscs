@@ -72,7 +72,7 @@ public class ControllerAdvisor {
 
 	@ExceptionHandler({ InvalidReCAPTCHAException.class })
 	public ResponseEntity<?> handleInvalidReCAPTCHAException(final InvalidReCAPTCHAException e) {
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.I_AM_A_TEAPOT);
 	}
 
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
