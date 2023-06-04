@@ -17,11 +17,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ib.util.DTOModelMapper;
 import com.ib.util.security.JwtRequestFilter;
+import com.ib.util.security.LoggerInterceptor;
 
 import jakarta.persistence.EntityManager;
 
@@ -66,5 +68,10 @@ public class ServerConfig implements WebMvcConfigurer {
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 		http.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
 		return http.build();
+	}
+	
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+	    registry.addInterceptor(new LoggerInterceptor());
 	}
 }

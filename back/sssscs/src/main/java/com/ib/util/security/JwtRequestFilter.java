@@ -37,7 +37,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	}
 
 	private void doJwtAuthenticationFilter(HttpServletRequest request, HttpServletResponse response) {
-		System.err.println(request.getRequestURL().toString() + " " + request.getMethod());
+		//System.err.println(request.getRequestURL().toString() + " " + request.getMethod());
 		if (!request.getRequestURL().toString().contains("/api/")) {
 			return;
 		}
