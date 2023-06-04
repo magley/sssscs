@@ -54,6 +54,11 @@ public class JwtTokenUtil {
 	public String getUsernameFromToken(String token) {
 		return getClaimFromToken(token, Claims::getSubject);
 	}
+	
+	public Long getIdFromToken(String token) {
+		final Claims claims = getAllClaimsFromToken(token);
+		return (long)(int)claims.get("id");
+	}
 
 	public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
 		final Claims claims = getAllClaimsFromToken(token);
@@ -70,6 +75,21 @@ public class JwtTokenUtil {
 			return true;
 		} catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
 			throw new BadCredentialsException("BAD_CREDENTIALS", ex);
+		}
+	}
+	
+	public String getJWTFromHeader(String header) {
+		if (header == null || !header.contains("Bearer")) {
+			return null;
+		}
+		try {
+			String jwt = header.substring(header.indexOf("Bearer ") + 7);
+			if (jwt.isEmpty()) {
+				return null;
+			}
+			return jwt;
+		} catch (IndexOutOfBoundsException e) {
+			return null;
 		}
 	}
 }

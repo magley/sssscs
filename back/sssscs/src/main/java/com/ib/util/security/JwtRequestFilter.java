@@ -12,8 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.server.ResponseStatusException;
-
 import com.ib.user.IUserService;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -37,7 +35,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	}
 
 	private void doJwtAuthenticationFilter(HttpServletRequest request, HttpServletResponse response) {
-		//System.err.println(request.getRequestURL().toString() + " " + request.getMethod());
 		if (!request.getRequestURL().toString().contains("/api/")) {
 			return;
 		}
@@ -58,14 +55,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 	private String getTokenFromRequest(HttpServletRequest request) {
 		String header = request.getHeader("Authorization");
-		return getTokenFromHeader(header);
-	}
-
-	public String getTokenFromHeader(String header) {
-		if (header == null || !header.contains("Bearer")) {
-			return null;
-		}
-		return header.substring(header.indexOf("Bearer ") + 7);
+		return jwtTokenUtil.getJWTFromHeader(header);
 	}
 
 	public UsernamePasswordAuthenticationToken getAuthFromToken(String jwt) throws JwtException, IllegalArgumentException, UsernameNotFoundException {
