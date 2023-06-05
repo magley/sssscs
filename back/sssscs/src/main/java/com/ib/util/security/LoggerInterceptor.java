@@ -42,7 +42,7 @@ public class LoggerInterceptor implements HandlerInterceptor {
 			userLog = String.format("User with ID %s", auth);
 		}
 		
-		log.info("{} @ {} {}", userLog, request.getRequestURL().toString(), request.getMethod());	
+		log.info("Request  {} @ {} {}", userLog, request.getRequestURL().toString(), request.getMethod());	
 	    return true;
 	}
 	
@@ -53,6 +53,14 @@ public class LoggerInterceptor implements HandlerInterceptor {
 	
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-		log.info("{}", HttpStatus.valueOf(response.getStatus()));	
+		String auth = getUserID(request.getHeader("Authorization"));
+		String userLog = "";
+		if (auth == null) {
+			userLog = "Anonymous User";
+		} else {
+			userLog = String.format("User with ID %s", auth);
+		}
+		
+		log.info("Response [{}] {} @ {} {}", HttpStatus.valueOf(response.getStatus()), userLog, request.getRequestURL().toString(), request.getMethod());	
 	}
 }
