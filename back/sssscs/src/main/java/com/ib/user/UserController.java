@@ -2,6 +2,8 @@ package com.ib.user;
 
 import com.ib.util.recaptcha.ReCAPTCHAUtil;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,7 @@ import com.ib.user.dto.PasswordRotationDto;
 import com.ib.user.dto.UserCreateDto;
 import com.ib.user.dto.UserLoginDto;
 import com.ib.util.security.JwtTokenUtil;
+import com.ib.util.security.LoggerInterceptor;
 
 import jakarta.validation.Valid;
 
@@ -35,6 +38,8 @@ public class UserController {
 	private ModelMapper mapper;
 	@Autowired
 	private ReCAPTCHAUtil captchaUtil;
+	
+	private static Logger log = LoggerFactory.getLogger(LoggerInterceptor.class);
 
 	@PostMapping("/session/register")
 	public ResponseEntity<?> register(@Valid @RequestBody UserCreateDto dto) {
@@ -70,6 +75,7 @@ public class UserController {
 		}
 		
 		String token = jwtTokenUtil.generateToken(user.getEmail(), user.getId(), user.getRole().toString());
+		log.info("User {} logged in.", user.getId());
 		return ResponseEntity.ok(token);
 	}
 	
