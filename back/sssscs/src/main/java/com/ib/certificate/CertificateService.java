@@ -80,6 +80,7 @@ public class CertificateService implements ICertificateService {
 		return user.getRole() == Role.ADMIN;
 	}
 
+	@LogExecution
 	@Override
 	public Certificate accept(CertificateRequest req, User caller) {
 		if (!isAuthorizedToAcceptOrReject(req, caller)) {
@@ -94,6 +95,7 @@ public class CertificateService implements ICertificateService {
 		return c;
 	}
 
+	@LogExecution
 	@Override
 	public void reject(CertificateRequest req, String reason, User caller) {
 		if (!isAuthorizedToAcceptOrReject(req, caller)) {
@@ -108,6 +110,7 @@ public class CertificateService implements ICertificateService {
 		return certificateRepo.findAll();
 	}
 
+	@LogExecution
 	@Override
 	public boolean validate(Certificate cert) {
 		if (isExpired(cert)) {
@@ -294,6 +297,7 @@ public class CertificateService implements ICertificateService {
 		return false;
 	}
 
+	@LogExecution
 	@Transactional
 	@Override
 	public void revoke(Long certificateId, String revocationReason) {
@@ -321,6 +325,7 @@ public class CertificateService implements ICertificateService {
 		certificateRequestService.findByParent(certificate).forEach(c -> certificateRequestService.reject(c, revocationReason));
 	}
 
+	@LogExecution
 	@Override
 	public FileSystemResource download(Long certificateId) {
 		Certificate cert = findById(certificateId);
@@ -328,6 +333,7 @@ public class CertificateService implements ICertificateService {
 		return new FileSystemResource(keyUtil.getFnameCert(cert.getSerialNumber()));
 	}
 
+	@LogExecution
 	@Override
 	public FileSystemResource downloadPrivateKey(Long certificateId) {
 		Certificate cert = findById(certificateId);
