@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -29,7 +30,11 @@ public class LoggerInterceptor implements HandlerInterceptor {
 		if (jwt == null) {
 			return null;
 		}
-		return jwtTokenUtil.getIdFromToken(jwt).toString();
+		try {
+			return jwtTokenUtil.getIdFromToken(jwt).toString();
+		} catch (ExpiredJwtException ex) {
+			return "EXPIRED";
+		}
 	}
 	
 	@Override
