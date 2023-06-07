@@ -45,6 +45,7 @@ import com.ib.certificate.request.ICertificateRequestService;
 import com.ib.pki.KeyUtil;
 import com.ib.user.User;
 import com.ib.user.User.Role;
+import com.ib.util.aspect.LogExecution;
 import com.ib.util.exception.EntityNotFoundException;
 import com.ib.util.security.IAuthenticationFacade;
 
@@ -124,6 +125,7 @@ public class CertificateService implements ICertificateService {
 		return validate(cert.getParent());
 	}
 
+	@LogExecution
 	@Override
 	public List<CertificateSummaryItemDto> getAllSummary() {
 		return getAll().stream().map(c -> modelMapper.map(c, CertificateSummaryItemDto.class)).toList();
