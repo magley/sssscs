@@ -1,3 +1,7 @@
+# Hide log
+
+sssscs.log
+
 # Hide database
 data/*.db
 

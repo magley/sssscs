@@ -12,6 +12,7 @@ import com.ib.user.dto.PasswordRotationDto;
 import com.ib.user.exception.EmailTakenException;
 import com.ib.user.exception.PasswordTooRecentException;
 import com.ib.user.exception.WrongPasswordException;
+import com.ib.util.aspect.LogExecution;
 import com.ib.util.exception.EntityNotFoundException;
 import com.ib.util.security.PasswordUtil;
 
