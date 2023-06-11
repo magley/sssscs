@@ -1,6 +1,10 @@
 package com.ib.user;
 
 import com.ib.util.recaptcha.ReCAPTCHAUtil;
+
+import java.time.LocalDateTime;
+import java.util.Random;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,39 +47,50 @@ public class UserController {
 
 	@PostMapping("/session/register")
 	public ResponseEntity<?> register(@Valid @RequestBody UserCreateDto dto) {
+		int logId = new Random().nextInt();
+		log.info("[Register {}] Begin", logId);
+		
 		captchaUtil.processResponse(dto.getToken());
 		userService.register(mapper.map(dto, User.class));
+		
+		log.info("[Register {}] Finish", logId);
 		return new ResponseEntity<Void>((Void) null, HttpStatus.NO_CONTENT);
 	}
 
 	@PostMapping("/session/login")
 	public ResponseEntity<String> login(@Valid @RequestBody UserLoginDto dto) {
+		int logId = new Random().nextInt();
+		log.info("[Login {}] Begin", logId);
+		
 		captchaUtil.processResponse(dto.getToken());
-		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(),
-				dto.getPassword());
+		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
 		Authentication auth = null;
 		try {
 			auth = authManager.authenticate(authToken);
 		} catch (BadCredentialsException ex) {
+			log.info("[Login {}] Bad credentials", logId);
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong email or password!");
 		}
 
 		User user = (User) auth.getPrincipal();
 		if (userService.isBlocked(user)) {
 			// TOO_MANY_REQUESTS == 429, it stands out which helps us on the frontend.
+			log.info("[Login {}] User blocked", logId);
 			throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "You are blocked.");
 		}
 		if (user.getVerified() == false || userService.isTimeFor2FA(user)) {
 			// UNPROCESSABLE_ENTITY == 422, it stands out which helps us on the frontend.
+			log.info("[Login {}] Needs verification", logId);
 			throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, "Verify your account.");
 		}
 		if (userService.isTimeToChangePassword(user)) {
 			// NOT_ACCEPTABLE == 406, it stands out which helps us on the frontend.
+			log.info("[Login {}] Stale password", logId);
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Rotate your password");
 		}
 		
 		String token = jwtTokenUtil.generateToken(user.getEmail(), user.getId(), user.getRole().toString());
-		log.info("User {} logged in.", user.getId());
+		log.info("[Login {}] Logged in user {}", logId, user.getId());
 		return ResponseEntity.ok(token);
 	}
 	
