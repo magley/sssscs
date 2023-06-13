@@ -36,9 +36,10 @@ export const Register = () => {
             })
             .catch((err : AxiosError) => {
                 if (err.response?.status === 400) {
+                    console.log(err.response?.data);
                     setError('email', {message: err.response?.data as string}, {shouldFocus: true});
                 }
-                else if (err.response?.status === 422) {
+                else if (err.response?.status === 418) {
                     setCaptchaError(err.response?.data as string);
                 }
             });

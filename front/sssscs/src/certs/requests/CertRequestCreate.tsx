@@ -4,14 +4,11 @@ import { CertType } from "../CertService";
 import { useEffect, useState } from "react";
 import { AuthService } from "../../auth/AuthService";
 import { CertRequestCreateDTO, CertRequestService } from "./CertRequestService";
-import ReCAPTCHA from "react-google-recaptcha";
 
 
 export const CertRequestCreate = () => {
     const { register, handleSubmit, formState: { errors }, watch, setError} = useForm({mode: 'all'});
     const [ allowedTypes, setAllowedTypes ] = useState<Array<CertType>>([]);
-    const [token, setToken] = useState<string | null>("");
-    const [ captchaError, setCaptchaError ] = useState("");
 
     useEffect(() => {
         let t = [CertType.END, CertType.INTERMEDIATE, CertType.ROOT];
@@ -23,11 +20,6 @@ export const CertRequestCreate = () => {
     }, []);
 
     const sendRequest = async (data: FieldValues) => {
-        setCaptchaError("");
-        if (!token) {
-            setCaptchaError("Retry captcha");
-            return;
-        }
         const dto: CertRequestCreateDTO = {
             type: CertType[data['type']],
             parentId: Number(data['parentId']),
@@ -38,7 +30,6 @@ export const CertRequestCreate = () => {
                 organization: data['subjectOrganization'],
                 commonName: data['subjectCommonName'],
             },
-            token: token,
         };
 
         if (dto.type !== CertType[CertType.ROOT]) {
@@ -57,13 +48,8 @@ export const CertRequestCreate = () => {
                 console.log(v.status);
             })
             .catch((err) => {
-                if (err.response?.status === 422) {
-                    setCaptchaError(err.response?.data as string);
-                }
-                else {
-                    console.error(err.response.data);
-                    setError('parentId', {message: err.response.data}, {shouldFocus: true});
-                }
+                console.error(err.response.data);
+                setError('parentId', {message: err.response.data}, {shouldFocus: true});
             })
     }
 
@@ -129,14 +115,6 @@ export const CertRequestCreate = () => {
                     Send Request
                 </Button>
             </Box>
-            <ReCAPTCHA
-                sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY!}
-                onChange={(value) => setToken(value)}/>
-            { captchaError !== "" && (
-            <>
-            {captchaError}
-            </>
-            )}
         </>
     );
 }

@@ -12,6 +12,7 @@ import com.ib.user.dto.PasswordRotationDto;
 import com.ib.user.exception.EmailTakenException;
 import com.ib.user.exception.PasswordTooRecentException;
 import com.ib.user.exception.WrongPasswordException;
+import com.ib.util.aspect.LogExecution;
 import com.ib.util.exception.EntityNotFoundException;
 import com.ib.util.security.PasswordUtil;
 
@@ -22,8 +23,8 @@ public class UserService implements IUserService {
 	@Autowired
 	private PasswordUtil passwordUtil;
 	private static final Integer MAX_PREVIOUS_PASSWORDS_SAVED = 5;
-	private static final Integer PERIOD_FOR_2FA_IN_MINTUES = 5;
-	private static final Integer PERIOD_FOR_PASSWORD_ROTATION_IN_MINUTES = 1;
+	private static final Integer PERIOD_FOR_2FA_IN_MINTUES = 10;
+	private static final Integer PERIOD_FOR_PASSWORD_ROTATION_IN_MINUTES = 10;
 
 	@Override
 	public User register(User user) {

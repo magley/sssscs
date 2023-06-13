@@ -4,15 +4,12 @@ import { CertService } from "./CertService";
 import { AxiosError, AxiosResponse } from "axios";
 import { useRef, useState } from "react";
 import UploadIcon from "@mui/icons-material/Upload"
-import ReCAPTCHA from "react-google-recaptcha";
 
 export const CertVerifyFile = () => {
     const { register, handleSubmit, setError, formState: {errors}} = useForm({mode: "all"});
     const fileInput = useRef<HTMLInputElement>(null);
     let [ fileName, setFileName ] = useState<string | null>(null);
     let [ isValid, setIsValid ] = useState<Boolean | null>(null);
-    const [token, setToken] = useState<string | null>("");
-    const [ captchaError, setCaptchaError ] = useState("");
 
     register("certFile");
 
@@ -27,22 +24,12 @@ export const CertVerifyFile = () => {
             setIsValid(null);
             return;
         }
-        setCaptchaError("");
-        if (!token) {
-            setCaptchaError("Retry captcha");
-            return;
-        }
-        CertService.verifyFile(file, token)
+        CertService.verifyFile(file)
             .then((res: AxiosResponse<Boolean>) => {
                 setIsValid(res.data);
             }).catch((err: AxiosError) => {
-                if (err.response?.status === 422) {
-                    setCaptchaError(err.response?.data as string);
-                }
-                else {
-                    setError("certFile", {message: err.response?.data as string}, {shouldFocus: true});
-                    setIsValid(null);
-                }
+                setError("certFile", {message: err.response?.data as string}, {shouldFocus: true});
+                setIsValid(null);
             });
     }
 
@@ -80,9 +67,6 @@ export const CertVerifyFile = () => {
 
                 <Button variant="contained" type="submit">Verify</Button>
             </Box>
-            <ReCAPTCHA
-                sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY!}
-                onChange={(value) => setToken(value)}/>
             {
                 isValid !== null &&
                 <p>
@@ -92,11 +76,6 @@ export const CertVerifyFile = () => {
             {
                 !!errors["certFile"] && <p style={{color: "red"}}>{errors["certFile"]?.message?.toString()}</p>
             }
-            { captchaError !== "" && (
-            <>
-            {captchaError}
-            </>
-        )}
         </>
     )
 }

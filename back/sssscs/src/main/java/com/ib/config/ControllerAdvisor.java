@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ib.certificate.exception.CreatorUnauthorizedException;
@@ -28,6 +29,11 @@ public class ControllerAdvisor {
 	@ExceptionHandler({ ResponseStatusException.class })
 	public ResponseEntity<?> handleResponseStatusException(final ResponseStatusException e) {
 		return new ResponseEntity<>(e.getMessage(), e.getStatusCode());
+	}
+	
+	@ExceptionHandler(MultipartException.class)
+	public ResponseEntity<?> handleMultipartException(MultipartException e) {
+	    return new ResponseEntity<>(e.getMessage(), HttpStatus.PAYLOAD_TOO_LARGE);
 	}
 
 	@ExceptionHandler({ EntityException.class })
@@ -72,7 +78,7 @@ public class ControllerAdvisor {
 
 	@ExceptionHandler({ InvalidReCAPTCHAException.class })
 	public ResponseEntity<?> handleInvalidReCAPTCHAException(final InvalidReCAPTCHAException e) {
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.I_AM_A_TEAPOT);
 	}
 
 	@ExceptionHandler({ MethodArgumentNotValidException.class })

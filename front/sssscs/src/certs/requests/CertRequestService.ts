@@ -22,7 +22,6 @@ export interface CertRequestCreateDTO {
     type: string,
     parentId: number | null,
     subjectData: SubjectData,
-    token: string,
 }
 
 export class CertRequestService {

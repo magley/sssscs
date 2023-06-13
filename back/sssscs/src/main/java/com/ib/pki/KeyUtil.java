@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -41,11 +42,15 @@ public class KeyUtil {
 	////////////////////////////////////////////////////////////
 
 	public String getFnameCert(String alias) {
-		return DIR_CERTS + "/" + alias + ".crt";
+		return sanitizePath(DIR_CERTS + "/" + alias + ".crt");
 	}
 
 	public String getFnamePrivKey(String alias) {
-		return DIR_KEYS + "/" + alias + ".key";
+		return sanitizePath(DIR_KEYS + "/" + alias + ".key");
+	}
+	
+	private String sanitizePath(String path) {
+		return Paths.get(path).normalize().toString();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -57,7 +62,7 @@ public class KeyUtil {
 		if (!new File(fnamePriv).isFile()) {
 			return null;
 		}
-
+		
 		try (FileInputStream is = new FileInputStream(fnamePriv)) {
 			byte[] key = Base64.getDecoder().decode(is.readAllBytes());
 			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
