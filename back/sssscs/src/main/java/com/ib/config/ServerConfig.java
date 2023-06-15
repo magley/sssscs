@@ -63,9 +63,11 @@ public class ServerConfig implements WebMvcConfigurer {
 				.requestMatchers("/**").permitAll()
 				.requestMatchers("/api/user/session/**").permitAll()
 				.requestMatchers("/api/verification-code/**").permitAll()
-				.anyRequest().authenticated();
+				.anyRequest().authenticated()
+				.and().oauth2Login();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+		// TODO: check if commenting out next line does sth bad
 		http.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
 		return http.build();
 	}
