@@ -2,16 +2,20 @@ package com.ib.config;
 
 import java.util.List;
 
+import com.ib.util.recaptcha.InvalidReCAPTCHAException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.ib.certificate.exception.CreatorUnauthorizedException;
 import com.ib.certificate.exception.RevocationUnauthorizedException;
+import com.ib.user.exception.PasswordTooRecentException;
+import com.ib.user.exception.WrongPasswordException;
 import com.ib.util.exception.EntityException;
 import com.ib.util.exception.EntityNotFoundException;
 import com.ib.util.validation.BadValidation;
@@ -26,9 +30,24 @@ public class ControllerAdvisor {
 	public ResponseEntity<?> handleResponseStatusException(final ResponseStatusException e) {
 		return new ResponseEntity<>(e.getMessage(), e.getStatusCode());
 	}
+	
+	@ExceptionHandler(MultipartException.class)
+	public ResponseEntity<?> handleMultipartException(MultipartException e) {
+	    return new ResponseEntity<>(e.getMessage(), HttpStatus.PAYLOAD_TOO_LARGE);
+	}
 
 	@ExceptionHandler({ EntityException.class })
 	public ResponseEntity<?> handleEntityException(final EntityException e) {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler({ WrongPasswordException.class })
+	public ResponseEntity<?> handleWrongPasswordException(final WrongPasswordException e) {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+	}
+	
+	@ExceptionHandler({ PasswordTooRecentException.class })
+	public ResponseEntity<?> handlePasswordTooRecentException(final PasswordTooRecentException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
@@ -55,6 +74,11 @@ public class ControllerAdvisor {
 	@ExceptionHandler({ RevocationUnauthorizedException.class })
 	public ResponseEntity<?> handleRevocationUnauthorizedException(final RevocationUnauthorizedException e) {
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+	}
+
+	@ExceptionHandler({ InvalidReCAPTCHAException.class })
+	public ResponseEntity<?> handleInvalidReCAPTCHAException(final InvalidReCAPTCHAException e) {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.I_AM_A_TEAPOT);
 	}
 
 	@ExceptionHandler({ MethodArgumentNotValidException.class })

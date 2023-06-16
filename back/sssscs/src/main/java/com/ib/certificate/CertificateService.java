@@ -45,6 +45,7 @@ import com.ib.certificate.request.ICertificateRequestService;
 import com.ib.pki.KeyUtil;
 import com.ib.user.User;
 import com.ib.user.User.Role;
+import com.ib.util.aspect.LogExecution;
 import com.ib.util.exception.EntityNotFoundException;
 import com.ib.util.security.IAuthenticationFacade;
 
@@ -79,6 +80,7 @@ public class CertificateService implements ICertificateService {
 		return user.getRole() == Role.ADMIN;
 	}
 
+	@LogExecution
 	@Override
 	public Certificate accept(CertificateRequest req, User caller) {
 		if (!isAuthorizedToAcceptOrReject(req, caller)) {
@@ -93,6 +95,7 @@ public class CertificateService implements ICertificateService {
 		return c;
 	}
 
+	@LogExecution
 	@Override
 	public void reject(CertificateRequest req, String reason, User caller) {
 		if (!isAuthorizedToAcceptOrReject(req, caller)) {
@@ -107,6 +110,7 @@ public class CertificateService implements ICertificateService {
 		return certificateRepo.findAll();
 	}
 
+	@LogExecution
 	@Override
 	public boolean validate(Certificate cert) {
 		if (isExpired(cert)) {
@@ -124,6 +128,7 @@ public class CertificateService implements ICertificateService {
 		return validate(cert.getParent());
 	}
 
+	@LogExecution
 	@Override
 	public List<CertificateSummaryItemDto> getAllSummary() {
 		return getAll().stream().map(c -> modelMapper.map(c, CertificateSummaryItemDto.class)).toList();
@@ -292,6 +297,7 @@ public class CertificateService implements ICertificateService {
 		return false;
 	}
 
+	@LogExecution
 	@Transactional
 	@Override
 	public void revoke(Long certificateId, String revocationReason) {
@@ -319,6 +325,7 @@ public class CertificateService implements ICertificateService {
 		certificateRequestService.findByParent(certificate).forEach(c -> certificateRequestService.reject(c, revocationReason));
 	}
 
+	@LogExecution
 	@Override
 	public FileSystemResource download(Long certificateId) {
 		Certificate cert = findById(certificateId);
@@ -326,6 +333,7 @@ public class CertificateService implements ICertificateService {
 		return new FileSystemResource(keyUtil.getFnameCert(cert.getSerialNumber()));
 	}
 
+	@LogExecution
 	@Override
 	public FileSystemResource downloadPrivateKey(Long certificateId) {
 		Certificate cert = findById(certificateId);

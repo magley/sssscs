@@ -4,6 +4,7 @@ import { axiosInstance } from "../http/HttpService";
 export interface UserLoginDto {
     email: string,
     password: string,
+    token: string,
 };
 
 export class LoginService {

@@ -11,6 +11,7 @@ import com.ib.certificate.Certificate.Type;
 import com.ib.certificate.request.CertificateRequest.Status;
 import com.ib.user.User;
 import com.ib.user.User.Role;
+import com.ib.util.aspect.LogExecution;
 import com.ib.util.exception.EntityNotFoundException;
 
 @Service
@@ -18,6 +19,7 @@ public class CertificateRequestService implements ICertificateRequestService {
 	@Autowired
 	private ICertificateRequestRepo certificateRequestRepo;
 
+	@LogExecution
 	@Override
 	public CertificateRequest makeRequest(CertificateRequest request) {
 		if (!request.isTypeValid()) {
@@ -68,11 +70,13 @@ public class CertificateRequestService implements ICertificateRequestService {
 		return false;
 	}
 
+	@LogExecution
 	@Override
 	public List<CertificateRequest> findByCreator(User creator) {
 		return certificateRequestRepo.findByCreator(creator);
 	}
 	
+	@LogExecution
 	@Override
 	public List<CertificateRequest> findAll() {
 		return certificateRequestRepo.findAll();
@@ -91,6 +95,7 @@ public class CertificateRequestService implements ICertificateRequestService {
 		certificateRequestRepo.save(req);
 	}
 
+	@LogExecution
 	@Override
 	public List<CertificateRequest> findPendingRequestsIssuedTo(User user) {
 		return certificateRequestRepo.findPendingRequestsIssuedTo(user.getId(), user.getRole() == Role.ADMIN);

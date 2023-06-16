@@ -2,6 +2,8 @@ package com.ib.user;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import com.ib.user.dto.PasswordRotationDto;
+
 public interface IUserService extends UserDetailsService {
 	User register(User user);
 
@@ -23,4 +25,8 @@ public interface IUserService extends UserDetailsService {
 	Boolean isBlocked(User user);
 	
 	void resetPassword(User user, String newPassword);
+
+	boolean isTimeToChangePassword(User user);
+	
+	void rotatePassword(PasswordRotationDto dto);
 }

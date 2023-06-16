@@ -1,8 +1,15 @@
+# Hide log
+
+sssscs.log
+
 # Hide database
 data/*.db
 
-# Hide sendgrid env vars
-data/sendgrid.env
+# Hide env vars
+data/*.env
+
+# Hide https cert bundle
+src/main/resources/keystore/**
 
 # Hide certs and keys
 certs/*
