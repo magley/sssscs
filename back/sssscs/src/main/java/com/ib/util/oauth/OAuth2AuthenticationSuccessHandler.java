@@ -28,7 +28,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     
     // TODO: unhardcode, extract outside
-    private static final String REDIRECT_URL = "http://localhost:4200/login";
+    private static final String REDIRECT_URL = "http://localhost:3000/login";
     
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
