@@ -17,6 +17,7 @@ export const Login = (props: {gloState: GlobalState}) => {
     const navigate = useNavigate();
     const [token, setToken] = useState<string | null>("");
     const [ captchaError, setCaptchaError ] = useState("");
+
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         let redirectToken = params.get("redirectToken");
@@ -108,6 +109,11 @@ export const Login = (props: {gloState: GlobalState}) => {
         { captchaError !== "" && (
         <>
         {captchaError}
+        </>
+        )}
+        {(new URLSearchParams(window.location.search)).get("error") && (
+        <>
+        {"OAuth2 error: " + (new URLSearchParams(window.location.search)).get("error")}
         </>
         )}
         </>
