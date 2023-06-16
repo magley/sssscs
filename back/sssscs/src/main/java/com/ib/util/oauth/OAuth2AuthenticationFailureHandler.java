@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     // TODO: unhardcode, extract outside
-    private static final String REDIRECT_URL = "http://localhost:3000/login";
+    private static final String REDIRECT_URL = "https://localhost:3000/login";
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
