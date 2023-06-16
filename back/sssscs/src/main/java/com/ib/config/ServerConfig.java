@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ib.util.DTOModelMapper;
 import com.ib.util.oauth.OAuth2AuthenticationFailureHandler;
 import com.ib.util.oauth.OAuth2AuthenticationSuccessHandler;
+import com.ib.util.oauth.OAuth2UserService;
 import com.ib.util.security.JwtRequestFilter;
 import com.ib.util.security.LoggerInterceptor;
 
@@ -42,6 +43,9 @@ public class ServerConfig implements WebMvcConfigurer {
 
 	@Autowired
 	private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+
+	@Autowired
+	private OAuth2UserService oAuth2UserService;
 
 	@Autowired
 	public ServerConfig(ApplicationContext applicationContext, EntityManager entityManager) {
@@ -73,6 +77,9 @@ public class ServerConfig implements WebMvcConfigurer {
 				.anyRequest().authenticated()
 				.and()
 				.oauth2Login()
+				.userInfoEndpoint()
+				.userService(oAuth2UserService)
+				.and()
 				.successHandler(oAuth2AuthenticationSuccessHandler)
 				.failureHandler(oAuth2AuthenticationFailureHandler);
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);

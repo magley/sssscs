@@ -35,7 +35,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Autowired
     private IUserService userService;
-
+    
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         String targetUrl = determineTargetUrl(request, response, authentication);
@@ -48,11 +48,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        System.out.println(oAuth2User);
         User user;
         try {
             user = processOAuth2User(oAuth2User);
         } catch (AuthenticationException ex) {
+        	// TODO: remove this code
             throw ex;
         } catch (Exception ex) {
             // Throwing an instance of AuthenticationException will trigger the OAuth2AuthenticationFailureHandler
@@ -81,9 +81,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private User registerNewUser(OAuth2UserInfo oAuth2UserInfo) {
         User user = new User();
-        System.out.println("DEBUG: " + oAuth2UserInfo.getEmail());
         user.setEmail(oAuth2UserInfo.getEmail());
         user.setPassword("");
+        user.setName(oAuth2UserInfo.getName());
+        user.setSurname("");  // this might be bad, but github doesn't have it
+        user.setPhoneNumber("");  // FIXME: will this cause problem with annoying you to verify?
         return userService.register(user);
     }
 }
