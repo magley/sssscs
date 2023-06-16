@@ -7,8 +7,9 @@ import { AuthService } from '../auth/AuthService';
 import { Link, useNavigate } from 'react-router-dom';
 import { GlobalState } from '../App';
 import { VerifyPageRouterState } from '../verify/VerifyService';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { Env } from '../common/Environment';
 
 
 export const Login = (props: {gloState: GlobalState}) => {
@@ -16,6 +17,16 @@ export const Login = (props: {gloState: GlobalState}) => {
     const navigate = useNavigate();
     const [token, setToken] = useState<string | null>("");
     const [ captchaError, setCaptchaError ] = useState("");
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        let redirectToken = params.get("redirectToken");
+        if (redirectToken) {
+            AuthService.putJWT(redirectToken);
+            props.gloState.updateIsLoggedIn();
+            navigate("/certificates");
+        }
+    }, [navigate, props.gloState]);
 
     const tryLogin = async (data: FieldValues) => {
         setCaptchaError("");
@@ -56,6 +67,9 @@ export const Login = (props: {gloState: GlobalState}) => {
                 }
             });
     }
+    const githubLogin = async (data: FieldValues) => {
+        window.location.href = Env.url + "/oauth2/authorization/github";
+    }
 
     return (
         <>
@@ -87,12 +101,19 @@ export const Login = (props: {gloState: GlobalState}) => {
             </Button>
         </Box>
         <Link to='/reset-password'>Forgot password?</Link>
+        <br />
+        <Button variant='contained' type='button' onClick={githubLogin}>Sign-in with github</Button>
         <ReCAPTCHA
             sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY!}
             onChange={(value) => setToken(value)}/>
         { captchaError !== "" && (
         <>
         {captchaError}
+        </>
+        )}
+        {(new URLSearchParams(window.location.search)).get("error") && (
+        <>
+        {"OAuth2 error: " + (new URLSearchParams(window.location.search)).get("error")}
         </>
         )}
         </>

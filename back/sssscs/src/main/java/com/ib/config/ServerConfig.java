@@ -14,7 +14,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -22,6 +21,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ib.util.DTOModelMapper;
+import com.ib.util.oauth.OAuth2AuthenticationFailureHandler;
+import com.ib.util.oauth.OAuth2AuthenticationSuccessHandler;
+import com.ib.util.oauth.OAuth2UserService;
 import com.ib.util.security.JwtRequestFilter;
 import com.ib.util.security.LoggerInterceptor;
 
@@ -35,6 +37,15 @@ public class ServerConfig implements WebMvcConfigurer {
 
 	@Autowired
 	private JwtRequestFilter jwtRequestFilter;
+
+	@Autowired
+	private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
+	@Autowired
+	private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+
+	@Autowired
+	private OAuth2UserService oAuth2UserService;
 
 	@Autowired
 	public ServerConfig(ApplicationContext applicationContext, EntityManager entityManager) {
@@ -63,9 +74,17 @@ public class ServerConfig implements WebMvcConfigurer {
 				.requestMatchers("/**").permitAll()
 				.requestMatchers("/api/user/session/**").permitAll()
 				.requestMatchers("/api/verification-code/**").permitAll()
-				.anyRequest().authenticated();
+				.anyRequest().authenticated()
+				.and()
+				.oauth2Login()
+				.userInfoEndpoint()
+				.userService(oAuth2UserService)
+				.and()
+				.successHandler(oAuth2AuthenticationSuccessHandler)
+				.failureHandler(oAuth2AuthenticationFailureHandler);
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+		// TODO: check if commenting out next line does sth bad
 		http.exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
 		return http.build();
 	}

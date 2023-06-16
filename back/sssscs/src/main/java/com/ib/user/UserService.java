@@ -145,7 +145,11 @@ public class UserService implements IUserService {
 	 */
 	private User setNewPassword(User user, String passwordPlaintext) {
 		user.setLastTimeOfPasswordChange(LocalDateTime.now());
-		user.setPassword(passwordUtil.encode(passwordPlaintext));
+		// this is so OAuth2 user can pass without hashed password
+		// TODO: if there is a bug that allows passage with blank password to here, we have big problem
+		if (!"".equals(passwordPlaintext)) {
+			user.setPassword(passwordUtil.encode(passwordPlaintext));
+		}
 		
 		while (user.getLastNPasswords().size() >= MAX_PREVIOUS_PASSWORDS_SAVED) {
 			user.getLastNPasswords().remove(0);
