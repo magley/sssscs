@@ -1,6 +1,7 @@
 package com.ib.util.oauth;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -83,7 +84,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         User user = new User();
         user.setEmail(oAuth2UserInfo.getEmail());
         user.setPassword("");
-        user.setName(oAuth2UserInfo.getName());
+        user.setName(Optional.ofNullable(oAuth2UserInfo.getName()).orElse(""));
         user.setSurname("");  // this might be bad, but github doesn't have it
         user.setPhoneNumber("");  // FIXME: will this cause problem with annoying you to verify?
         return userService.register(user);
