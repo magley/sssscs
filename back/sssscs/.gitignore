@@ -8,6 +8,9 @@ data/*.db
 # Hide env vars
 data/*.env
 
+# Hide https cert bundle
+src/main/resources/keystore/**
+
 # Hide certs and keys
 certs/*
 keys/*

@@ -24,7 +24,7 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 
 @Component
 public class JwtTokenUtil {
-	private static final long JWT_LIFE = 60 * 1000;
+	private static final long JWT_LIFE = 5 * 60 * 1000;
     private static final SecretKey secret = MacProvider.generateKey(SignatureAlgorithm.HS256);
     private static final byte[] secretBytes = secret.getEncoded();
     private static final String base64SecretBytes = Base64.getEncoder().encodeToString(secretBytes);
